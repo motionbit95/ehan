@@ -36,3 +36,17 @@ export const postCart = async (data) => {
     console.error("Error adding document: ", error);
   }
 };
+
+export const getCart = async (uid) => {
+  const q = query(collection(db, "CART"), where("uid", "==", uid));
+  const querySnapshot = await getDocs(q);
+
+  const cart = [];
+  let totalCost = 0;
+  querySnapshot.forEach((doc) => {
+    totalCost += doc.data().product_price * doc.data().count;
+    cart.push({ ...doc.data(), doc_id: doc.id });
+  });
+  console.log(totalCost);
+  return { cart, totalCost };
+};

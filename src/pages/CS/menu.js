@@ -50,7 +50,9 @@ function Menu(props) {
           }}
         >
           <div onClick={() => navigate(-1)}>뒤로가기</div>
-          <div onClick={() => navigate(`/cart/${auth.currentUser.uid}`)}>
+          <div
+            onClick={() => navigate(`/cart`, { state: auth.currentUser.uid })}
+          >
             장바구니
           </div>
         </div>
