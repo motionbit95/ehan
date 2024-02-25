@@ -1,4 +1,11 @@
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "./firebase_conf";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
@@ -18,5 +25,14 @@ export const fetchProducts = async (collection_name, field_name) => {
   } catch (error) {
     console.error("데이터 가져오기 중 오류 발생:", error);
     return {};
+  }
+};
+
+export const postCart = async (data) => {
+  try {
+    const docRef = await addDoc(collection(db, "CART"), data);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
   }
 };

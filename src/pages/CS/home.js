@@ -12,8 +12,10 @@ import {
   TabList,
   Tabs,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 function Home(props) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [shopInfo, setShopInfo] = useState(null);
   const [productList, setProductList] = useState([]);
@@ -168,7 +170,11 @@ function Home(props) {
                     key={index}
                     style={{ backgroundColor: "white", padding: "2vh" }}
                   >
-                    <HStack width={"100%"} justifyContent={"space-between"}>
+                    <HStack
+                      onClick={() => navigate(`/menu`, { state: item })}
+                      width={"100%"}
+                      justifyContent={"space-between"}
+                    >
                       <Stack>
                         <div>{item.product_name}</div>
                         <div>{item.product_price}원</div>
