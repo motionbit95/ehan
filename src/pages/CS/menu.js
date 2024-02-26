@@ -1,4 +1,4 @@
-import { Button, Flex, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Stack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase_conf";
@@ -21,7 +21,13 @@ function Menu(props) {
     }
   };
   return (
-    <Stack gap={"2vh"} id="container">
+    <Stack
+      gap={"2vh"}
+      w={"100%"}
+      id="container"
+      position={"relative"}
+      height={"100vh"}
+    >
       <Stack
         id="banner"
         h={"30vh"}
@@ -76,13 +82,15 @@ function Menu(props) {
         </div>
       </Flex>
 
-      <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
-        <Button
-          w={"80%"}
-          position={"absolute"}
-          bottom={"1vh"}
-          onClick={addCart}
-        >
+      <Flex
+        id="button"
+        align={"center"}
+        justify={"center"}
+        position={"absolute"}
+        bottom={"1vh"}
+        w={"100%"}
+      >
+        <Button w={"80%"} onClick={addCart}>
           {menu?.product_price * count}원 담기
         </Button>
       </Flex>

@@ -79,7 +79,7 @@ function Cart(props) {
             ←
           </Flex>
           <div>장바구니</div>
-          <div>홈으로</div>
+          <div>홈</div>
         </Flex>
         {cartList?.map((item) => (
           <Stack
@@ -88,8 +88,8 @@ function Cart(props) {
             borderRadius={"10px"}
             key={item.doc_id}
           >
-            <Stack width={"100%"} padding={"10px"}>
-              <HStack>
+            <Flex width={"100%"} padding={"10px"}>
+              <HStack w={"100%"}>
                 {item.product_images && item.product_images.length > 0 ? (
                   <Image
                     bgColor={"#d9d9d9"}
@@ -112,30 +112,32 @@ function Cart(props) {
                   <div>{item.product_price}원</div>
                 </Stack>
               </HStack>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1vh",
-                  alignItems: "flex-end",
-                  justifyContent: "flex-end",
-                }}
+              <Stack
+                display={"flex"}
+                direction={"row"}
+                align={"center"}
+                justify={"center"}
+                bgColor={"#d9d9d9"}
+                color={"white"}
+                g={"3vh"}
+                h={"5vh"}
+                p={"1vh 3vh"}
+                borderRadius={"15px"}
               >
                 <div>-</div>
                 <div>{item.count}</div>
                 <div>+</div>
-              </div>
-            </Stack>
+              </Stack>
+            </Flex>
           </Stack>
         ))}
 
-        <Stack bgColor={"white"} width={"100%"} mt={"2vh"}>
+        <Stack width={"100%"} mt={"2vh"} gap={"2vh"}>
           <HStack justifyContent={"space-between"} width={"100%"}>
             <div>총 주문금액</div>
             <div>{totalCost}원</div>
           </HStack>
-          <div
-            style={{ height: "1vh", width: "100%", backgroundColor: "#d9d9d9" }}
-          />
+          <Box style={{ borderBottom: "1px solid black" }} />
           <HStack justifyContent={"space-between"} width={"100%"}>
             <div>결제예정금액</div>
             <div>{totalCost}원</div>

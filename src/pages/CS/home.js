@@ -164,7 +164,12 @@ function Home(props) {
       <Stack p={"2vh"}>
         <Stack id="tab">
           {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-          <Tabs variant="solid-rounded" colorScheme="orange">
+          <Tabs
+            variant="solid-rounded"
+            colorScheme="orange"
+            overflowX={"auto"}
+            maxW={"100vw"}
+          >
             <TabList gap={"8px"}>
               {categories?.map((item, index) => (
                 <Tab height={"35px"} key={index}>
@@ -203,6 +208,7 @@ function Home(props) {
                             bgColor={"#d9d9d9"}
                             width={"100px"}
                             height={"100px"}
+                            marginLeft={"1vh"}
                             borderRadius={"10px"}
                             alt=""
                             src={
@@ -213,6 +219,7 @@ function Home(props) {
                           <Box
                             borderRadius={"10px"}
                             bgColor={"#d9d9d9"}
+                            marginLeft={"1vh"}
                             width={"100px"}
                             height={"100px"}
                           />
