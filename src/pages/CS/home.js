@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../../firebase/firebase_func";
 import {
   Box,
+  Button,
   HStack,
   Image,
   Stack,
@@ -115,7 +116,8 @@ function Home(props) {
           >
             LOGO
           </div>
-          <div
+          <Button>장바구니</Button>
+          {/* <div
             style={{
               backgroundColor: "white",
               padding: "1vh 2vh",
@@ -123,7 +125,7 @@ function Home(props) {
             }}
           >
             장바구니
-          </div>
+          </div> */}
         </div>
         <div
           style={{
