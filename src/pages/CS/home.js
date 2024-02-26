@@ -6,6 +6,7 @@ import { fetchProducts } from "../../firebase/firebase_func";
 import {
   Box,
   Button,
+  Flex,
   HStack,
   Image,
   Stack,
@@ -71,142 +72,159 @@ function Home(props) {
     }
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
   return (
-    <div
+    <Stack
       id="container"
       style={{
-        gap: "2vh",
+        // gap: "24px",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <div
+      <Stack
         id="banner"
-        style={{
-          height: "30vh",
-          display: "flex",
-          flexDirection: "column",
-          //   justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#d9d9d9",
-          backgroundImage: `url(${shopInfo?.shop_img})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          opacity: "0.7",
-          padding: "1vh 2vh",
-        }}
+        height={"30vh"}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        backgroundColor={"#d9d9d9"}
+        backgroundImage={`url(${shopInfo?.shop_img})`}
+        backgroundSize={"cover"}
+        backgroundPosition={"center"}
+        backgroundRepeat={"no-repeat"}
+        opacity={"0.7"}
+        padding={"2vh 3vh"}
+        gap={"2vh"}
       >
-        <div
+        <Flex
           id="header"
-          style={{
-            height: "10vh",
-            maxWidth: "700px",
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
+          height={"10vh"}
+          maxWidth={"700px"}
+          width={"100%"}
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
         >
-          <div
+          <Image
+            src={shopInfo?.shop_logo}
             style={{
+              width: "50px",
+              height: "50px",
               backgroundColor: "white",
-              padding: "1vh 2vh",
               borderRadius: "8px",
             }}
-          >
-            LOGO
-          </div>
-          <Button>장바구니</Button>
-          {/* <div
+          />
+          <Button
             style={{
               backgroundColor: "white",
-              padding: "1vh 2vh",
-              borderRadius: "8px",
+              width: "40px",
+              height: "40px",
+              borderRadius: "100%",
             }}
           >
-            장바구니
-          </div> */}
-        </div>
-        <div
-          style={{
-            maxWidth: "700px",
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            height: "10vh",
-          }}
+            <Image
+              bgColor={"#d9d9d9"}
+              width={"24px"}
+              height={"24px"}
+              borderRadius={"10px"}
+              objectFit={"cover"}
+            />
+          </Button>
+        </Flex>
+        <Flex
+          id="title"
+          width={"100%"}
+          maxWidth={"700px"}
+          height={"10vh"}
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
         >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "2vh",
-              borderRadius: "8px",
-              width: "100%",
-              opacity: "0.7",
-            }}
+          <Stack
+            display={"flex"}
+            flexDirection={"row"}
+            alignItems={"center"}
+            backgroundColor={"white"}
+            width={"100%"}
+            height={"60px"}
+            opacity={"0.7"}
+            borderRadius={"8px"}
           >
-            {shopInfo?.shop_name}
-          </div>
-        </div>
-      </div>
-      <div id="tab">
-        {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-        <Tabs>
-          <TabList>
-            {categories?.map((item, index) => (
-              <Tab key={index}>{item}</Tab>
-            ))}
-          </TabList>
-        </Tabs>
-      </div>
-      <div id="products">
-        {categories?.map((category, index) => (
-          <div>
-            <div>{category}</div>
-            {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-            {productList?.products?.map(
-              (item, index) =>
-                category === item.product_category && (
-                  <div
-                    key={index}
-                    style={{ backgroundColor: "white", padding: "2vh" }}
-                  >
-                    <HStack
-                      onClick={() => navigate(`/menu`, { state: item })}
-                      width={"100%"}
-                      justifyContent={"space-between"}
+            <Flex
+              width={"50px"}
+              height={"50px"}
+              bgColor={"white"}
+              borderRadius={"8px"}
+            >
+              가상 이미지
+            </Flex>
+            <Flex>{shopInfo?.shop_name}</Flex>
+          </Stack>
+        </Flex>
+      </Stack>
+      <Stack p={"2vh"}>
+        <Stack id="tab">
+          {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
+          <Tabs variant="solid-rounded" colorScheme="orange">
+            <TabList gap={"8px"}>
+              {categories?.map((item, index) => (
+                <Tab height={"35px"} key={index}>
+                  {item}
+                </Tab>
+              ))}
+            </TabList>
+          </Tabs>
+        </Stack>
+        <Stack id="products">
+          {categories?.map((category, index) => (
+            <Stack className="category-box" paddingY={"1vh"}>
+              <div>{category}</div>
+              {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
+              {productList?.products?.map(
+                (item, index) =>
+                  category === item.product_category && (
+                    <Flex
+                      p={"1vh"}
+                      bgColor={"white"}
+                      key={index}
+                      borderRadius={"1vh"}
                     >
-                      <Stack>
-                        <div>{item.product_name}</div>
-                        <div>{item.product_price}원</div>
-                      </Stack>
-                      {item.product_images && item.product_images.length > 0 ? (
-                        <Image
-                          bgColor={"#d9d9d9"}
-                          width={"100px"}
-                          height={"100px"}
-                          borderRadius={"10px"}
-                          alt=""
-                          src={
-                            item.product_images ? item.product_images[0] : ""
-                          }
-                        />
-                      ) : (
-                        <Box
-                          borderRadius={"10px"}
-                          bgColor={"#d9d9d9"}
-                          width={"100px"}
-                          height={"100px"}
-                        />
-                      )}
-                    </HStack>
-                  </div>
-                )
-            )}
-          </div>
-        ))}
-      </div>
+                      <HStack
+                        onClick={() => navigate(`/menu`, { state: item })}
+                        width={"100%"}
+                        justifyContent={"space-between"}
+                      >
+                        <Stack gap={"10px"}>
+                          <div>{item.product_name}</div>
+                          <div>{item.product_price}원</div>
+                        </Stack>
+                        {item.product_images &&
+                        item.product_images.length > 0 ? (
+                          <Image
+                            bgColor={"#d9d9d9"}
+                            width={"100px"}
+                            height={"100px"}
+                            borderRadius={"10px"}
+                            alt=""
+                            src={
+                              item.product_images ? item.product_images[0] : ""
+                            }
+                          />
+                        ) : (
+                          <Box
+                            borderRadius={"10px"}
+                            bgColor={"#d9d9d9"}
+                            width={"100px"}
+                            height={"100px"}
+                          />
+                        )}
+                      </HStack>
+                    </Flex>
+                  )
+              )}
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
       <div
         id="footer"
         style={{
@@ -216,7 +234,7 @@ function Home(props) {
       >
         <div>Footer</div>
       </div>
-    </div>
+    </Stack>
   );
 }
 

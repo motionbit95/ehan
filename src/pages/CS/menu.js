@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Flex, Stack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase_conf";
@@ -21,85 +21,72 @@ function Menu(props) {
     }
   };
   return (
-    <div
-      id="container"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1vh",
-      }}
-    >
-      <div
+    <Stack gap={"2vh"} id="container">
+      <Stack
         id="banner"
-        style={{
-          height: "30vh",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "#8c8c8c",
-        }}
+        h={"30vh"}
+        display={"flex"}
+        justify={"flex-start"}
+        bgColor={"#8c8c8c"}
       >
-        <div
-          style={{
-            display: "flex",
-            height: "5vh",
-            margin: "1vh",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "space-between",
-            backgroundColor: "white",
-          }}
+        <Flex
+          display={"flex"}
+          h={"5vh"}
+          margin={"3vh"}
+          align={"center"}
+          justify={"space-between"}
+          bgColor={"white"}
         >
-          <div onClick={() => navigate(-1)}>뒤로가기</div>
-          <div
+          <Flex
+            w={"5vh"}
+            h={"5vh"}
+            bgColor={"#white"}
+            color={"#black"}
+            display={"flex"}
+            align={"center"}
+            justify={"center"}
+            onClick={() => navigate(-1)}
+          >
+            ←
+          </Flex>
+          <Flex
+            w={"5vh"}
+            h={"5vh"}
             onClick={() => navigate(`/cart`, { state: auth.currentUser.uid })}
           >
             장바구니
-          </div>
-        </div>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1vh",
-        }}
-      >
+          </Flex>
+        </Flex>
+      </Stack>
+
+      <Stack id="item" gap={"2vh"} p={"3vh"} bgColor={"white"}>
         <div>{menu?.product_name}</div>
-        <div>{menu?.product_price}원</div>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          gap: "1vh",
-        }}
-      >
+        <hr />
+        <Flex display={"flex"} justify={"space-between"}>
+          <div>가격</div>
+          <div>{menu?.product_price}원</div>
+        </Flex>
+      </Stack>
+      <Flex id="count" bgColor={"white"} justify={"space-between"} p={"3vh"}>
         <div>수량</div>
         <div style={{ display: "flex", gap: "1vh" }}>
           <div onClick={() => setCount(count - 1)}>-</div>
           <div>{count}</div>
           <div onClick={() => setCount(count + 1)}>+</div>
         </div>
-      </div>
+      </Flex>
 
-      <div
-        style={{
-          position: "absolute",
-          bottom: "2vh",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-        }}
-      >
-        <Button style={{ width: "90%" }} onClick={addCart}>
+      <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
+        <Button
+          w={"80%"}
+          position={"absolute"}
+          bottom={"1vh"}
+          onClick={addCart}
+        >
           {menu?.product_price * count}원 담기
         </Button>
-      </div>
-    </div>
+      </Flex>
+    </Stack>
   );
 }
 

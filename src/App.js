@@ -21,6 +21,7 @@ function App() {
     <ChakraProvider>
       <Center>
         <Container
+          p={0}
           w={"100%"}
           maxW={isAdmin ? "100%" : "700px"}
           bgColor={"#d9d9d9"}
