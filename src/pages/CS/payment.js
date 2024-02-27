@@ -28,10 +28,12 @@ function Payment(props) {
     console.log("popup!");
     // PAYMENT DATA를 저장합니다.
     const order_id = random();
+    console.log(location.state.productList);
     await postPayment({
       ...formData,
       uid: auth.currentUser.uid,
       order_id: order_id,
+      pay_product: location.state.productList,
     });
 
     window.confirm("주문 정보가 저장되었나요?");
@@ -44,7 +46,7 @@ function Payment(props) {
       appScheme: "test",
       method: payMethod,
       orderId: order_id,
-      amount: location.state,
+      amount: location.state.totalCost,
       goodsName: "나이스페이-상품",
       returnUrl:
         "https://port-0-nicepay-module-17xco2nlszge3vt.sel5.cloudtype.app/serverAuth",
@@ -158,12 +160,12 @@ function Payment(props) {
       <Stack width={"100%"} mt={"2vh"} gap={"2vh"} padding={"2vh"}>
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 주문금액</div>
-          <div>{location.state}원</div>
+          <div>{location.state.totalCost}원</div>
         </HStack>
         <Box style={{ borderBottom: "1px solid black" }} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>결제예정금액</div>
-          <div>{location.state}원</div>
+          <div>{location.state.totalCost}원</div>
         </HStack>
       </Stack>
       <Flex id="button" display={"flex"} align={"center"} justify={"center"}>

@@ -112,7 +112,11 @@ function Cart(props) {
         <Button
           w={"80%"}
           mt={"2vh"}
-          onClick={() => navigate("/payment", { state: totalCost })}
+          onClick={() =>
+            navigate("/payment", {
+              state: { totalCost: totalCost, productList: cartList },
+            })
+          }
         >
           결제하기
         </Button>
