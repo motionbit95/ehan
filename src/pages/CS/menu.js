@@ -1,4 +1,4 @@
-import { Button, Flex, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Stack, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase_conf";
@@ -26,54 +26,26 @@ function Menu(props) {
     }
   };
   return (
-    <Stack
-      gap={"2vh"}
-      w={"100%"}
-      id="container"
-      position={"relative"}
-      height={"100vh"}
-    >
-      <Stack
-        id="banner"
-        h={"30vh"}
-        display={"flex"}
-        justify={"flex-start"}
-        bgColor={"#8c8c8c"}
-      >
+    <Stack gap={"2vh"} id="container" position={"relative"} height={"100vh"}>
+      <Stack id="banner" h={"30vh"} bgColor={"#8c8c8c"}>
         <Flex
-          display={"flex"}
           h={"5vh"}
           margin={"3vh"}
           align={"center"}
           justify={"space-between"}
-          bgColor={"white"}
         >
-          <Flex
-            w={"5vh"}
-            h={"5vh"}
-            bgColor={"#white"}
-            color={"#black"}
-            display={"flex"}
-            align={"center"}
-            justify={"center"}
+          <Image
+            w={"3vh"}
+            h={"3vh"}
             onClick={() => navigate(-1)}
-          >
-            ←
-          </Flex>
-          <Flex
-            w={"5vh"}
-            h={"5vh"}
-            onClick={() =>
-              navigate(`/cart`, {
-                state: {
-                  uid: auth.currentUser.uid,
-                  shop_id: location.state.shop_id,
-                },
-              })
-            }
-          >
-            장바구니
-          </Flex>
+            src={require("../../image/CkChevronLeft.png")}
+          />
+          <Image
+            w={"3vh"}
+            h={"3vh"}
+            src={require("../../image/ShoppingCart.png")}
+            onClick={() => navigate(`/cart`, { state: auth.currentUser.uid })}
+          />
         </Flex>
       </Stack>
 
@@ -85,13 +57,26 @@ function Menu(props) {
           <div>{formatCurrency(menu?.product_price)}원</div>
         </Flex>
       </Stack>
-      <Flex id="count" bgColor={"white"} justify={"space-between"} p={"3vh"}>
-        <div>수량</div>
-        <div style={{ display: "flex", gap: "1vh" }}>
-          <div onClick={() => setCount(count - 1)}>-</div>
-          <div>{count}</div>
-          <div onClick={() => setCount(count + 1)}>+</div>
-        </div>
+      <Flex
+        id="count"
+        bgColor={"white"}
+        justify={"space-between"}
+        p={"3vh"}
+        align={"center"}
+        fontSize={"medium"}
+        fontWeight={"bold"}
+      >
+        <Text>수량</Text>
+        <Flex
+          gap={"5vh"}
+          border={"1px solid #d9d9d9"}
+          p={"1vh"}
+          borderRadius={"1vh"}
+        >
+          <Text onClick={() => setCount(count - 1)}>-</Text>
+          <Text>{count}</Text>
+          <Text onClick={() => setCount(count + 1)}>+</Text>
+        </Flex>
       </Flex>
 
       <Flex

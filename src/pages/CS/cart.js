@@ -27,22 +27,15 @@ function Cart(props) {
       <Flex
         bgColor={"white"}
         align={"center"}
-        w={"100%"}
         h={"5vh"}
         justify={"space-between"}
       >
-        <Flex
-          w={"5vh"}
-          h={"5vh"}
-          bgColor={"#white"}
-          color={"#black"}
-          display={"flex"}
-          align={"center"}
-          justify={"center"}
+        <Image
+          w={"3vh"}
+          h={"3vh"}
           onClick={() => navigate(-1)}
-        >
-          ←
-        </Flex>
+          src={require("../../image/CkChevronLeft.png")}
+        />
         <div>장바구니</div>
         <div>홈</div>
       </Flex>
@@ -103,7 +96,7 @@ function Cart(props) {
           <div>총 주문금액</div>
           <div>{formatCurrency(totalCost)}원</div>
         </HStack>
-        <Box style={{ borderBottom: "1px solid black" }} />
+        <Box borderBottom={"1px solid gray"} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>결제예정금액</div>
           <div>{formatCurrency(totalCost)}원</div>

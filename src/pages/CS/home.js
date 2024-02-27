@@ -83,102 +83,78 @@ function Home(props) {
     }
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
   return (
-    <Stack
-      id="container"
-      style={{
-        // gap: "24px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Stack id="container" position={"relative"} height={"100vh"}>
       <Stack
         id="banner"
         height={"30vh"}
-        display={"flex"}
         flexDirection={"column"}
         alignItems={"center"}
-        backgroundColor={"#d9d9d9"}
         backgroundImage={`url(${shopInfo?.shop_img})`}
         backgroundSize={"cover"}
         backgroundPosition={"center"}
         backgroundRepeat={"no-repeat"}
         opacity={"0.7"}
         padding={"2vh 3vh"}
-        gap={"2vh"}
       >
         <Flex
           id="header"
           height={"10vh"}
-          maxWidth={"700px"}
           width={"100%"}
-          display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
         >
           <Image
             src={shopInfo?.shop_logo}
-            style={{
-              width: "50px",
-              height: "50px",
-              backgroundColor: "white",
-              borderRadius: "8px",
-            }}
+            w={"7vh"}
+            h={"7vh"}
+            objectFit={"cover"}
+            bgColor={"white"}
+            borderRadius={"8px"}
           />
           <Button
             bgColor={"white"}
-            w={"40px"}
-            h={"40px"}
+            w={"5vh"}
+            h={"5vh"}
             borderRadius={"100%"}
-            p={"0px"}
+            p={"0"}
           >
-            <Image
-              bgColor={"#d9d9d9"}
-              width={"24px"}
-              height={"24px"}
-              objectFit={"cover"}
-            />
+            <Image bgColor={"#d9d9d9"} w={"3vh"} h={"3vh"} />
           </Button>
         </Flex>
         <Flex
           id="title"
-          width={"100%"}
-          maxWidth={"700px"}
-          height={"10vh"}
-          display={"flex"}
-          justifyContent={"space-between"}
+          w={"100%"}
+          h={"10vh"}
+          justify={"space-between"}
           alignItems={"center"}
         >
-          <Stack
-            display={"flex"}
-            flexDirection={"row"}
-            alignItems={"center"}
+          <Flex
+            direction={"row"}
+            align={"center"}
             backgroundColor={"white"}
             width={"100%"}
-            height={"60px"}
+            h={"7vh"}
             opacity={"0.7"}
-            borderRadius={"8px"}
+            borderRadius={"1vh"}
           >
-            <Flex
-              width={"50px"}
-              height={"50px"}
-              bgColor={"white"}
-              borderRadius={"8px"}
-            >
-              가상 이미지
+            <Flex w={"7vh"} h={"7vh"} align={"center"} justify={"center"}>
+              <Image
+                w={"3vh"}
+                h={"2vh"}
+                bgColor={"white"}
+                src={require("../../image/th_tag.png")}
+              />
             </Flex>
-            <Flex>{shopInfo?.shop_name}</Flex>
-          </Stack>
+            <Flex color={"#666666"} fontSize={"medium"}>
+              {shopInfo?.shop_name}
+            </Flex>
+          </Flex>
         </Flex>
       </Stack>
       <Stack p={"2vh"}>
         <Stack id="tab">
           {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-          <Tabs
-            variant="solid-rounded"
-            colorScheme="orange"
-            overflowX={"auto"}
-            maxW={"100vw"}
-          >
+          <Tabs variant="solid-rounded" colorScheme="cyan">
             <TabList gap={"8px"}>
               {categories?.map((item, index) => (
                 <Tab height={"35px"} key={index}>
