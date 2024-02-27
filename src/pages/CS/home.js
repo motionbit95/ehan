@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { auth, db } from "../../firebase/firebase_conf";
 import { doc, getDoc } from "firebase/firestore";
-import { fetchProducts } from "../../firebase/firebase_func";
+import { fetchProducts, getMessageToken } from "../../firebase/firebase_func";
 import {
   Box,
   HStack,
@@ -36,6 +36,8 @@ function Home(props) {
           setProductList(data);
           setCategories(Array.from(data.categories));
         });
+
+        getMessageToken();
       } catch (error) {
         console.error("shop id로 샵 정보가져오기 오류 발생:", error);
       }
