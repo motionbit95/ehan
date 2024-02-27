@@ -63,7 +63,7 @@ function Payment(props) {
   };
 
   return (
-    <div>
+    <Stack position={"relative"} height={"100vh"} gap={"1vh"}>
       <Flex
         bgColor={"white"}
         align={"center"}
@@ -86,7 +86,7 @@ function Payment(props) {
         <div>결제하기</div>
         <div>홈으로</div>
       </Flex>
-      <Stack padding={"2vh"}>
+      <Stack padding={"2vh"} bgColor={"#f5f5f5"}>
         <FormControl isRequired>
           <FormLabel>배송지</FormLabel>
           <Input
@@ -96,48 +96,24 @@ function Payment(props) {
             }
           />
         </FormControl>
-        <Flex
-          direction={"column"}
-          w={"100%"}
-          justify={"space-between"}
-          gap={"1vh"}
-        >
-          배송지
+        <FormControl isRequired>
+          <FormLabel>주문 코드</FormLabel>
           <Input
-            placeholder="배달받을 주소를 입력하세요."
+            placeholder="매장에서 확인 가능한 주문 코드를 입력하세요."
             onChange={(e) =>
               setFormData({ ...formData, order_address: e.target.value })
             }
           />
-        </Flex>
-        <Flex
-          direction={"column"}
-          w={"100%"}
-          justify={"space-between"}
-          gap={"1vh"}
-        >
-          주문코드
-          <Input
-            placeholder="매장에서 확인 가능한 주문 코드를 입력하세요."
-            onChange={(e) =>
-              setFormData({ ...formData, order_code: e.target.value })
-            }
-          />
-        </Flex>
-        <Flex
-          direction={"column"}
-          w={"100%"}
-          justify={"space-between"}
-          gap={"1vh"}
-        >
-          배송메세지
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>배송메세지</FormLabel>
           <Input
             placeholder="배송메세지를 입력하세요."
             onChange={(e) =>
-              setFormData({ ...formData, order_message: e.target.value })
+              setFormData({ ...formData, order_address: e.target.value })
             }
           />
-        </Flex>
+        </FormControl>
       </Stack>
       {/* {payMethod === "vbank" && (
         <div>
@@ -145,16 +121,18 @@ function Payment(props) {
           <input></input>
         </div>
       )} */}
-      <Stack padding={"2vh"} bgColor={"#8c8c8c"}>
-        <div>결제수단</div>
-        <Flex gap={"1vh"}>
-          <Button onClick={() => setPayMethod("kakaopay")}>카카오페이</Button>
-          <Button onClick={() => setPayMethod("naverpayCard")}>
-            네이버페이
-          </Button>
-          <Button onClick={() => setPayMethod("card")}>신용카드</Button>
-          <Button onClick={() => setPayMethod("vbank")}>무통장입금</Button>
-        </Flex>
+      <Stack padding={"2vh"} bgColor={"#f5f5f5"}>
+        <FormControl isRequired>
+          <FormLabel>배송지</FormLabel>
+          <HStack gap={"1vh"}>
+            <Button onClick={() => setPayMethod("kakaopay")}>카카오페이</Button>
+            <Button onClick={() => setPayMethod("naverpayCard")}>
+              네이버페이
+            </Button>
+            <Button onClick={() => setPayMethod("card")}>신용카드</Button>
+            <Button onClick={() => setPayMethod("vbank")}>무통장입금</Button>
+          </HStack>
+        </FormControl>
       </Stack>
 
       <Stack width={"100%"} mt={"2vh"} gap={"2vh"} padding={"2vh"}>
@@ -168,12 +146,20 @@ function Payment(props) {
           <div>{location.state.totalCost}원</div>
         </HStack>
       </Stack>
-      <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
-        <Button w={"80%"} mt={"2vh"} onClick={callNicePayPopup}>
+
+      <Flex
+        id="button"
+        align={"center"}
+        justify={"center"}
+        position={"absolute"}
+        bottom={"2vh"}
+        w={"100%"}
+      >
+        <Button w={"80%"} onClick={callNicePayPopup}>
           결제하기
         </Button>
       </Flex>
-    </div>
+    </Stack>
   );
 }
 

@@ -87,7 +87,7 @@ function Menu(props) {
         align={"center"}
         justify={"center"}
         position={"absolute"}
-        bottom={"1vh"}
+        bottom={"2vh"}
         w={"100%"}
       >
         <Button w={"80%"} onClick={addCart}>

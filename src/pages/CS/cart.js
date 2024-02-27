@@ -22,7 +22,7 @@ function Cart(props) {
     getCartList();
   }, []);
   return (
-    <Stack gap={"1vh"}>
+    <Stack gap={"1vh"} position={"relative"} height={"100vh"}>
       <Flex
         bgColor={"white"}
         align={"center"}
@@ -108,7 +108,14 @@ function Cart(props) {
           <div>{totalCost}원</div>
         </HStack>
       </Stack>
-      <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
+      <Flex
+        id="button"
+        align={"center"}
+        justify={"center"}
+        position={"absolute"}
+        bottom={"2vh"}
+        w={"100%"}
+      >
         <Button
           w={"80%"}
           mt={"2vh"}

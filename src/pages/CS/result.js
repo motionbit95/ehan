@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getPayment } from "../../firebase/firebase_func";
-import { Box, Button, HStack, Stack, VStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, Stack, VStack } from "@chakra-ui/react";
 
 function Result(props) {
   const location = useLocation();
+  const navigate = useNavigate();
   const payresult = decodeURIComponent(location.search);
   const data = JSON.parse(payresult.substring(1).replace("data=", ""));
   const [order, setOrder] = useState({});
@@ -21,50 +22,62 @@ function Result(props) {
   };
 
   return (
-    <div>
-      {" "}
-      <div
-        style={{
-          backgroundColor: "white",
-          alignItems: "center",
-          height: "5vh",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
+    <Stack position={"relative"} height={"100vh"}>
+      <Flex
+        bgColor={"white"}
+        align={"center"}
+        w={"100%"}
+        h={"5vh"}
+        justify={"space-between"}
       >
-        <div>뒤로가기</div>
-        <div>주문내역</div>
+        <Flex
+          w={"5vh"}
+          h={"5vh"}
+          bgColor={"#white"}
+          color={"#black"}
+          display={"flex"}
+          align={"center"}
+          justify={"center"}
+          onClick={() => navigate(-1)}
+        >
+          ←
+        </Flex>
+        <div>결제하기</div>
         <div>홈으로</div>
-      </div>
-      <div>
+      </Flex>
+      <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"#f5f5f5"} gap={"3vh"}>
         <div>{data.resultCode === "0000" ? "결제가 완료되었습니다." : ""}</div>
-        <div>주문일시 : {data.ediDate}</div>
-        <div>주문번호 : {data.orderId}</div>
-        <div>배송지 : {order.order_address}</div>
-        <div>주문코드 : {order.order_code}</div>
-        <div>배송메세지 : {order.order_message}</div>
-        <Button onClick={() => window.open(data.receiptUrl)}>
-          결제영수증보기
-        </Button>
-      </div>
-      <div>
-        {order.pay_product?.map((value, index) => (
-          <div key={index}>
-            <div>
-              {value.product_name} {value.count}개
-            </div>
-            <div>{value.product_price}원</div>
-          </div>
-        ))}
-      </div>
-      <Stack width={"100%"} mt={"2vh"} gap={"2vh"} padding={"2vh"}>
+        <div>
+          <div>주문일시 : {data.ediDate}</div>
+          <div>주문번호 : {data.orderId}</div>
+          <div>배송지 : ?</div>
+          <div>주문코드 : ?</div>
+          <div>배송메세지 : </div>
+        </div>
+        <div>결제 영수증 보기</div>
+      </Stack>
+      <Stack width={"100%"} mt={"2vh"} gap={"1vh"} padding={"2vh"}>
+        <HStack gap={"1vh"}>
+          <div>상품이름</div>
+          <div>상품 개수</div>
+        </HStack>
+        <div>상품가격</div>
+      </Stack>
+      <Stack
+        width={"100%"}
+        mt={"2vh"}
+        gap={"2vh"}
+        padding={"2vh"}
+        bgColor={"#f5f5f5"}
+      >
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 주문금액</div>
-          <div>{data.amount}원</div>
+          <div>{location.state}원</div>
         </HStack>
         <Box style={{ borderBottom: "1px solid black" }} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 결제금액</div>
+
           <div>{data.amount}원</div>
         </HStack>
         <HStack>
@@ -81,7 +94,7 @@ function Result(props) {
           )}
         </HStack>
       </Stack>
-    </div>
+    </Stack>
   );
 }
 
