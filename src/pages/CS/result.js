@@ -50,9 +50,9 @@ function Result(props) {
         <div>
           <div>주문일시 : {data.ediDate}</div>
           <div>주문번호 : {data.orderId}</div>
-          <div>배송지 : ?</div>
-          <div>주문코드 : ?</div>
-          <div>배송메세지 : </div>
+          <div>배송지 : {order.order_address}</div>
+          <div>주문코드 : {order.order_code}</div>
+          <div>배송메세지 : {order.order_message}</div>
         </div>
         <div>결제 영수증 보기</div>
       </Stack>
@@ -83,7 +83,10 @@ function Result(props) {
         <HStack>
           <div>결제방법</div>
           {data.payMethod === "card" ? (
-            <div>카드</div>
+            <Stack>
+              <div>카드</div>
+              {/* <div>{data.vbank.vbankName}</div> */}
+            </Stack>
           ) : data.payMethod === "vbank" ? (
             <Stack>
               <div>무통장입금</div>
