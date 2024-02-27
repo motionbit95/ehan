@@ -8,6 +8,7 @@ import {
   FormControl,
   FormLabel,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -77,23 +78,23 @@ function Payment(props) {
         bgColor={"white"}
         align={"center"}
         w={"100%"}
-        h={"5vh"}
+        h={"40px"}
+        py={"25px"}
         justify={"space-between"}
       >
-        <Flex
-          w={"5vh"}
-          h={"5vh"}
-          bgColor={"white"}
-          color={"black"}
-          display={"flex"}
-          align={"center"}
-          justify={"center"}
+        <Image
+          w={"3vh"}
+          h={"3vh"}
           onClick={() => navigate(-1)}
-        >
-          ←
-        </Flex>
-        <div>결제하기</div>
-        <div>홈으로</div>
+          src={require("../../image/CkChevronLeft.png")}
+        />
+        <Text fontSize={"large"} fontWeight={"bold"}>
+          결제하기
+        </Text>
+        <Image
+          src={require("../../image/Homebutton.png")}
+          onClick={() => navigate(`/home/${location.state.shop_id}`)}
+        />
       </Flex>
       <form onSubmit={handleSubmit}>
         <Stack>
@@ -116,7 +117,7 @@ function Payment(props) {
                 }
               />
             </FormControl>
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel>배송메세지</FormLabel>
               <Input
                 placeholder="배송메세지를 입력하세요."
@@ -201,18 +202,23 @@ function Payment(props) {
             지지않습니다.
           </Text>
 
+          <Box h={"15vh"} />
           <Flex
             id="button"
             align={"center"}
             justify={"center"}
+            w={"100%"}
+            h={"10vh"}
+            bgColor={"white"}
             position={"absolute"}
             bottom={"0"}
-            padding={"2vh 2vh 4vh 2vh"}
-            w={"100%"}
-            bgColor={"white"}
-            // borderRadius={"2vh 2vh 0 0"}
           >
-            <Button colorScheme="red" type="submit" w={"100%"}>
+            <Button
+              w={"80%"}
+              color={"white"}
+              bgColor={"#e53e3e"}
+              onClick={callNicePayPopup}
+            >
               {formatCurrency(location.state.totalCost)}원 결제하기
             </Button>
           </Flex>

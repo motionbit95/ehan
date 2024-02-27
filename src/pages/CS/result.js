@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPayment, postPayment } from "../../firebase/firebase_func";
-import { Box, Flex, HStack, Stack, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Image,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { formatCurrency } from "./home";
 
 function Result(props) {
@@ -18,7 +27,7 @@ function Result(props) {
 
   const getOrder = async () => {
     const order = await getPayment(data.orderId);
-    console.log(order);
+    console.log(order.pay_product);
     setOrder(order);
 
     // 받은 결제 정보 업데이트 하는 부분
@@ -36,81 +45,122 @@ function Result(props) {
   };
 
   return (
-    <Stack position={"relative"} height={"100vh"}>
+    <Stack position={"relative"} height={"auto"}>
       <Flex
         bgColor={"white"}
         align={"center"}
         w={"100%"}
-        h={"5vh"}
+        h={"40px"}
+        py={"25px"}
         justify={"space-between"}
       >
-        <Flex
-          w={"5vh"}
-          h={"5vh"}
-          bgColor={"#white"}
-          color={"#black"}
-          display={"flex"}
-          align={"center"}
-          justify={"center"}
+        <Image
+          w={"24px"}
+          h={"24px"}
           onClick={() => navigate(-1)}
-        >
-          ←
-        </Flex>
-        <div>결제하기</div>
-        <div>홈으로</div>
+          src={require("../../image/CkChevronLeft.png")}
+        />
+        <Text fontSize={"large"} fontWeight={"bold"}>
+          주문내역
+        </Text>
+        <Image
+          src={require("../../image/Homebutton.png")}
+          onClick={() => navigate(`/home/${order.shop_id}`)}
+        />
       </Flex>
-      <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"#f5f5f5"} gap={"3vh"}>
-        <div>{data.resultCode === "0000" ? "결제가 완료되었습니다." : ""}</div>
-        <div>
-          <div>주문일시 : {data.ediDate}</div>
-          <div>주문번호 : {data.orderId}</div>
-          <div>배송지 : {order.order_address}</div>
-          <div>주문코드 : {order.order_code}</div>
-          <div>배송메세지 : {order.order_message}</div>
-        </div>
-        <div>결제 영수증 보기</div>
-      </Stack>
-      <Stack width={"100%"} mt={"2vh"} gap={"1vh"} padding={"2vh"}>
-        <HStack gap={"1vh"}>
-          <div>상품이름</div>
-          <div>상품 개수</div>
-        </HStack>
-        <div>상품가격</div>
+      <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"#f1f1f1"} gap={"4vh"}>
+        <Stack gap={"0"}>
+          <Text fontSize={"large"} fontWeight={"bold"} color={"#e53e3e"}>
+            {data.resultCode === "0000" ? "결제가 완료되었습니다." : ""}
+          </Text>
+
+          {order?.pay_product?.length > 0 && (
+            <Text fontSize={"xx-large"} fontWeight={"bold"}>
+              {order.pay_product[0].product_name} 외 {order.pay_product.length}
+              건
+            </Text>
+          )}
+        </Stack>
+        <Stack gap={"0"}>
+          <Text>주문일시 : {data.ediDate}</Text>
+          <Text>주문번호 : {data.orderId}</Text>
+          <Text>배송지 : {order.order_address}</Text>
+          <Text>주문코드 : {order.order_code}</Text>
+          <Text>배송메세지 : {order.order_message}</Text>
+          <Text>연락처 : {order.user_phone}</Text>
+        </Stack>
+        <Box>
+          <Button
+            border={"1px solid #e53e3e"}
+            bgColor={"white"}
+            color={"#e53e3e"}
+            size={"xs"}
+          >
+            결제 영수증 보기
+          </Button>
+        </Box>
       </Stack>
       <Stack
         width={"100%"}
-        mt={"2vh"}
-        gap={"2vh"}
+        gap={"1vh"}
         padding={"2vh"}
-        bgColor={"#f5f5f5"}
+        fontSize={"large"}
+        fontWeight={"bold"}
+        bgColor={"#f1f1f1"}
       >
-        <HStack justifyContent={"space-between"} width={"100%"}>
-          <div>총 주문금액</div>
-          <div>{formatCurrency(location.state)}원</div>
+        {order?.pay_product?.length > 0 &&
+          order.pay_product.map((value, index) => (
+            <>
+              <HStack gap={"1vh"}>
+                <Text>{value.product_name}</Text>
+                <Text>{value.count}개</Text>
+              </HStack>
+              <Text>{value.product_price}원</Text>
+              <Box borderBottom={"1px solid gray"} />
+            </>
+          ))}
+      </Stack>
+      <Stack width={"100%"} gap={"1vh"} padding={"2vh"} bgColor={"#f1f1f1"}>
+        <HStack
+          justifyContent={"space-between"}
+          width={"100%"}
+          fontSize={"large"}
+        >
+          <Text>총 주문금액</Text>
+          <Text>{formatCurrency(data.amount)}원</Text>
         </HStack>
         <Box borderBottom={"1px solid gray"} />
-        <HStack justifyContent={"space-between"} width={"100%"}>
-          <div>총 결제금액</div>
-
-          <div>{formatCurrency(data.amount)}원</div>
+        <HStack
+          fontSize={"x-large"}
+          fontWeight={"bold"}
+          justifyContent={"space-between"}
+          width={"100%"}
+        >
+          <Text>총 결제금액</Text>
+          <Text>{formatCurrency(data.amount)}원</Text>
         </HStack>
-        <HStack>
-          <div>결제방법</div>
-          {data.payMethod === "card" ? (
-            <Stack>
-              <div>카드</div>
-              {/* <div>{data.vbank.vbankName}</div> */}
-            </Stack>
-          ) : data.payMethod === "vbank" ? (
-            <Stack>
-              <div>무통장입금</div>
-              <div>{data.vbank.vbankName}</div>
-            </Stack>
-          ) : (
-            <div>전체</div>
-          )}
+        <HStack fontSize={"large"} justify={"space-between"}>
+          <Text>결제방법</Text>
+          <Stack textAlign={"right"}>
+            {data.payMethod === "card" ? (
+              <Stack>
+                <Text>카드</Text>
+                {/* <div>{data.vbank.vbankName}</div> */}
+              </Stack>
+            ) : data.payMethod === "vbank" ? (
+              <Stack gap={"0"}>
+                <Text>무통장입금</Text>
+                <Text fontSize={"medium"} color={"gray"}>
+                  {data.vbank.vbankName}
+                </Text>
+              </Stack>
+            ) : (
+              <Text>전체</Text>
+            )}
+          </Stack>
         </HStack>
       </Stack>
+      <Box h={"15vh"} />
     </Stack>
   );
 }

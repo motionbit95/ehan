@@ -13,6 +13,7 @@ import {
   Tab,
   TabList,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -110,6 +111,7 @@ function Home(props) {
             objectFit={"cover"}
             bgColor={"white"}
             borderRadius={"8px"}
+            onClick={() => navigate(`/home/${shop_id}`)}
           />
           <Button
             bgColor={"white"}
@@ -118,7 +120,19 @@ function Home(props) {
             borderRadius={"100%"}
             p={"0"}
           >
-            <Image bgColor={"#d9d9d9"} w={"3vh"} h={"3vh"} />
+            <Image
+              w={"3vh"}
+              h={"3vh"}
+              src={require("../../image/ShoppingCart.png")}
+              onClick={() =>
+                navigate(`/cart`, {
+                  state: {
+                    uid: auth.currentUser.uid,
+                    shop_id: shop_id,
+                  },
+                })
+              }
+            />
           </Button>
         </Flex>
         <Flex
@@ -145,9 +159,9 @@ function Home(props) {
                 src={require("../../image/th_tag.png")}
               />
             </Flex>
-            <Flex color={"#666666"} fontSize={"medium"}>
+            <Text color={"#666666"} fontSize={"medium"}>
               {shopInfo?.shop_name}
-            </Flex>
+            </Text>
           </Flex>
         </Flex>
       </Stack>
@@ -166,8 +180,10 @@ function Home(props) {
         </Stack>
         <Stack id="products">
           {categories?.map((category, index) => (
-            <Stack className="category-box" paddingY={"1vh"}>
-              <div>{category}</div>
+            <Stack className="category-box" paddingTop={"1vh"}>
+              <Text fontSize={"large"} fontWeight={"bold"}>
+                {category}
+              </Text>
               {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
               {productList?.products?.map(
                 (item, index) =>
@@ -188,8 +204,12 @@ function Home(props) {
                         justifyContent={"space-between"}
                       >
                         <Stack gap={"10px"}>
-                          <div>{item.product_name}</div>
-                          <div>{formatCurrency(item.product_price)}원</div>
+                          <Text fontSize={"large"} fontWeight={"bold"}>
+                            {item.product_name}
+                          </Text>
+                          <Text color="#9B2C2C">
+                            {formatCurrency(item.product_price)}원
+                          </Text>
                         </Stack>
                         {item.product_images &&
                         item.product_images.length > 0 ? (

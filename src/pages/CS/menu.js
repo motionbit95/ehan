@@ -26,7 +26,7 @@ function Menu(props) {
     }
   };
   return (
-    <Stack gap={"2vh"} id="container" position={"relative"} height={"100vh"}>
+    <Stack gap={"1vh"} id="container" position={"relative"} height={"100vh"}>
       <Stack id="banner" h={"30vh"} bgColor={"#8c8c8c"}>
         <Flex
           h={"5vh"}
@@ -44,17 +44,30 @@ function Menu(props) {
             w={"3vh"}
             h={"3vh"}
             src={require("../../image/ShoppingCart.png")}
-            onClick={() => navigate(`/cart`, { state: auth.currentUser.uid })}
+            onClick={() =>
+              navigate(`/cart`, {
+                state: {
+                  uid: auth.currentUser.uid,
+                  shop_id: location.state.shop_id,
+                },
+              })
+            }
           />
         </Flex>
       </Stack>
 
       <Stack id="item" gap={"2vh"} p={"3vh"} bgColor={"white"}>
-        <div>{menu?.product_name}</div>
-        <hr />
-        <Flex display={"flex"} justify={"space-between"}>
-          <div>가격</div>
-          <div>{formatCurrency(menu?.product_price)}원</div>
+        <Text fontSize={"medium"} fontWeight={"bold"}>
+          {menu?.product_name}
+        </Text>
+        <Flex
+          display={"flex"}
+          justify={"space-between"}
+          fontSize={"medium"}
+          fontWeight={"bold"}
+        >
+          <Text>가격</Text>
+          <Text>{formatCurrency(menu?.product_price)}원</Text>
         </Flex>
       </Stack>
       <Flex
@@ -72,25 +85,45 @@ function Menu(props) {
           border={"1px solid #d9d9d9"}
           p={"1vh"}
           borderRadius={"1vh"}
+          align={"center"}
         >
-          <Text onClick={() => setCount(count - 1)}>-</Text>
+          <Image
+            w={"20px"}
+            h={"20px"}
+            src={require("../../image/HiMinus.png")}
+            onClick={() => setCount(count - 1)}
+          />
           <Text>{count}</Text>
-          <Text onClick={() => setCount(count + 1)}>+</Text>
+          <Image
+            w={"20px"}
+            h={"20px"}
+            src={require("../../image/HiPlus.png")}
+            onClick={() => setCount(count + 1)}
+          />
         </Flex>
       </Flex>
 
-      <Flex
-        id="button"
-        align={"center"}
-        justify={"center"}
-        position={"absolute"}
-        bottom={"2vh"}
-        w={"100%"}
-      >
-        <Button w={"80%"} onClick={addCart}>
-          {formatCurrency(menu?.product_price * count)}원 담기
-        </Button>
-      </Flex>
+      <Box h={"10vh"}>
+        <Flex
+          id="button"
+          align={"center"}
+          justify={"center"}
+          w={"100%"}
+          h={"10vh"}
+          bgColor={"white"}
+          position={"absolute"}
+          bottom={"0"}
+        >
+          <Button
+            w={"80%"}
+            color={"white"}
+            bgColor={"#e53e3e"}
+            onClick={addCart}
+          >
+            {formatCurrency(menu?.product_price * count)}원 담기
+          </Button>
+        </Flex>
+      </Box>
     </Stack>
   );
 }

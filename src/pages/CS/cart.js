@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCart } from "../../firebase/firebase_func";
-import { Flex, Box, Button, HStack, Image, Stack } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Button,
+  HStack,
+  Image,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { formatCurrency } from "./home";
 function Cart(props) {
   const navigate = useNavigate();
@@ -11,6 +19,7 @@ function Cart(props) {
 
   const getCartList = async () => {
     if (location.state) {
+      console.log(location.state.uid);
       const cartlist = await getCart(location.state.uid);
       console.log(cartlist);
       setCartList(cartlist.cart);
@@ -23,11 +32,12 @@ function Cart(props) {
     getCartList();
   }, []);
   return (
-    <Stack gap={"1vh"} position={"relative"} height={"100vh"}>
+    <Stack gap={"1vh"} position={"relative"}>
       <Flex
         bgColor={"white"}
         align={"center"}
-        h={"5vh"}
+        h={"40px"}
+        py={"25px"}
         justify={"space-between"}
       >
         <Image
@@ -36,14 +46,19 @@ function Cart(props) {
           onClick={() => navigate(-1)}
           src={require("../../image/CkChevronLeft.png")}
         />
-        <div>장바구니</div>
-        <div>홈</div>
+        <Text fontSize={"large"} fontWeight={"bold"}>
+          장바구니
+        </Text>
+        <Image
+          src={require("../../image/Homebutton.png")}
+          onClick={() => navigate(`/home/${location.state.shop_id}`)}
+        />
       </Flex>
-      <Stack p={"2vh"}>
+      <Stack p={"1vh"} bgColor={"white"}>
         {cartList?.map((item) => (
           <Stack
             w={"100%"}
-            bgColor={"white"}
+            bgColor={"#f1f1f1"}
             borderRadius={"10px"}
             key={item.doc_id}
           >
@@ -67,52 +82,73 @@ function Cart(props) {
                   />
                 )}
                 <Stack>
-                  <div>{item.product_name}</div>
-                  <div>{formatCurrency(item.product_price)}원</div>
+                  <Text fontWeight={"bold"}>{item.product_name}</Text>
+                  <Text color="#9B2C2C">
+                    {formatCurrency(item.product_price)}원
+                  </Text>
                 </Stack>
               </HStack>
-              <Stack
-                display={"flex"}
-                direction={"row"}
+            </Flex>
+            <Flex justifyContent={"flex-end"} margin={"0 2vh 2vh 0"}>
+              <Flex
+                gap={"5vh"}
+                border={"1px solid #d9d9d9"}
+                p={"1vh"}
+                borderRadius={"1vh"}
                 align={"center"}
-                justify={"center"}
-                bgColor={"#d9d9d9"}
-                color={"white"}
-                g={"3vh"}
-                h={"5vh"}
-                p={"1vh 3vh"}
-                borderRadius={"15px"}
               >
-                <div>-</div>
-                <div>{item.count}</div>
-                <div>+</div>
-              </Stack>
+                <Image
+                  w={"20px"}
+                  h={"20px"}
+                  src={require("../../image/HiMinus.png")}
+                />
+                <Text>{item.count}</Text>
+                <Image
+                  w={"20px"}
+                  h={"20px"}
+                  src={require("../../image/HiPlus.png")}
+                />
+              </Flex>
             </Flex>
           </Stack>
         ))}
       </Stack>
-      <Stack width={"100%"} mt={"2vh"} gap={"2vh"} p={"2vh"}>
+      <Stack width={"100%"} gap={"2vh"} p={"2vh"} bgColor={"white"}>
         <HStack justifyContent={"space-between"} width={"100%"}>
-          <div>총 주문금액</div>
-          <div>{formatCurrency(totalCost)}원</div>
+          <Text>총 주문금액</Text>
+          <Text>{formatCurrency(totalCost)}원</Text>
         </HStack>
         <Box borderBottom={"1px solid gray"} />
         <HStack justifyContent={"space-between"} width={"100%"}>
-          <div>결제예정금액</div>
-          <div>{formatCurrency(totalCost)}원</div>
+          <Text>결제예정금액</Text>
+          <Text>{formatCurrency(totalCost)}원</Text>
         </HStack>
       </Stack>
+      <Text
+        color="#8c8c8c"
+        padding={"1vh 2vh"}
+        fontSize={"x-small"}
+        lineHeight={"1.5"}
+      >
+        레드스위치는 통신판매중개자이며, 통신판매의 당사자가 아닙니다. 따라서
+        레드스위치는 상품, 거래정보 및 거래에 대하여 책임을 지지않습니다.
+      </Text>
+
+      <Box h={"15vh"} />
       <Flex
         id="button"
         align={"center"}
         justify={"center"}
-        position={"absolute"}
-        bottom={"2vh"}
         w={"100%"}
+        h={"10vh"}
+        bgColor={"white"}
+        position={"absolute"}
+        bottom={"0"}
       >
         <Button
           w={"80%"}
-          mt={"2vh"}
+          color={"white"}
+          bgColor={"#e53e3e"}
           onClick={() =>
             navigate("/payment", {
               state: {
