@@ -23,29 +23,29 @@ function Cart(props) {
   }, []);
   return (
     <Stack gap={"1vh"}>
-      <Stack p={"3vh"}>
+      <Flex
+        bgColor={"white"}
+        align={"center"}
+        w={"100%"}
+        h={"5vh"}
+        justify={"space-between"}
+      >
         <Flex
-          bgColor={"white"}
-          align={"center"}
-          w={"100%"}
+          w={"5vh"}
           h={"5vh"}
-          justify={"space-between"}
+          bgColor={"#white"}
+          color={"#black"}
+          display={"flex"}
+          align={"center"}
+          justify={"center"}
+          onClick={() => navigate(-1)}
         >
-          <Flex
-            w={"5vh"}
-            h={"5vh"}
-            bgColor={"#white"}
-            color={"#black"}
-            display={"flex"}
-            align={"center"}
-            justify={"center"}
-            onClick={() => navigate(-1)}
-          >
-            ←
-          </Flex>
-          <div>장바구니</div>
-          <div>홈</div>
+          ←
         </Flex>
+        <div>장바구니</div>
+        <div>홈</div>
+      </Flex>
+      <Stack p={"2vh"}>
         {cartList?.map((item) => (
           <Stack
             w={"100%"}
@@ -53,7 +53,7 @@ function Cart(props) {
             borderRadius={"10px"}
             key={item.doc_id}
           >
-            <Flex width={"100%"} padding={"10px"}>
+            <Flex width={"100%"} padding={"1vh"}>
               <HStack w={"100%"}>
                 {item.product_images && item.product_images.length > 0 ? (
                   <Image
@@ -96,28 +96,27 @@ function Cart(props) {
             </Flex>
           </Stack>
         ))}
-
-        <Stack width={"100%"} mt={"2vh"} gap={"2vh"}>
-          <HStack justifyContent={"space-between"} width={"100%"}>
-            <div>총 주문금액</div>
-            <div>{totalCost}원</div>
-          </HStack>
-          <Box style={{ borderBottom: "1px solid black" }} />
-          <HStack justifyContent={"space-between"} width={"100%"}>
-            <div>결제예정금액</div>
-            <div>{totalCost}원</div>
-          </HStack>
-        </Stack>
-        <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
-          <Button
-            w={"80%"}
-            mt={"2vh"}
-            onClick={() => navigate("/payment", { state: totalCost })}
-          >
-            결제하기
-          </Button>
-        </Flex>
       </Stack>
+      <Stack width={"100%"} mt={"2vh"} gap={"2vh"} p={"2vh"}>
+        <HStack justifyContent={"space-between"} width={"100%"}>
+          <div>총 주문금액</div>
+          <div>{totalCost}원</div>
+        </HStack>
+        <Box style={{ borderBottom: "1px solid black" }} />
+        <HStack justifyContent={"space-between"} width={"100%"}>
+          <div>결제예정금액</div>
+          <div>{totalCost}원</div>
+        </HStack>
+      </Stack>
+      <Flex id="button" display={"flex"} align={"center"} justify={"center"}>
+        <Button
+          w={"80%"}
+          mt={"2vh"}
+          onClick={() => navigate("/payment", { state: totalCost })}
+        >
+          결제하기
+        </Button>
+      </Flex>
     </Stack>
   );
 }

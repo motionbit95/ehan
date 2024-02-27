@@ -116,18 +116,16 @@ function Home(props) {
             }}
           />
           <Button
-            style={{
-              backgroundColor: "white",
-              width: "40px",
-              height: "40px",
-              borderRadius: "100%",
-            }}
+            bgColor={"white"}
+            w={"40px"}
+            h={"40px"}
+            borderRadius={"100%"}
+            p={"0px"}
           >
             <Image
               bgColor={"#d9d9d9"}
               width={"24px"}
               height={"24px"}
-              borderRadius={"10px"}
               objectFit={"cover"}
             />
           </Button>

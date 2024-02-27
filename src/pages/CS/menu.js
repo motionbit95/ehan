@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Stack } from "@chakra-ui/react";
+import { Button, Flex, Stack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase_conf";
