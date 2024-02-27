@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getPayment } from "../../firebase/firebase_func";
+import { getPayment, postPayment } from "../../firebase/firebase_func";
 import { Box, Flex, HStack, Stack, VStack } from "@chakra-ui/react";
+import { formatCurrency } from "./home";
 
 function Result(props) {
   const location = useLocation();
@@ -19,6 +20,19 @@ function Result(props) {
     const order = await getPayment(data.orderId);
     console.log(order);
     setOrder(order);
+
+    // 받은 결제 정보 업데이트 하는 부분
+    await postPayment({
+      ...order,
+      pay_date: data.paidAt,
+      pay_price: data.amount,
+      pay_id: data.tid,
+      pay_method: data.payMethod,
+      pay_state: data.resultCode,
+      pay_result: data.resultMsg,
+      receipt_url: data.receiptUrl,
+      createAt: new Date(), // 현재 시간
+    });
   };
 
   return (
@@ -72,13 +86,13 @@ function Result(props) {
       >
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 주문금액</div>
-          <div>{location.state}원</div>
+          <div>{formatCurrency(location.state)}원</div>
         </HStack>
         <Box style={{ borderBottom: "1px solid black" }} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 결제금액</div>
 
-          <div>{data.amount}원</div>
+          <div>{formatCurrency(data.amount)}원</div>
         </HStack>
         <HStack>
           <div>결제방법</div>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCart } from "../../firebase/firebase_func";
-import { auth } from "../../firebase/firebase_conf";
 import { Flex, Box, Button, HStack, Image, Stack } from "@chakra-ui/react";
+import { formatCurrency } from "./home";
 function Cart(props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,7 +11,7 @@ function Cart(props) {
 
   const getCartList = async () => {
     if (location.state) {
-      const cartlist = await getCart(location.state);
+      const cartlist = await getCart(location.state.uid);
       setCartList(cartlist.cart);
       setTotalCost(cartlist.totalCost);
     }
@@ -73,8 +73,8 @@ function Cart(props) {
                   />
                 )}
                 <Stack>
-                  <div>{item.product_name}</div>
-                  <div>{item.product_price}원</div>
+                  <div>{formatCurrency(item.product_name)}</div>
+                  <div>{formatCurrency(item.product_price)}원</div>
                 </Stack>
               </HStack>
               <Stack
@@ -100,12 +100,12 @@ function Cart(props) {
       <Stack width={"100%"} mt={"2vh"} gap={"2vh"} p={"2vh"}>
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 주문금액</div>
-          <div>{totalCost}원</div>
+          <div>{formatCurrency(totalCost)}원</div>
         </HStack>
         <Box style={{ borderBottom: "1px solid black" }} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>결제예정금액</div>
-          <div>{totalCost}원</div>
+          <div>{formatCurrency(totalCost)}원</div>
         </HStack>
       </Stack>
       <Flex
@@ -121,7 +121,11 @@ function Cart(props) {
           mt={"2vh"}
           onClick={() =>
             navigate("/payment", {
-              state: { totalCost: totalCost, productList: cartList },
+              state: {
+                totalCost: totalCost,
+                productList: cartList,
+                shop_id: location.state.shop_id,
+              },
             })
           }
         >

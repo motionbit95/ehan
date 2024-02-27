@@ -16,6 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+export function formatCurrency(number, currencyCode = "KRW") {
+  const formattedNumber = new Intl.NumberFormat("ko-KR", {
+    style: "currency",
+    currency: currencyCode,
+  }).format(number);
+
+  return formattedNumber.substring(1);
+}
+
 function Home(props) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -194,13 +203,17 @@ function Home(props) {
                       borderRadius={"1vh"}
                     >
                       <HStack
-                        onClick={() => navigate(`/menu`, { state: item })}
+                        onClick={() =>
+                          navigate(`/menu`, {
+                            state: { data: item, shop_id: shopInfo?.doc_id },
+                          })
+                        }
                         width={"100%"}
                         justifyContent={"space-between"}
                       >
                         <Stack gap={"10px"}>
                           <div>{item.product_name}</div>
-                          <div>{item.product_price}원</div>
+                          <div>{formatCurrency(item.product_price)}원</div>
                         </Stack>
                         {item.product_images &&
                         item.product_images.length > 0 ? (

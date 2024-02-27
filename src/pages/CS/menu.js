@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase_conf";
 import { postCart } from "../../firebase/firebase_func";
+import { formatCurrency } from "./home";
 
 function Menu(props) {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function Menu(props) {
   const [count, setCount] = useState(1);
 
   useEffect(() => {
-    setMenu(location.state);
+    setMenu(location.state.data);
   }, []);
 
   const addCart = () => {
@@ -58,7 +59,14 @@ function Menu(props) {
           <Flex
             w={"5vh"}
             h={"5vh"}
-            onClick={() => navigate(`/cart`, { state: auth.currentUser.uid })}
+            onClick={() =>
+              navigate(`/cart`, {
+                state: {
+                  uid: auth.currentUser.uid,
+                  shop_id: location.state.shop_id,
+                },
+              })
+            }
           >
             장바구니
           </Flex>
@@ -70,7 +78,7 @@ function Menu(props) {
         <hr />
         <Flex display={"flex"} justify={"space-between"}>
           <div>가격</div>
-          <div>{menu?.product_price}원</div>
+          <div>{formatCurrency(menu?.product_price)}원</div>
         </Flex>
       </Stack>
       <Flex id="count" bgColor={"white"} justify={"space-between"} p={"3vh"}>
@@ -91,7 +99,7 @@ function Menu(props) {
         w={"100%"}
       >
         <Button w={"80%"} onClick={addCart}>
-          {menu?.product_price * count}원 담기
+          {formatCurrency(menu?.product_price * count)}원 담기
         </Button>
       </Flex>
     </Stack>
