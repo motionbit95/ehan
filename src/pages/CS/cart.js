@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCart } from "../../firebase/firebase_func";
 import { auth } from "../../firebase/firebase_conf";
-import { Box, Button, HStack, Image, Stack } from "@chakra-ui/react";
+import { Flex, Box, Button, HStack, Image, Stack } from "@chakra-ui/react";
 function Cart(props) {
   const navigate = useNavigate();
   const location = useLocation();
