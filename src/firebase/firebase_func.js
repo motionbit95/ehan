@@ -50,8 +50,8 @@ export const getCart = async (uid) => {
   querySnapshot.forEach((doc) => {
     totalCost += doc.data().product_price * doc.data().count;
     cart.push({ ...doc.data(), doc_id: doc.id });
+    console.log(totalCost);
   });
-  console.log(totalCost);
   return { cart, totalCost };
 };
 

@@ -18,7 +18,11 @@ function Menu(props) {
   const addCart = () => {
     // navigate(`/cart/${auth.currentUser.uid}`);
     if (window.confirm("장바구니에 추가하시겠습니까?")) {
-      postCart({ ...location.state, uid: auth.currentUser.uid, count: count });
+      postCart({
+        ...location.state.data,
+        uid: auth.currentUser.uid,
+        count: count,
+      });
     }
   };
   return (

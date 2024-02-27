@@ -12,6 +12,7 @@ function Cart(props) {
   const getCartList = async () => {
     if (location.state) {
       const cartlist = await getCart(location.state.uid);
+      console.log(cartlist);
       setCartList(cartlist.cart);
       setTotalCost(cartlist.totalCost);
     }
@@ -73,7 +74,7 @@ function Cart(props) {
                   />
                 )}
                 <Stack>
-                  <div>{formatCurrency(item.product_name)}</div>
+                  <div>{item.product_name}</div>
                   <div>{formatCurrency(item.product_price)}원</div>
                 </Stack>
               </HStack>
