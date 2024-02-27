@@ -88,7 +88,7 @@ function Result(props) {
           <div>총 주문금액</div>
           <div>{formatCurrency(location.state)}원</div>
         </HStack>
-        <Box style={{ borderBottom: "1px solid black" }} />
+        <Box borderBottom={"1px solid gray"} />
         <HStack justifyContent={"space-between"} width={"100%"}>
           <div>총 결제금액</div>
 
