@@ -1,9 +1,12 @@
 // GlobalState.js
 import React, { createContext, useContext, useState } from "react";
+import { getAdmin } from "./firebase/firebase_func";
 
 // 초기 상태
 const initialState = {
   uid: "",
+  admin: {},
+  setAdminInfo: () => {},
   setAdminUid: () => {},
 };
 
@@ -13,14 +16,24 @@ const GlobalStateContext = createContext(initialState);
 // 컨텍스트 제공자
 export const GlobalStateProvider = ({ children }) => {
   const [uid, setUid] = useState("");
+  const [admin, setAdmin] = useState({});
 
   const setAdminUid = (uid) => {
-    console.log("전역 변수에 로그인 된 사용자의 uid를 저장합니다.");
     setUid(uid);
   };
 
+  const setAdminInfo = async (uid) => {
+    const currentAdmin = await getAdmin(uid);
+    if (currentAdmin) {
+      setAdmin(currentAdmin);
+      setUid(uid);
+    }
+  };
+
   return (
-    <GlobalStateContext.Provider value={{ uid, setAdminUid }}>
+    <GlobalStateContext.Provider
+      value={{ uid, setAdminUid, admin, setAdminInfo }}
+    >
       {children}
     </GlobalStateContext.Provider>
   );

@@ -45,7 +45,7 @@ function Home(props) {
         setShopInfo(docSnap.data());
 
         // 상품 리스트 업데이트
-        fetchProducts("PRODUCT", "product_category").then((data) => {
+        fetchProducts("PRODUCT", "product_category", shop_id).then((data) => {
           setProductList(data);
           setCategories(Array.from(data.categories));
         });
@@ -80,8 +80,10 @@ function Home(props) {
 
     // 컴포넌트가 마운트될 때 shop 정보 가지고오기 & 익명 로그인을 수행합니다.
     if (!user) {
-      handleShopInfo();
-      handleAnonymousLogin();
+      if (window.location.pathname.includes("home")) {
+        handleShopInfo();
+        handleAnonymousLogin();
+      }
     }
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
   return (

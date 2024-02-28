@@ -26,6 +26,7 @@ import {
   SearchIcon,
 } from "@chakra-ui/icons";
 import { auth } from "../firebase/firebase_conf";
+import { useGlobalState } from "../GlobalState";
 
 const RHeader = (props) => {
   const [isDesktopView, setIsDesktopView] = useState(window.innerWidth > 768); // 기본적으로 데스크탑 뷰
@@ -33,6 +34,7 @@ const RHeader = (props) => {
   const [currentMenu, setCurrentMenu] = useState(
     localStorage.getItem("menu") ? localStorage.getItem("menu") : "home"
   );
+  const { admin } = useGlobalState();
 
   const handleResize = () => {
     setIsDesktopView(window.innerWidth > 768);
@@ -67,7 +69,7 @@ const RHeader = (props) => {
             LOGO
           </Text>
           <Text display={{ base: "none", md: "block" }}>
-            {auth.currentUser?.uid}
+            {admin?.admin_name}
           </Text>
         </Flex>
 
@@ -149,7 +151,7 @@ const RHeader = (props) => {
               justifyContent={"flex-start"}
               w={"100%"}
             >
-              서브 관리자 설정
+              관리자 설정
             </Button>
           </Stack>
         </Box>
@@ -214,7 +216,7 @@ const RHeader = (props) => {
                       justifyContent={"flex-start"}
                       w={"100%"}
                     >
-                      서브 관리자 설정
+                      관리자 설정
                     </Button>
                   </Stack>
                 </VStack>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RHeader from "../../components/RHeader";
-import { currentAdmin } from "../../firebase/firebase_func";
+import { currentAdmin, getAdmin } from "../../firebase/firebase_func";
 import { useGlobalState } from "../../GlobalState";
 import { Flex, HStack, Stack, calc, useMediaQuery } from "@chakra-ui/react";
 import RFilter from "../../components/RFilter";
@@ -11,9 +11,11 @@ import Income from "./income";
 import Product from "./product";
 import Inventory from "./inventory";
 import { auth } from "../../firebase/firebase_conf";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard(props) {
-  const { uid, setAdminUid } = useGlobalState();
+  const navigate = useNavigate();
+  const { uid, setAdminInfo } = useGlobalState();
   const [menu, setMenu] = useState(
     localStorage.getItem("menu") ? localStorage.getItem("menu") : "home"
   );
@@ -23,7 +25,7 @@ function Dashboard(props) {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         console.log("사용자 uid를 로드하여 저장! > ", user.uid);
-        setAdminUid(user.uid);
+        setAdminInfo(user.uid);
       }
     });
   }, [uid]);

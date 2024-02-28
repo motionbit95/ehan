@@ -26,7 +26,7 @@ function App() {
             p={0}
             w={"100%"}
             maxW={isAdmin ? "100%" : "700px"}
-            bgColor={"#d9d9d9"}
+            bgColor={"#f1f1f1"}
             minH={"100vh"}
           >
             <BrowserRouter>
@@ -37,6 +37,7 @@ function App() {
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/result" element={<Result />} />
+                <Route path="/admin/*" element={<Dashboard />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/account" element={<Account />} />
                 <Route path="/admin/login" element={<Login />} />
