@@ -9,6 +9,7 @@ import {
   Flex,
   HStack,
   Image,
+  Link,
   Stack,
   Tab,
   TabList,
@@ -111,7 +112,14 @@ function Home(props) {
             objectFit={"cover"}
             bgColor={"white"}
             borderRadius={"8px"}
-            onClick={() => navigate(`/home/${shop_id}`)}
+            onClick={() =>
+              navigate(`/home`, {
+                state: {
+                  uid: auth.currentUser.uid,
+                  shop_id: shop_id,
+                },
+              })
+            }
           />
           <Button
             bgColor={"white"}
@@ -172,7 +180,7 @@ function Home(props) {
             <TabList gap={"8px"}>
               {categories?.map((item, index) => (
                 <Tab height={"35px"} key={index}>
-                  {item}
+                  <Link>{item}</Link>
                 </Tab>
               ))}
             </TabList>

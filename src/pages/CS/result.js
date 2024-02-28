@@ -9,7 +9,6 @@ import {
   Image,
   Stack,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { formatCurrency } from "./home";
 

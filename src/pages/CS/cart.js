@@ -31,6 +31,7 @@ function Cart(props) {
     // 현재 유저 세션에 담긴 장바구니 정보를 가지고 옵니다.
     getCartList();
   }, []);
+
   return (
     <Stack gap={"1vh"} position={"relative"}>
       <Flex
