@@ -27,7 +27,15 @@ function Menu(props) {
   };
   return (
     <Stack gap={"1vh"} id="container" position={"relative"} height={"100vh"}>
-      <Stack id="banner" h={"30vh"} bgColor={"#8c8c8c"}>
+      <Stack
+        id="banner"
+        h={"30vh"}
+        bgColor={"#8c8c8c"}
+        // bgImage={`url(${menu?.product_img})`}
+        backgroundSize={"cover"}
+        backgroundPosition={"center"}
+        backgroundRepeat={"no-repeat"}
+      >
         <Flex
           h={"5vh"}
           margin={"3vh"}
