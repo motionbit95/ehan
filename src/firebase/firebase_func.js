@@ -41,6 +41,21 @@ export const fetchProducts = async (collection_name, field_name, shop_id) => {
   }
 };
 
+export const updateCart = async (data) => {
+  //  setDoc -> 모든 데이터가 data로 치환됩니다.
+  //  updateDoc -> data로 들어온 필드가 업데이트 됩니다.
+  try {
+    console.log(data);
+    const docRef = doc(db, "CART", data.doc_id);
+
+    // db의 CART 컬렉션에서 해당 doc_id의 문서를 set
+    await updateDoc(docRef, data);
+    console.log("Document update with ID: ", data.doc_id);
+  } catch (error) {
+    console.error("Error update document: ", error);
+  }
+};
+
 export const postCart = async (data) => {
   try {
     const docRef = await addDoc(collection(db, "CART"), data);

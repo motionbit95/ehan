@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getCart } from "../../firebase/firebase_func";
+import { getCart, updateCart } from "../../firebase/firebase_func";
 import {
   Flex,
   Box,
@@ -32,13 +32,28 @@ function Cart(props) {
     getCartList();
   }, []);
 
+  const changeCartCount = async (index, count) => {
+    const tempCart = [...cartList];
+    tempCart[index].count = count;
+
+    // console.log(tempCart);
+
+    // 렌더링을 위한 장바구니 리스트 정보(UI DATA)를 저장
+    setCartList(tempCart);
+
+    // db의 장바구니 데이터를 수정합니다.
+    const cartlist = await getCart(location.state.uid);
+    setTotalCost(cartlist.totalCost);
+    await updateCart(tempCart[index]);
+  };
+
   return (
     <Stack gap={"1vh"} position={"relative"}>
       <Flex
         bgColor={"white"}
         align={"center"}
         h={"40px"}
-        py={"25px"}
+        p={"25px 20px"}
         justify={"space-between"}
       >
         <Image
@@ -56,7 +71,7 @@ function Cart(props) {
         />
       </Flex>
       <Stack p={"1vh"} bgColor={"white"}>
-        {cartList?.map((item) => (
+        {cartList?.map((item, index) => (
           <Stack
             w={"100%"}
             bgColor={"#f1f1f1"}
@@ -89,7 +104,13 @@ function Cart(props) {
                   </Text>
                 </Stack>
               </HStack>
+              <Image
+                w={"15px"}
+                h={"15px"}
+                src={require("../../image/Delete.png")}
+              />
             </Flex>
+
             <Flex justifyContent={"flex-end"} margin={"0 2vh 2vh 0"}>
               <Flex
                 gap={"5vh"}
@@ -102,12 +123,14 @@ function Cart(props) {
                   w={"20px"}
                   h={"20px"}
                   src={require("../../image/HiMinus.png")}
+                  onClick={() => changeCartCount(index, item.count - 1)}
                 />
                 <Text>{item.count}</Text>
                 <Image
                   w={"20px"}
                   h={"20px"}
                   src={require("../../image/HiPlus.png")}
+                  onClick={() => changeCartCount(index, item.count + 1)}
                 />
               </Flex>
             </Flex>

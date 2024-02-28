@@ -50,7 +50,7 @@ function Result(props) {
         align={"center"}
         w={"100%"}
         h={"40px"}
-        py={"25px"}
+        p={"25px 20px"}
         justify={"space-between"}
       >
         <Image
@@ -80,7 +80,7 @@ function Result(props) {
             </Text>
           )}
         </Stack>
-        <Stack gap={"0"}>
+        <Stack fontSize={"medium"} gap={"0"}>
           <Text>주문일시 : {data.ediDate}</Text>
           <Text>주문번호 : {data.orderId}</Text>
           <Text>배송지 : {order.order_address}</Text>
@@ -138,17 +138,17 @@ function Result(props) {
           <Text>총 결제금액</Text>
           <Text>{formatCurrency(data.amount)}원</Text>
         </HStack>
-        <HStack fontSize={"large"} justify={"space-between"}>
-          <Text>결제방법</Text>
+        <HStack justify={"space-between"}>
+          <Text fontSize={"large"}>결제방법</Text>
           <Stack textAlign={"right"}>
             {data.payMethod === "card" ? (
               <Stack>
-                <Text>카드</Text>
+                <Text fontSize={"large"}>카드</Text>
                 {/* <div>{data.vbank.vbankName}</div> */}
               </Stack>
             ) : data.payMethod === "vbank" ? (
               <Stack gap={"0"}>
-                <Text>무통장입금</Text>
+                <Text fontSize={"large"}>무통장입금</Text>
                 <Text fontSize={"medium"} color={"gray"}>
                   {data.vbank.vbankName}
                 </Text>

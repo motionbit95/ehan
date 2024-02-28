@@ -79,7 +79,7 @@ function Payment(props) {
         align={"center"}
         w={"100%"}
         h={"40px"}
-        py={"25px"}
+        p={"25px 20px"}
         justify={"space-between"}
       >
         <Image

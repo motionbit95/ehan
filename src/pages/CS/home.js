@@ -9,7 +9,6 @@ import {
   Flex,
   HStack,
   Image,
-  Link,
   Stack,
   Tab,
   TabList,
@@ -86,8 +85,17 @@ function Home(props) {
       }
     }
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
+
+  const moveToScroll = (id) => {
+    console.log(id);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <Stack id="container" position={"relative"} height={"100vh"}>
+    <Stack id="container" position={"relative"} height={"auto"}>
       <Stack
         id="banner"
         height={"30vh"}
@@ -176,13 +184,18 @@ function Home(props) {
         </Flex>
       </Stack>
       <Stack p={"2vh"}>
-        <Stack id="tab">
+        <Stack overflowX={"hidden"} maxW={"100vw"} whiteSpace={"nowrap"}>
           {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
           <Tabs variant="solid-rounded" colorScheme="cyan">
             <TabList gap={"8px"}>
               {categories?.map((item, index) => (
-                <Tab height={"35px"} key={index}>
-                  <Link>{item}</Link>
+                <Tab
+                  onClick={() => moveToScroll(item)}
+                  w={"auto"}
+                  height={"35px"}
+                  key={index}
+                >
+                  {item}
                 </Tab>
               ))}
             </TabList>
@@ -190,7 +203,7 @@ function Home(props) {
         </Stack>
         <Stack id="products">
           {categories?.map((category, index) => (
-            <Stack className="category-box" paddingTop={"1vh"}>
+            <Stack id={category} className="category-box" paddingTop={"1vh"}>
               <Text fontSize={"large"} fontWeight={"bold"}>
                 {category}
               </Text>
