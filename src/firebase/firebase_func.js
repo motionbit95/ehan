@@ -9,8 +9,9 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { db, messaging, vapidKey } from "./firebase_conf";
+import { auth, db, messaging, vapidKey } from "./firebase_conf";
 import { getToken } from "firebase/messaging";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
 export const fetchProducts = async (collection_name, field_name) => {
@@ -95,5 +96,49 @@ export const getMessageToken = async (uid) => {
     .catch((err) => {
       console.log("An error occurred while retrieving token. ", err);
       // ...
+    });
+};
+
+// 관리자 로그인 함수
+export const adminSignIn = (e) => {
+  e.preventDefault();
+  console.log(e.target[0].value, e.target[1].value);
+
+  signInWithEmailAndPassword(auth, e.target[0].value, e.target[1].value)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+      // 로그인에 성공했다면, 대시보드로 이동합니다.
+      if (user) {
+        window.location.replace("/admin/dashboard");
+      }
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      let err_msg = "";
+
+      if (errorCode == "auth/invalid-email") {
+        err_msg = "이메일 형식이 올바르지 않습니다.";
+      }
+      if (errorCode == "auth/user-not-found") {
+        err_msg = "일치하는 계정이 존재하지 않습니다.";
+      }
+      if (errorCode == "auth/wrong-password") {
+        err_msg = "비밀번호를 다시 확인해주세요";
+      }
+      if (errorCode == "auth/too-many-requests") {
+        err_msg = "잠시 후 다시 시도해 주세요";
+      }
+      if (errorCode == "auth/too-many-requests") {
+        err_msg = "잠시 후 다시 시도해 주세요";
+      }
+      if (errorCode == "auth/email-already-in-use") {
+        err_msg = "이미 존재하는 아이디입니다.";
+      }
+
+      alert(err_msg);
     });
 };

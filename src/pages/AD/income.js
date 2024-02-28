@@ -1,7 +1,8 @@
+import { Center } from "@chakra-ui/react";
 import React from "react";
 
 function Income(props) {
-  return <div>손익관리</div>;
+  return <Center>손익관리</Center>;
 }
 
 export default Income;
