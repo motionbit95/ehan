@@ -116,7 +116,7 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
               <FormLabel>관리 지점</FormLabel>
               <Select
                 onChange={handleChangeShop}
-                isDisabled={permission === "advisor"}
+                isDisabled={permission !== "supervisor"}
                 name="shop_id"
                 defaultValue={admin.shop_id}
               >
