@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-function PopupBase(props) {
+function PopupBase({ visibleButton = true, ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const finalRef = React.useRef(null);
 
@@ -30,10 +30,9 @@ function PopupBase(props) {
   return (
     <>
       <Button
-        leftIcon={<AddIcon />}
-        colorScheme="red"
-        bgColor={props.variant === "outline" ? "white" : "red.500"}
-        variant={props.variant}
+        leftIcon={props.icon ? props.icon : null}
+        colorScheme={props.colorScheme ? props.colorScheme : "red"}
+        variant={props.variant ? props.variant : "solid"}
         onClick={onOpen}
       >
         {props.title}
@@ -46,29 +45,32 @@ function PopupBase(props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{props.title}</ModalHeader>
+          <ModalHeader>
+            {props.title} {props.action}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleClick}>
               <Stack>{props.children}</Stack>
 
-              <ModalFooter p={"20px 0 0 0 "}>
-                <Button
-                  variant={"outline"}
-                  colorScheme="red"
-                  mr={3}
-                  onClick={onClose}
-                >
-                  취소
-                </Button>
-                <Button colorScheme="red" variant="solid" type="submit">
-                  {props.action}
-                </Button>
-              </ModalFooter>
+              {visibleButton && (
+                <ModalFooter p={"20px 0px"}>
+                  <Button
+                    variant={"outline"}
+                    colorScheme="red"
+                    mr={3}
+                    onClick={onClose}
+                  >
+                    취소
+                  </Button>
+                  <Button colorScheme="red" variant="solid" type="submit">
+                    {props.action}
+                  </Button>
+                </ModalFooter>
+              )}
             </form>
           </ModalBody>
-
-          <ModalFooter></ModalFooter>
+          {!visibleButton && <ModalFooter />}
         </ModalContent>
       </Modal>
     </>

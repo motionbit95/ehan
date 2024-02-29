@@ -12,8 +12,12 @@ import {
 import { auth, db, messaging, vapidKey } from "./firebase_conf";
 import { getToken } from "firebase/messaging";
 import {
+  EmailAuthCredential,
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
+  updatePassword,
 } from "firebase/auth";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
@@ -313,4 +317,32 @@ export const isCurrentUserAnonymous = () => {
 
   // 현재 사용자가 있고, 사용자의 프로바이더 데이터에 'anonymous'가 포함되어 있는지 확인
   return currentUser && currentUser.isAnonymous;
+};
+
+export const changeAdminPassword = (oldPassword, newPassword, doc_id) => {
+  const user = auth.currentUser;
+
+  // TODO(you): prompt the user to re-provide their sign-in credentials
+  const credential = EmailAuthProvider.credential(user.email, oldPassword);
+
+  reauthenticateWithCredential(user, credential)
+    .then(async () => {
+      // User re-authenticated.
+      // 재인증 성공 시, 새 비밀번호로 업데이트
+      console.log(doc_id);
+      const docRef = doc(db, "ACCOUNT", doc_id);
+      await updateDoc(docRef, { admin_password: newPassword });
+
+      updatePassword(user, newPassword);
+
+      alert("비밀번호가 업데이트 되었습니다. 재로그인을 진행해주세요.");
+
+      window.location.replace("/admin/login");
+
+      return true;
+    })
+    .catch((error) => {
+      // An error ocurred
+      // ...
+    });
 };
