@@ -123,14 +123,22 @@ function Cart(props) {
                   w={"20px"}
                   h={"20px"}
                   src={require("../../image/HiMinus.png")}
-                  onClick={() => changeCartCount(index, item.count - 1)}
+                  onClick={() => {
+                    if (item.count > 0) {
+                      changeCartCount(index, item.count - 1);
+                    }
+                  }}
                 />
                 <Text>{item.count}</Text>
                 <Image
                   w={"20px"}
                   h={"20px"}
                   src={require("../../image/HiPlus.png")}
-                  onClick={() => changeCartCount(index, item.count + 1)}
+                  onClick={() => {
+                    if (item.count < 100) {
+                      changeCartCount(index, item.count + 1);
+                    }
+                  }}
                 />
               </Flex>
             </Flex>

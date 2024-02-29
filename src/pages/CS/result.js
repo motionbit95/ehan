@@ -67,7 +67,7 @@ function Result(props) {
           onClick={() => navigate(`/home/${order.shop_id}`)}
         />
       </Flex>
-      <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"#f1f1f1"} gap={"4vh"}>
+      <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"white"} gap={"4vh"}>
         <Stack gap={"0"}>
           <Text fontSize={"large"} fontWeight={"bold"} color={"#e53e3e"}>
             {data.resultCode === "0000" ? "결제가 완료되었습니다." : ""}
@@ -81,7 +81,7 @@ function Result(props) {
           )}
         </Stack>
         <Stack fontSize={"medium"} gap={"0"}>
-          <Text>주문일시 : {data.ediDate}</Text>
+          <Text>주문일시 : {data.ediDate.split("T")[0]}</Text>
           <Text>주문번호 : {data.orderId}</Text>
           <Text>배송지 : {order.order_address}</Text>
           <Text>주문코드 : {order.order_code}</Text>
@@ -105,7 +105,7 @@ function Result(props) {
         padding={"2vh"}
         fontSize={"large"}
         fontWeight={"bold"}
-        bgColor={"#f1f1f1"}
+        bgColor={"white"}
       >
         {order?.pay_product?.length > 0 &&
           order.pay_product.map((value, index) => (
@@ -114,12 +114,14 @@ function Result(props) {
                 <Text>{value.product_name}</Text>
                 <Text>{value.count}개</Text>
               </HStack>
-              <Text>{value.product_price}원</Text>
-              <Box borderBottom={"1px solid gray"} />
+              <Text>{formatCurrency(value.product_price)}원</Text>
+              {index !== order?.pay_product?.length - 1 && (
+                <Box borderBottom={"1px solid #d9d9d9"} />
+              )}
             </>
           ))}
       </Stack>
-      <Stack width={"100%"} gap={"1vh"} padding={"2vh"} bgColor={"#f1f1f1"}>
+      <Stack width={"100%"} gap={"1vh"} padding={"2vh"} bgColor={"white"}>
         <HStack
           justifyContent={"space-between"}
           width={"100%"}

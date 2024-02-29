@@ -213,12 +213,7 @@ function Payment(props) {
             position={"absolute"}
             bottom={"0"}
           >
-            <Button
-              w={"80%"}
-              color={"white"}
-              bgColor={"#e53e3e"}
-              onClick={callNicePayPopup}
-            >
+            <Button w={"80%"} color={"white"} bgColor={"#e53e3e"} type="submit">
               {formatCurrency(location.state.totalCost)}원 결제하기
             </Button>
           </Flex>
