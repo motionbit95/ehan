@@ -14,6 +14,7 @@ import {
   useDisclosure,
   Button,
   Stack,
+  HStack,
 } from "@chakra-ui/react";
 import {
   AttachmentIcon,
@@ -68,18 +69,23 @@ const RHeader = (props) => {
           <Text fontSize="xl" fontWeight="bold" mr={4}>
             LOGO
           </Text>
-          <Text display={{ base: "none", md: "block" }}>
+          <Text display={{ base: "none", md: "block" }} mr={4}>
             {admin?.admin_name}
           </Text>
         </Flex>
 
-        {/* 햄버거 아이콘 (모바일 화면에서만 보임) */}
-        <IconButton
-          icon={<HamburgerIcon />}
-          display={{ base: "block", md: "none" }}
-          aria-label="메뉴 열기"
-          onClick={onOpen}
-        />
+        <HStack>
+          <Button size={"sm"} onClick={() => auth.signOut()}>
+            로그아웃
+          </Button>
+          {/* 햄버거 아이콘 (모바일 화면에서만 보임) */}
+          <IconButton
+            icon={<HamburgerIcon />}
+            display={{ base: "block", md: "none" }}
+            aria-label="메뉴 열기"
+            onClick={onOpen}
+          />
+        </HStack>
       </Flex>
 
       {/* Navigate (모바일에서는 드로어, 데스크탑에서는 고정 위치) */}

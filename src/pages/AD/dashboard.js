@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import RHeader from "../../components/RHeader";
-import { currentAdmin, getAdmin } from "../../firebase/firebase_func";
+import {
+  currentAdmin,
+  getAdmin,
+  isCurrentUserAnonymous,
+} from "../../firebase/firebase_func";
 import { useGlobalState } from "../../GlobalState";
 import { Flex, HStack, Stack, calc, useMediaQuery } from "@chakra-ui/react";
 import RFilter from "../../components/RFilter";
@@ -24,14 +28,22 @@ function Dashboard(props) {
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        console.log("사용자 uid를 로드하여 저장! > ", user.uid);
-        setAdminInfo(user.uid);
+        // 익명으로 로그인 된 사용자라면 로그인 페이지로 이동합니다.
+        if (!isCurrentUserAnonymous()) {
+          console.log("사용자 uid를 로드하여 저장! > ", user.uid);
+          setAdminInfo(user.uid);
+        }
+      } else {
+        navigate("/admin/login");
       }
     });
+
+    changeMenu(localStorage.getItem("menu"));
   }, [uid]);
 
   const changeMenu = (menu) => {
     console.log(">>>", menu);
+    localStorage.setItem("menu", menu);
     setMenu(menu);
   };
 

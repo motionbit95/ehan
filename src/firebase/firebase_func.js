@@ -4,7 +4,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  orderBy,
   query,
   setDoc,
   updateDoc,
@@ -123,15 +122,25 @@ export const getMessageToken = async (uid) => {
 };
 
 // 관리자 계정 생성 함수
-export const adminSignUp = (email, password) => {
+export const adminSignUp = async (email, password, admin) => {
   console.log(email, password);
 
   createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
       // Signed in
       const user = userCredential.user;
       // ...
-      console.log(user);
+      console.log(
+        "계정 생성이 왼료되었습니다: 유저 id: ",
+        user.uid,
+        ", 문서 Id : ",
+        admin.doc_id
+      );
+
+      const docRef = doc(db, "ACCOUNT", admin.doc_id);
+
+      // 가입된 관리자의 uid를 저장합니다,
+      await updateDoc(docRef, { uid: user.uid });
 
       return user.uid;
     })
@@ -151,14 +160,17 @@ async function firstLogin(id, password) {
   const q = query(collection(db, "ACCOUNT"), where("admin_email", "==", id));
   const querySnapshot = await getDocs(q);
 
-  querySnapshot.forEach((doc) => {
+  const admin = [];
+  querySnapshot.forEach(async (doc) => {
     console.log(doc.data());
-
-    // 하나라도 있으면 리턴
-    return true;
+    admin.push({ ...doc.data(), doc_id: doc.id });
   });
 
-  return false;
+  if (admin.length) {
+    return admin[0];
+  } else {
+    return null;
+  }
 }
 
 // 관리자 로그인 함수
@@ -177,18 +189,20 @@ export const adminSignIn = (e) => {
         window.location.replace("/admin/dashboard");
       }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
 
       let err_msg = "";
 
       if (errorCode == "auth/invalid-credential") {
-        let existUser = firstLogin(e.target[0].value, e.target[1].value);
+        let existUser = await firstLogin(e.target[0].value, e.target[1].value);
         if (existUser) {
           // 계정 생성된 관리자의 최초 로그인 시 계정을 생성합니다.
-          let uid = adminSignUp(e.target[0].value, e.target[1].value);
-          console.log(uid);
+          await adminSignUp(e.target[0].value, e.target[1].value, existUser);
+          // 계정 생성이 완료 되면 대시보드로 이동합니다.
+          window.location.replace("/admin/dashboard");
+          return;
         } else {
           err_msg = "계정을 다시 확인해주세요.";
         }
@@ -248,7 +262,6 @@ export const fetchShopList = async () => {
   const shop = [];
   querySnapshot.forEach((doc) => {
     shop.push({ ...doc.data(), doc_id: doc.id });
-    console.log(doc.data());
   });
   return shop;
 };
@@ -292,4 +305,12 @@ export const postAdmin = async (e) => {
   }
 
   return true;
+};
+
+// 현재 로그인된 사용자가 익명인지 여부를 판단하는 함수
+export const isCurrentUserAnonymous = () => {
+  const currentUser = auth.currentUser;
+
+  // 현재 사용자가 있고, 사용자의 프로바이더 데이터에 'anonymous'가 포함되어 있는지 확인
+  return currentUser && currentUser.isAnonymous;
 };

@@ -1,8 +1,10 @@
 import {
+  Button,
   ButtonGroup,
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Select,
   Stack,
@@ -18,9 +20,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
-import { PlusSquareIcon } from "@chakra-ui/icons";
 import {
-  adminSignUp,
   fetchAdminList,
   fetchShopList,
   postAdmin,
@@ -29,6 +29,118 @@ import {
 import PopupBase from "../../modals/PopupBase";
 import RDepth1 from "../../components/RDepth1";
 import RDepth2 from "../../components/RDepth2";
+
+function AccountInfo({ admin, shopList, ...props }) {
+  const [changePassword, setChangePassword] = useState(false);
+  const handleSubmit = (event) => {
+    console.log("submit!!");
+  };
+  return (
+    <>
+      {props.visibleAdminInfo && (
+        <form onSubmit={handleSubmit}>
+          <Stack>
+            <Stack bgColor={"white"} borderRadius={"10px"} p={"20px"}>
+              <FormControl isRequired>
+                <FormLabel>관리자 이름</FormLabel>
+                <HStack>
+                  <Input
+                    defaultValue={admin.admin_name}
+                    name="admin_name"
+                    type="text"
+                    placeholder="관리자 이름을 입력하세요."
+                  ></Input>
+                  <Button>변경</Button>
+                </HStack>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>관리자 이메일</FormLabel>
+                <Input
+                  disabled
+                  defaultValue={admin.admin_email}
+                  name="admin_email"
+                  type="text"
+                  placeholder="관리자 이메일을 입력하세요."
+                ></Input>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>관리 지점</FormLabel>
+                <Select
+                  isDisabled={admin.permission === "advisor"}
+                  name="shop_id"
+                  defaultValue={admin.shop_id}
+                >
+                  {shopList?.map((shop) => (
+                    <option value={shop.doc_id}>{shop.shop_name}</option>
+                  ))}
+                </Select>
+              </FormControl>
+              {admin.permission === "supervisor" && (
+                <>
+                  <FormControl isRequired>
+                    <FormLabel>권한 설정</FormLabel>
+                    <Select name="permission">
+                      <option value="advisor">서브 관리자</option>
+                      <option value="supervisor">메인 관리자</option>
+                    </Select>
+                  </FormControl>
+                </>
+              )}
+              {changePassword && (
+                <>
+                  <FormControl isRequired>
+                    <FormLabel>현재 관리자 패스워드</FormLabel>
+                    <HStack>
+                      <Input
+                        onBlur={(e) =>
+                          props.checkCurrentPassword(e.target.value)
+                        }
+                        name="admin_password"
+                        type="password"
+                        placeholder="관리자 패스워드를 입력하세요."
+                      ></Input>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>변경 할 관리자 패스워드</FormLabel>
+                    <Input
+                      onBlur={(e) => props.checkValidPassword(e.target.value)}
+                      name="admin_password"
+                      type="password"
+                      placeholder="관리자 패스워드를 입력하세요."
+                    ></Input>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>변경 할 관리자 패스워드 확인</FormLabel>
+                    <Input
+                      onBlur={(e) => props.checkConfirmPassword(e.target.value)}
+                      name="admin_password_confirm"
+                      type="password"
+                      placeholder="관리자 패스워드를 확인해주세요."
+                    ></Input>
+                  </FormControl>
+                </>
+              )}
+
+              <ButtonGroup>
+                <Button
+                  display={changePassword ? "block" : "none"}
+                  type="submit"
+                >
+                  패스워드 변경
+                </Button>
+                <Button onClick={() => setChangePassword(!changePassword)}>
+                  {changePassword ? "패스워드 변경 취소" : "패스워드 변경"}
+                </Button>
+              </ButtonGroup>
+            </Stack>
+          </Stack>
+        </form>
+      )}
+    </>
+  );
+}
+
 function Account(props) {
   const { admin } = useGlobalState();
   const [adminList, setAdminList] = useState([]);
@@ -37,6 +149,25 @@ function Account(props) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [visibleAdminInfo, setVisibleAdminInfo] = useState(
+    admin.permission === "advisor" ? true : false
+  );
+
+  useEffect(() => {
+    if (admin.permission === "advisor") {
+      setVisibleAdminInfo(true);
+    } else {
+      setVisibleAdminInfo(false);
+    }
+  }, [admin]);
+
+  function checkCurrentPassword(password) {
+    if (password !== admin.admin_password) {
+      alert("현재 패스워드가 일치하지 않습니다.");
+      return false;
+    }
+    return true;
+  }
 
   function checkValidPassword(password) {
     if (password.length < 8) {
@@ -68,7 +199,12 @@ function Account(props) {
   useEffect(() => {
     // supervisor의 경우 전체 관리자 목록 조회를 진행합니다.
     if (admin.permission === "supervisor") {
-      getAdminList();
+      if (adminList) {
+        getAdminList();
+      }
+    }
+    if (shopList) {
+      // 과금 방지를 위해 최소한으로 줄이기
       getShopList();
     }
   }, [admin]);
@@ -132,7 +268,7 @@ function Account(props) {
                       <Input
                         name="admin_email"
                         type="text"
-                        placeholder="관리자 이메일을 입력하세요."
+                        placeholder="관리자 이메일을 입력하세요. (변경 불가능)"
                         onChange={(e) => setEmail(e.target.value)}
                       ></Input>
                     </FormControl>
@@ -165,7 +301,7 @@ function Account(props) {
                     <FormControl isRequired>
                       <FormLabel>권한 설정</FormLabel>
                       <Select name="permission">
-                        <option value="advisior">서브 관리자</option>
+                        <option value="advisor">서브 관리자</option>
                         <option value="supervisor">메인 관리자</option>
                       </Select>
                     </FormControl>
@@ -251,6 +387,14 @@ function Account(props) {
                 </TableContainer>
               </Stack>
             )}
+            <AccountInfo
+              admin={admin}
+              shopList={shopList}
+              visibleAdminInfo={visibleAdminInfo}
+              checkConfirmPassword={checkConfirmPassword}
+              checkValidPassword={checkValidPassword}
+              checkCurrentPassword={checkCurrentPassword}
+            />
           </Stack>
         </Stack>
       ) : (
