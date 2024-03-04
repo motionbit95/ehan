@@ -99,14 +99,22 @@ function Menu(props) {
             w={"20px"}
             h={"20px"}
             src={require("../../image/HiMinus.png")}
-            onClick={() => setCount(count > 1 && count - 1)}
+            onClick={() => {
+              if (count > 1) {
+                setCount(count - 1);
+              }
+            }}
           />
           <Text>{count}</Text>
           <Image
             w={"20px"}
             h={"20px"}
             src={require("../../image/HiPlus.png")}
-            onClick={() => setCount(count < 100 && count + 1)}
+            onClick={() => {
+              if (count < 100) {
+                setCount(count + 1);
+              }
+            }}
           />
         </Flex>
       </Flex>

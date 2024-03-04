@@ -33,6 +33,7 @@ function Home(props) {
   const [productList, setProductList] = useState([]);
   const [categories, setCategories] = useState([]);
   const shop_id = window.location.pathname.split("/")[2];
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     // shop id로 샵 정보를 가지고 오는 함수
@@ -184,10 +185,20 @@ function Home(props) {
         </Flex>
       </Stack>
       <Stack p={"2vh"}>
-        <Stack overflowX={"hidden"} maxW={"100vw"} whiteSpace={"nowrap"}>
+        <Stack
+          className="scroll_view"
+          overflowX="scroll"
+          hideScrollbar
+          maxW={"100vw"}
+          whiteSpace={"nowrap"}
+          position={"sticky"}
+          bg={"#f1f1f1"}
+          top={"0"}
+          py={"5px"}
+        >
           {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-          <Tabs variant="solid-rounded" colorScheme="cyan">
-            <TabList gap={"8px"}>
+          <Tabs variant="solid-rounded" colorScheme="cyan" isLazy>
+            <TabList gap={"8px"} flexBasis={"content"}>
               {categories?.map((item, index) => (
                 <Tab
                   onClick={() => moveToScroll(item)}
@@ -204,7 +215,7 @@ function Home(props) {
         <Stack id="products">
           {categories?.map((category, index) => (
             <Stack id={category} className="category-box" paddingTop={"1vh"}>
-              <Text fontSize={"large"} fontWeight={"bold"}>
+              <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
                 {category}
               </Text>
               {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
