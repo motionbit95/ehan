@@ -79,7 +79,7 @@ function Home(props) {
 
     // 컴포넌트가 마운트될 때 shop 정보 가지고오기 & 익명 로그인을 수행합니다.
     if (!user) {
-      if (window.location.pathname.includes("home")) {
+      if (!window.location.pathname.includes("admin")) {
         handleShopInfo();
         handleAnonymousLogin();
       }

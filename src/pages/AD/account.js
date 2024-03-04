@@ -87,8 +87,8 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
   return (
     <>
       {props.visibleAdminInfo && (
-        <Stack>
-          <Stack bgColor={"white"} borderRadius={"10px"}>
+        <Stack w={"100%"} h={"100%"}>
+          <Stack>
             <FormControl isRequired>
               <FormLabel>관리자 이름</FormLabel>
               <HStack>
@@ -527,7 +527,7 @@ function Account(props) {
                 </TableContainer>
               </Stack>
             )}
-            <Flex p={"20px"}>
+            <Flex bgColor={"white"} borderRadius={"10px"} p={"20px"}>
               <AccountInfo
                 admin={admin}
                 shopList={shopList}

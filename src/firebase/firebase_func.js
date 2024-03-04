@@ -134,17 +134,21 @@ export const adminSignUp = async (email, password, admin) => {
       // Signed in
       const user = userCredential.user;
       // ...
-      console.log(
-        "계정 생성이 왼료되었습니다: 유저 id: ",
-        user.uid,
-        ", 문서 Id : ",
-        admin.doc_id
-      );
 
       const docRef = doc(db, "ACCOUNT", admin.doc_id);
 
       // 가입된 관리자의 uid를 저장합니다,
       await updateDoc(docRef, { uid: user.uid });
+
+      // ...
+      // console.log("문서 Id : ", admin.doc_id);
+      // console.log("계정의 uid를 저장합니다 : ", user.uid);
+
+      // 계정 생성이 완료 되면 대시보드로 이동합니다.
+      if (user.uid) {
+        // console.log("로그인 성공!", user.uid);
+        window.location.replace("/admin/dashboard");
+      }
 
       return user.uid;
     })
@@ -189,6 +193,7 @@ export const adminSignIn = (e) => {
       const user = userCredential.user;
       // ...
       // 로그인에 성공했다면, 대시보드로 이동합니다.
+      // console.log("로그인 성공!");
       if (user) {
         window.location.replace("/admin/dashboard");
       }
@@ -199,38 +204,41 @@ export const adminSignIn = (e) => {
 
       let err_msg = "";
 
-      if (errorCode == "auth/invalid-credential") {
-        let existUser = await firstLogin(e.target[0].value, e.target[1].value);
-        if (existUser) {
-          // 계정 생성된 관리자의 최초 로그인 시 계정을 생성합니다.
-          await adminSignUp(e.target[0].value, e.target[1].value, existUser);
-          // 계정 생성이 완료 되면 대시보드로 이동합니다.
-          window.location.replace("/admin/dashboard");
-          return;
-        } else {
+      let existUser = await firstLogin(e.target[0].value, e.target[1].value);
+      // console.log(existUser);
+      if (existUser) {
+        // 계정 생성된 관리자의 최초 로그인 시 계정을 생성합니다.
+        await adminSignUp(e.target[0].value, e.target[1].value, existUser);
+        return;
+      } else {
+        if (
+          errorCode == "auth/invalid-credential" ||
+          errorCode == "auth/network-request-failed"
+        ) {
           err_msg = "계정을 다시 확인해주세요.";
         }
-      }
-      if (errorCode == "auth/invalid-email") {
-        err_msg = "이메일 형식이 올바르지 않습니다.";
-      }
-      if (errorCode == "auth/user-not-found") {
-        err_msg = "일치하는 계정이 존재하지 않습니다.";
-      }
-      if (errorCode == "auth/wrong-password") {
-        err_msg = "비밀번호를 다시 확인해주세요";
-      }
-      if (errorCode == "auth/too-many-requests") {
-        err_msg = "잠시 후 다시 시도해 주세요";
-      }
-      if (errorCode == "auth/too-many-requests") {
-        err_msg = "잠시 후 다시 시도해 주세요";
-      }
-      if (errorCode == "auth/email-already-in-use") {
-        err_msg = "이미 존재하는 아이디입니다.";
-      }
+        if (errorCode == "auth/invalid-email") {
+          err_msg = "이메일 형식이 올바르지 않습니다.";
+        }
+        if (errorCode == "auth/user-not-found") {
+          err_msg = "일치하는 계정이 존재하지 않습니다.";
+        }
+        if (errorCode == "auth/wrong-password") {
+          err_msg = "비밀번호를 다시 확인해주세요";
+        }
+        if (errorCode == "auth/too-many-requests") {
+          err_msg = "잠시 후 다시 시도해 주세요";
+        }
+        if (errorCode == "auth/too-many-requests") {
+          err_msg = "잠시 후 다시 시도해 주세요";
+        }
+        if (errorCode == "auth/email-already-in-use") {
+          err_msg = "이미 존재하는 아이디입니다.";
+        }
 
-      alert(errorMessage);
+        alert(err_msg);
+        return;
+      }
     });
 };
 
