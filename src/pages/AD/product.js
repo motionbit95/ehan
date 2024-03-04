@@ -1,21 +1,16 @@
 import {
-  Box,
   Button,
   ButtonGroup,
+  Center,
   Flex,
   FormControl,
   FormLabel,
-  Grid,
-  HStack,
   IconButton,
   Input,
-  Modal,
   Select,
   Stack,
   Table,
   TableContainer,
-  Tag,
-  TagCloseButton,
   Tbody,
   Td,
   Text,
@@ -27,264 +22,163 @@ import {
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import {
-  changeAdminPassword,
   fetchShopList,
   getProduct,
   getProductCount,
-  postAdmin,
+  postProduct,
+  updateProduct,
 } from "../../firebase/firebase_func";
 import PopupBase from "../../modals/PopupBase";
-import RDepth1 from "../../components/RDepth1";
-import RDepth2 from "../../components/RDepth2";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase/firebase_conf";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { deleteUser } from "firebase/auth";
 import { formatCurrency } from "../CS/home";
 
-function AccountInfo({ permission, admin, shopList, ...props }) {
-  const [changePassword, setChangePassword] = useState(false);
-  const [name, setName] = useState(admin.name);
-  const [password, setPassword] = useState({
-    origin_password: "",
-    change_password: "",
-    confirm_password: "",
-  });
+function ProductInfo({ shopList, permission, ...props }) {
+  const [product, setProduct] = useState(
+    props.product
+      ? props.product
+      : {
+          product_name: "",
+          product_images: [],
+          product_origin_price: 0,
+          product_price: 0,
+          product_category: "",
+          shop_id: "",
+        }
+  );
 
-  const handleChangePermission = async (e) => {
-    if (window.confirm("관리자 권한을 변경하시겠습니까?")) {
-      const docRef = doc(db, "ACCOUNT", admin.doc_id);
-      await updateDoc(docRef, { permission: e.target.value });
-    }
-  };
+  const [fileList, setFileList] = useState([]);
 
-  const handleChangeShop = async (e) => {
-    if (window.confirm("관리 지점을 변경하시겠습니까?")) {
-      const docRef = doc(db, "ACCOUNT", admin.doc_id);
-      await updateDoc(docRef, { shop_id: e.target.value });
-    }
-  };
-
-  const handleChangeName = async () => {
-    if (window.confirm("관리자 이름을 변경하시겠습니까?")) {
-      const docRef = doc(db, "ACCOUNT", admin.doc_id);
-      await updateDoc(docRef, { admin_name: name });
-    }
-  };
-
-  const handlePasswordChange = async () => {
-    if (window.confirm("관리자 비밀번호를 변경하시겠습니까?")) {
-      changeAdminPassword(
-        password.origin_password,
-        password.change_password,
-        admin.doc_id
-      );
-    }
-  };
-
-  const handleDeleteUser = async () => {
-    if (window.confirm("탈퇴하시겠습니까?")) {
-      deleteUser(auth.currentUser);
+  const handleChange = (event) => {
+    if (event.target.name === "product_images") {
+      setFileList([...fileList, event.target.files[0]]);
+      setProduct({
+        ...product,
+        [event.target.name]: [...fileList, event.target.files[0].name],
+      });
+      props.onChangeProduct({
+        ...product,
+        [event.target.name]: [...fileList, event.target.files[0].name],
+      });
+    } else {
+      setProduct({
+        ...product,
+        [event.target.name]: event.target.value,
+      });
+      props.onChangeProduct({
+        ...product,
+        [event.target.name]: event.target.value,
+      });
     }
   };
 
   return (
-    <>
-      {props.visibleAdminInfo && (
-        <Stack w={"100%"} h={"100%"}>
-          <Stack>
-            <FormControl isRequired>
-              <FormLabel>관리자 이름</FormLabel>
-              <HStack>
-                <Input
-                  defaultValue={admin.admin_name}
-                  name="admin_name"
-                  type="text"
-                  placeholder="관리자 이름을 입력하세요."
-                  onChange={(e) => setName(e.target.value)}
-                ></Input>
-                <Button onClick={handleChangeName}>변경</Button>
-              </HStack>
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>관리자 이메일</FormLabel>
+    <Stack w={"100%"} h={"100%"}>
+      <Stack>
+        <FormControl isRequired>
+          <FormLabel>관리 지점</FormLabel>
+          <Select
+            onChange={handleChange}
+            isDisabled={permission !== "supervisor"}
+            name="shop_id"
+            defaultValue={props.product?.shop_id}
+          >
+            <option value={"total"}>{"전체"}</option>
+            {shopList?.map((shop) => (
+              <option value={shop.doc_id}>{shop.shop_name}</option>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>상품명</FormLabel>
+          <Input
+            onChange={handleChange}
+            minLength={0}
+            name="product_name"
+            type="text"
+            placeholder="상품명을 입력해주세요."
+            defaultValue={props.product?.product_name}
+          ></Input>
+        </FormControl>
+        <FormControl>
+          <FormLabel>상품 이미지 등록</FormLabel>
+          <Stack direction={"column-reverse"}>
+            <Input
+              onChange={handleChange}
+              name="product_images"
+              p={"4px"}
+              type="file"
+              accept="image/*"
+            />
+            {fileList.map((file, index) => (
               <Input
-                disabled
-                defaultValue={admin.admin_email}
-                name="admin_email"
-                type="text"
-                placeholder="관리자 이메일을 입력하세요."
-              ></Input>
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>관리 지점</FormLabel>
-              <Select
-                onChange={handleChangeShop}
-                isDisabled={permission !== "supervisor"}
-                name="shop_id"
-                defaultValue={admin.shop_id}
-              >
-                {shopList?.map((shop) => (
-                  <option value={shop.doc_id}>{shop.shop_name}</option>
-                ))}
-              </Select>
-            </FormControl>
-            {permission === "supervisor" && (
-              <>
-                <FormControl isRequired>
-                  <FormLabel>권한 설정</FormLabel>
-                  <Select
-                    defaultValue={admin.permission}
-                    name="permission"
-                    onChange={handleChangePermission}
-                  >
-                    <option value="advisor">서브 관리자</option>
-                    <option value="supervisor">메인 관리자</option>
-                  </Select>
-                </FormControl>
-              </>
-            )}
-            {changePassword && (
-              <>
-                <FormControl isRequired>
-                  <FormLabel>현재 관리자 패스워드</FormLabel>
-                  <HStack>
-                    <Input
-                      onBlur={(e) => props.checkCurrentPassword(e.target.value)}
-                      name="admin_password"
-                      type="password"
-                      placeholder="관리자 패스워드를 입력하세요."
-                      onChange={(e) =>
-                        setPassword({
-                          ...password,
-                          origin_password: e.target.value,
-                        })
-                      }
-                    ></Input>
-                  </HStack>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>변경 할 관리자 패스워드</FormLabel>
-                  <Input
-                    onBlur={(e) => props.checkValidPassword(e.target.value)}
-                    name="admin_password"
-                    type="password"
-                    placeholder="관리자 패스워드를 입력하세요."
-                    onChange={(e) =>
-                      setPassword({
-                        ...password,
-                        change_password: e.target.value,
-                      })
-                    }
-                  ></Input>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>변경 할 관리자 패스워드 확인</FormLabel>
-                  <Input
-                    onBlur={(e) => props.checkConfirmPassword(e.target.value)}
-                    name="admin_password_confirm"
-                    type="password"
-                    placeholder="관리자 패스워드를 확인해주세요."
-                    onChange={(e) =>
-                      setPassword({
-                        ...password,
-                        confirm_password: e.target.value,
-                      })
-                    }
-                  ></Input>
-                </FormControl>
-              </>
-            )}
-
-            {admin.uid == auth.currentUser.uid && (
-              <>
-                <ButtonGroup>
-                  <Button
-                    colorScheme={changePassword ? "gray" : "red"}
-                    onClick={() => setChangePassword(!changePassword)}
-                  >
-                    {changePassword ? "패스워드 변경 취소" : "패스워드 변경"}
-                  </Button>
-                  <Button
-                    colorScheme="red"
-                    display={changePassword ? "block" : "none"}
-                    onClick={handlePasswordChange}
-                  >
-                    패스워드 변경
-                  </Button>
-                </ButtonGroup>
-                <HStack w={"100%"} justifyContent={"flex-end"}>
-                  <Text
-                    color={"#8c8c8c"}
-                    cursor={"pointer"}
-                    onClick={handleDeleteUser}
-                  >
-                    탈퇴하기
-                  </Text>
-                </HStack>
-              </>
-            )}
+                onChange={handleChange}
+                name="product_images"
+                p={"4px"}
+                type="file"
+                accept="image/*"
+                key={index}
+              />
+            ))}
           </Stack>
-        </Stack>
-      )}
-    </>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>상품 원가</FormLabel>
+          <Input
+            onChange={handleChange}
+            name="product_origin_price"
+            type="number"
+            placeholder="상품 원가를 입력하세요."
+            defaultValue={props.product?.product_origin_price}
+          ></Input>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>판매 가격</FormLabel>
+          <Input
+            onChange={handleChange}
+            name="product_price"
+            type="number"
+            placeholder="상품 판매 가격을 입력하세요."
+            defaultValue={props.product?.product_price}
+          ></Input>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>카테고리</FormLabel>
+          <Input
+            onChange={handleChange}
+            name="product_category"
+            type="text"
+            placeholder="상품 카테고리를 입력하세요."
+            defaultValue={props.product?.product_category}
+          ></Input>
+        </FormControl>
+      </Stack>
+    </Stack>
   );
 }
 
 function Product(props) {
   const { admin } = useGlobalState();
-  const [adminList, setAdminList] = useState([]);
-  const [shopList, setShopList] = useState([]);
-
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
-  const [selectAdmin, setSelectAdmin] = useState(null);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [visibleAdminInfo, setVisibleAdminInfo] = useState(
-    admin.permission === "advisor" ? true : false
-  );
-
-  const [categories, setCategories] = useState([]);
+  // list
+  const [shopList, setShopList] = useState([]);
   const [productList, setProductList] = useState([]);
-  const [productCount, setProductCount] = useState(0);
-  const [pagination, setPagination] = useState(null);
+  const [productInfo, setProductInfo] = useState(null);
 
-  function checkCurrentPassword(password) {
-    if (password && password !== admin.admin_password) {
-      alert("현재 패스워드가 일치하지 않습니다.");
-      return false;
-    }
-    return true;
-  }
+  // list view control
+  const [lastDocumentSnapshot, setLastDocumentSnapshot] = useState(null);
+  const [moreButtonVisible, setMoreButtonVisible] = useState(false);
 
-  function checkValidPassword(password) {
-    if (!password) return;
-    if (password.length < 8) {
-      alert("8자 이상의 비밀번호로 입력해주세요.");
-      return false;
+  useEffect(() => {
+    if (shopList) {
+      // 과금 방지를 위해 최소한으로 줄이기
+      getShopList();
     }
-    if (!/[a-z]/.test(password) && !/[A-Z]/.test(password)) {
-      alert("영문 대/소문자를 포함하여 입력해주세요.");
-      return false;
-    }
-    if (!/[0-9]/.test(password)) {
-      alert("숫자를 포함하여 입력해주세요.");
-      return false;
-    }
-
-    setPassword(password);
-    return true;
-  }
-
-  function checkConfirmPassword(confirmPassword) {
-    console.log(password, confirmPassword);
-    if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return false;
-    }
-    return true;
-  }
+    getProductList();
+    setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
+  }, []);
 
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {
@@ -299,27 +193,20 @@ function Product(props) {
     return null;
   }
 
-  useEffect(() => {
-    if (admin.permission === "advisor") {
-      setVisibleAdminInfo(true);
-    } else {
-      setVisibleAdminInfo(false);
+  const getShopList = async () => {
+    console.log("가맹점 리스트를 가지고 옵니다.");
+    const shopList = await fetchShopList();
+    setShopList(shopList);
+  };
+
+  // C - create product
+  const addProduct = async () => {
+    if (await postProduct(productInfo)) {
+      window.location.reload();
     }
-    // getProductList();
-    if (shopList) {
-      // 과금 방지를 위해 최소한으로 줄이기
-      getShopList();
-    }
-  }, [admin]);
+  };
 
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    getProductList();
-  }, []);
-
-  const [lastDocumentSnapshot, setLastDocumentSnapshot] = useState(null);
-
+  // R - read product
   const getProductList = async () => {
     // 상품 목록을 조회합니다.
     await getProduct(lastDocumentSnapshot, admin.shop_id).then((data) => {
@@ -327,28 +214,28 @@ function Product(props) {
         console.log("product > ", data.products);
         setProductList([...productList, ...data.products]);
         setLastDocumentSnapshot(data.lastDocumentSnapshot);
+        if (data.products.length < 10) {
+          setMoreButtonVisible(false);
+        }
       } else {
-        alert("불러올 상품 목록이 없습니다.");
+        // alert("불러올 상품 목록이 없습니다.");
+        return;
       }
     });
   };
 
-  const getShopList = async () => {
-    console.log("가맹점 리스트를 가지고 옵니다.");
-    const shopList = await fetchShopList();
-    setShopList(shopList);
+  // U - update product
+  const updateProductInfo = (productInfo) => {
+    setProductInfo(productInfo);
   };
 
-  const saveAdmin = async (e) => {
-    if (await postAdmin(e)) {
+  // D - delete product
+  const deleteProduct = async (id) => {
+    if (window.confirm("상품를 삭제하시겠습니까?")) {
+      // 회원 정보 삭제
+      await deleteDoc(doc(db, "PRODUCT", id));
       window.location.reload();
     }
-  };
-
-  const deleteAdmin = async (id) => {
-    // 회원 정보 삭제
-    await deleteDoc(doc(db, "ACCOUNT", id));
-    window.location.reload();
   };
 
   return (
@@ -370,48 +257,16 @@ function Product(props) {
               <Stack>
                 <ButtonGroup size={"sm"}>
                   <PopupBase
+                    onClose={addProduct}
                     icon={<AddIcon />}
-                    onClose={saveAdmin}
                     title={"상품"}
                     action={"추가"}
                   >
-                    <FormControl isRequired>
-                      <FormLabel>상품명</FormLabel>
-                      <Input
-                        minLength={8}
-                        name="product_name"
-                        type="text"
-                        placeholder="8자 이상 작성해주세요."
-                      ></Input>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>상품 이미지 등록</FormLabel>
-                      <Input name="product_image" p={"4px"} type="file" />
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>상품 원가</FormLabel>
-                      <Input
-                        name="product_origin_price"
-                        type="number"
-                        placeholder="상품 원가를 입력하세요."
-                      ></Input>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>판매 가격</FormLabel>
-                      <Input
-                        name="product_price"
-                        type="number"
-                        placeholder="상품 판매 가격을 입력하세요."
-                      ></Input>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>카테고리</FormLabel>
-                      <Input
-                        name="product_category"
-                        type="text"
-                        placeholder="상품 카테고리를 입력하세요."
-                      ></Input>
-                    </FormControl>
+                    <ProductInfo
+                      shopList={shopList}
+                      permission={admin.permission}
+                      onChangeProduct={updateProductInfo}
+                    />
                   </PopupBase>
                 </ButtonGroup>
                 <TableContainer
@@ -453,22 +308,23 @@ function Product(props) {
                               visibleButton={true}
                               action={"수정"}
                               title={<EditIcon />}
-                              onClose={(e) => window.location.reload()}
+                              onClose={async () => {
+                                if (await updateProduct(productInfo)) {
+                                  window.location.reload();
+                                }
+                              }}
                             >
-                              <AccountInfo
-                                permission={admin.permission}
-                                admin={item}
+                              <ProductInfo
+                                product={item}
                                 shopList={shopList}
-                                visibleAdminInfo={true}
-                                checkConfirmPassword={checkConfirmPassword}
-                                checkValidPassword={checkValidPassword}
-                                checkCurrentPassword={checkCurrentPassword}
+                                permission={admin.permission}
+                                onChangeProduct={updateProductInfo}
                               />
                             </PopupBase>
                           </Td>
                           <Td>
                             <IconButton
-                              onClick={() => deleteAdmin(item.doc_id)}
+                              onClick={() => deleteProduct(item.doc_id)}
                               icon={<DeleteIcon />}
                             />
                           </Td>
@@ -477,20 +333,18 @@ function Product(props) {
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Button onClick={() => getProductList()}>더보기</Button>
+                <Center>
+                  <Button
+                    colorScheme="red"
+                    mb={"20px"}
+                    w={"80px"}
+                    display={moreButtonVisible ? "box" : "none"}
+                    onClick={() => getProductList()}
+                  >
+                    더보기
+                  </Button>
+                </Center>
               </Stack>
-            )}
-            {visibleAdminInfo && (
-              <Flex bgColor={"white"} borderRadius={"10px"} p={"20px"}>
-                <AccountInfo
-                  admin={admin}
-                  shopList={shopList}
-                  visibleAdminInfo={visibleAdminInfo}
-                  checkConfirmPassword={checkConfirmPassword}
-                  checkValidPassword={checkValidPassword}
-                  checkCurrentPassword={checkCurrentPassword}
-                />
-              </Flex>
             )}
           </Stack>
         </Stack>

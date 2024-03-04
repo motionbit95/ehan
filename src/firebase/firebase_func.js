@@ -70,7 +70,7 @@ export const getProductCount = async (shop_id) => {
 export const getProduct = async (lastDocumentSnapshot, shop_id) => {
   console.log(lastDocumentSnapshot);
   // 이전 페이지의 마지막 문서 스냅샷
-  const documentsPerPage = 6;
+  const documentsPerPage = 10;
   console.log("상품 리스트를 가지고 옵니다.");
   // 시작 위치 계산
   var startAfterDocument = null;
@@ -438,4 +438,40 @@ export const changeAdminPassword = (oldPassword, newPassword, doc_id) => {
       // An error ocurred
       // ...
     });
+};
+
+// 상품 저장 함수
+export const postProduct = async (product) => {
+  const productInfo = {
+    ...product,
+    createAt: new Date(),
+  };
+
+  console.log(productInfo);
+
+  try {
+    const docRef = await addDoc(collection(db, "PRODUCT"), productInfo);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+
+  return true;
+};
+
+export const updateProduct = async (data) => {
+  //  setDoc -> 모든 데이터가 data로 치환됩니다.
+  //  updateDoc -> data로 들어온 필드가 업데이트 됩니다.
+  try {
+    console.log(data);
+    const docRef = doc(db, "PRODUCT", data.doc_id);
+
+    // db의 CART 컬렉션에서 해당 doc_id의 문서를 set
+    await updateDoc(docRef, data);
+    console.log("Document update with ID: ", data.doc_id);
+    return true;
+  } catch (error) {
+    console.error("Error update document: ", error);
+    return false;
+  }
 };
