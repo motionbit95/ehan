@@ -26,7 +26,6 @@ import { useGlobalState } from "../../GlobalState";
 import {
   changeAdminPassword,
   fetchAdminList,
-  fetchShopList,
   postAdmin,
   postShop,
 } from "../../firebase/firebase_func";
@@ -37,6 +36,7 @@ import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { deleteUser } from "firebase/auth";
+import { debug } from "../../firebase/api";
 
 function AccountInfo({ permission, admin, shopList, ...props }) {
   const [changePassword, setChangePassword] = useState(false);
@@ -230,7 +230,6 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
 function Account(props) {
   const { admin } = useGlobalState();
   const [adminList, setAdminList] = useState([]);
-  const [shopList, setShopList] = useState([]);
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [selectAdmin, setSelectAdmin] = useState(null);
 
@@ -287,7 +286,7 @@ function Account(props) {
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
-    for (let item of shopList) {
+    for (let item of props.shopList) {
       // 타겟 값과 일치하는 항목을 찾았을 때 해당 정보 반환
       if (item.doc_id === id) {
         return item.shop_name;
@@ -304,21 +303,11 @@ function Account(props) {
         getAdminList();
       }
     }
-    if (shopList) {
-      // 과금 방지를 위해 최소한으로 줄이기
-      getShopList();
-    }
   }, [admin]);
 
   const getAdminList = async () => {
     const adminList = await fetchAdminList();
     setAdminList(adminList);
-  };
-
-  const getShopList = async () => {
-    console.log("가맹점 리스트를 가지고 옵니다.");
-    const shopList = await fetchShopList();
-    setShopList(shopList);
   };
 
   const saveShop = async (e) => {
@@ -401,7 +390,7 @@ function Account(props) {
                     <FormControl isRequired>
                       <FormLabel>관리 지점</FormLabel>
                       <Select name="shop_id">
-                        {shopList?.map((shop) => (
+                        {props.shopList?.map((shop) => (
                           <option value={shop.doc_id}>{shop.shop_name}</option>
                         ))}
                       </Select>
@@ -506,7 +495,7 @@ function Account(props) {
                               <AccountInfo
                                 permission={admin.permission}
                                 admin={item}
-                                shopList={shopList}
+                                shopList={props.shopList}
                                 visibleAdminInfo={true}
                                 checkConfirmPassword={checkConfirmPassword}
                                 checkValidPassword={checkValidPassword}
@@ -531,7 +520,7 @@ function Account(props) {
               <Flex bgColor={"white"} borderRadius={"10px"} p={"20px"}>
                 <AccountInfo
                   admin={admin}
-                  shopList={shopList}
+                  shopList={props.shopList}
                   visibleAdminInfo={visibleAdminInfo}
                   checkConfirmPassword={checkConfirmPassword}
                   checkValidPassword={checkValidPassword}

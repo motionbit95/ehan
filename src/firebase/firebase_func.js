@@ -24,10 +24,10 @@ import {
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
+import { debug, error } from "./api";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
 export const fetchProducts = async (collection_name, field_name, shop_id) => {
-  console.log("상품 리스트를 가지고 옵니다.");
   try {
     let q;
     if (shop_id) {
@@ -68,10 +68,8 @@ export const getProductCount = async (shop_id) => {
 };
 
 export const getProduct = async (lastDocumentSnapshot, shop_id) => {
-  console.log(lastDocumentSnapshot);
   // 이전 페이지의 마지막 문서 스냅샷
   const documentsPerPage = 10;
-  console.log("상품 리스트를 가지고 옵니다.");
   // 시작 위치 계산
   var startAfterDocument = null;
 
@@ -447,11 +445,9 @@ export const postProduct = async (product) => {
     createAt: new Date(),
   };
 
-  console.log(productInfo);
-
   try {
     const docRef = await addDoc(collection(db, "PRODUCT"), productInfo);
-    console.log("Document written with ID: ", docRef.id);
+    debug("[PRODUCT] 문서가 저장되었습니다.\n문서번호 :", docRef.id);
   } catch (error) {
     console.error("Error adding document: ", error);
   }
@@ -463,12 +459,11 @@ export const updateProduct = async (data) => {
   //  setDoc -> 모든 데이터가 data로 치환됩니다.
   //  updateDoc -> data로 들어온 필드가 업데이트 됩니다.
   try {
-    console.log(data);
     const docRef = doc(db, "PRODUCT", data.doc_id);
 
     // db의 CART 컬렉션에서 해당 doc_id의 문서를 set
     await updateDoc(docRef, data);
-    console.log("Document update with ID: ", data.doc_id);
+    debug("[PRODUCT] 문서가 수정되었습니다.", data.doc_id);
     return true;
   } catch (error) {
     console.error("Error update document: ", error);

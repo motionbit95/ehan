@@ -1,11 +1,14 @@
 // GlobalState.js
 import React, { createContext, useContext, useState } from "react";
-import { getAdmin } from "./firebase/firebase_func";
+import { fetchShopList, getAdmin } from "./firebase/firebase_func";
+import { debug } from "./firebase/api";
 
 // 초기 상태
 const initialState = {
   uid: "",
   admin: {},
+  shopList: [],
+  setGlobalShopList: () => {},
   setAdminInfo: () => {},
   setAdminUid: () => {},
 };
@@ -17,6 +20,7 @@ const GlobalStateContext = createContext(initialState);
 export const GlobalStateProvider = ({ children }) => {
   const [uid, setUid] = useState("");
   const [admin, setAdmin] = useState({});
+  const [shopList, setShopList] = useState([]);
 
   const setAdminUid = (uid) => {
     setUid(uid);
@@ -25,14 +29,34 @@ export const GlobalStateProvider = ({ children }) => {
   const setAdminInfo = async (uid) => {
     const currentAdmin = await getAdmin(uid);
     if (currentAdmin) {
+      debug(
+        "로그인 된 유저정보를 저장합니다. \n",
+        currentAdmin.admin_name,
+        "(",
+        uid.slice(0, 6),
+        ")"
+      );
       setAdmin(currentAdmin);
       setUid(uid);
     }
   };
 
+  const setGlobalShopList = async () => {
+    debug("가맹점 리스트를 가지고 옵니다.");
+    const shopList = await fetchShopList();
+    setShopList(shopList);
+  };
+
   return (
     <GlobalStateContext.Provider
-      value={{ uid, setAdminUid, admin, setAdminInfo }}
+      value={{
+        uid,
+        setAdminUid,
+        admin,
+        setAdminInfo,
+        shopList,
+        setGlobalShopList,
+      }}
     >
       {children}
     </GlobalStateContext.Provider>

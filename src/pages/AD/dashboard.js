@@ -16,13 +16,22 @@ import Product from "./product";
 import Inventory from "./inventory";
 import { auth } from "../../firebase/firebase_conf";
 import { useNavigate } from "react-router-dom";
+import { debug } from "../../firebase/api";
 
 function Dashboard(props) {
   const navigate = useNavigate();
-  const { uid, setAdminInfo } = useGlobalState();
+  const { admin, uid, setAdminInfo, shopList, setGlobalShopList } =
+    useGlobalState();
   const [menu, setMenu] = useState(
     localStorage.getItem("menu") ? localStorage.getItem("menu") : "home"
   );
+
+  useEffect(() => {
+    if (admin.doc_id) {
+      setGlobalShopList();
+      changeMenu(localStorage.getItem("menu"));
+    }
+  }, [admin]);
 
   // 아래 계정 정보의 state가 변경 될 때마다 사용자 uid를 로드하여 저장합니다.
   useEffect(() => {
@@ -30,19 +39,16 @@ function Dashboard(props) {
       if (user) {
         // 익명으로 로그인 된 사용자라면 로그인 페이지로 이동합니다.
         if (!isCurrentUserAnonymous()) {
-          console.log("사용자 uid를 로드하여 저장! > ", user.uid);
           setAdminInfo(user.uid);
         }
       } else {
         navigate("/admin/login");
       }
     });
-
-    changeMenu(localStorage.getItem("menu"));
   }, [uid]);
 
   const changeMenu = (menu) => {
-    console.log(">>>", menu);
+    debug(menu, " 페이지를 렌더링합니다");
     localStorage.setItem("menu", menu);
     setMenu(menu);
   };
@@ -52,7 +58,7 @@ function Dashboard(props) {
       case "home":
         return <Home />;
       case "account":
-        return <Account />;
+        return <Account shopList={shopList} />;
       case "order":
         return <Order />;
       case "income":
@@ -60,7 +66,7 @@ function Dashboard(props) {
       case "inventory":
         return <Inventory />;
       case "product":
-        return <Product />;
+        return <Product shopList={shopList} />;
       default:
         return <Home />;
     }

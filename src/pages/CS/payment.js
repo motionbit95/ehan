@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { postPayment } from "../../firebase/firebase_func";
 import { auth } from "../../firebase/firebase_conf";
 import { formatCurrency } from "./home";
+import { PG_CLIENT_ID, SERVER_URL } from "../../firebase/api";
 
 function Payment(props) {
   const { AUTHNICE } = window;
@@ -48,18 +49,14 @@ function Payment(props) {
       pay_product: location.state.productList,
     });
 
-    const clientId = "S2_af4543a0be4d49a98122e01ec2059a56";
-    // const secretKey = "9eb85607103646da9f9c02b128f2e5ee";
-
     AUTHNICE.requestPay({
-      clientId: clientId,
+      clientId: PG_CLIENT_ID,
       appScheme: "nicepay",
       method: payMethod,
       orderId: order_id,
       amount: location.state.totalCost,
       goodsName: "나이스페이-상품",
-      returnUrl:
-        "https://port-0-nicepay-module-17xco2nlszge3vt.sel5.cloudtype.app/serverAuth",
+      returnUrl: SERVER_URL + "/serverAuth",
       vbankHolder: "레드스위치",
       fnError: function (result) {
         alert(result.errorMsg + "");

@@ -22,7 +22,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import {
-  fetchShopList,
   getProduct,
   getProductCount,
   postProduct,
@@ -33,6 +32,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
+import { debug } from "../../firebase/api";
 
 function ProductInfo({ shopList, permission, ...props }) {
   const [product, setProduct] = useState(
@@ -84,9 +84,13 @@ function ProductInfo({ shopList, permission, ...props }) {
             name="shop_id"
             defaultValue={props.product?.shop_id}
           >
-            <option value={"total"}>{"전체"}</option>
+            <option key={"total"} value={"total"}>
+              {"전체"}
+            </option>
             {shopList?.map((shop) => (
-              <option value={shop.doc_id}>{shop.shop_name}</option>
+              <option key={shop.doc_id} value={shop.doc_id}>
+                {shop.shop_name}
+              </option>
             ))}
           </Select>
         </FormControl>
@@ -163,7 +167,6 @@ function Product(props) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
   // list
-  const [shopList, setShopList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [productInfo, setProductInfo] = useState(null);
 
@@ -172,18 +175,16 @@ function Product(props) {
   const [moreButtonVisible, setMoreButtonVisible] = useState(false);
 
   useEffect(() => {
-    if (shopList) {
-      // 과금 방지를 위해 최소한으로 줄이기
-      getShopList();
+    if (admin.doc_id) {
+      // getProductList();
+      setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
     }
-    getProductList();
-    setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
-  }, []);
+  }, [admin]);
 
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
-    for (let item of shopList) {
+    for (let item of props.shopList) {
       // 타겟 값과 일치하는 항목을 찾았을 때 해당 정보 반환
       if (item.doc_id === id) {
         return item.shop_name;
@@ -193,16 +194,10 @@ function Product(props) {
     return null;
   }
 
-  const getShopList = async () => {
-    console.log("가맹점 리스트를 가지고 옵니다.");
-    const shopList = await fetchShopList();
-    setShopList(shopList);
-  };
-
   // C - create product
   const addProduct = async () => {
     if (await postProduct(productInfo)) {
-      window.location.reload();
+      setProductList([...productList, productInfo]);
     }
   };
 
@@ -211,7 +206,6 @@ function Product(props) {
     // 상품 목록을 조회합니다.
     await getProduct(lastDocumentSnapshot, admin.shop_id).then((data) => {
       if (data.products.length > 0) {
-        console.log("product > ", data.products);
         setProductList([...productList, ...data.products]);
         setLastDocumentSnapshot(data.lastDocumentSnapshot);
         if (data.products.length < 10) {
@@ -222,7 +216,12 @@ function Product(props) {
         return;
       }
     });
+    debug("상품 목록을 조회합니다.");
   };
+
+  if (productList.length === 0) {
+    getProductList();
+  }
 
   // U - update product
   const updateProductInfo = (productInfo) => {
@@ -234,8 +233,10 @@ function Product(props) {
     if (window.confirm("상품를 삭제하시겠습니까?")) {
       // 회원 정보 삭제
       await deleteDoc(doc(db, "PRODUCT", id));
-      window.location.reload();
+      setProductList(productList.filter((product) => product.doc_id !== id));
     }
+
+    debug("[PRODUCT] 문서가 삭제되었습니다.", id);
   };
 
   return (
@@ -263,7 +264,7 @@ function Product(props) {
                     action={"추가"}
                   >
                     <ProductInfo
-                      shopList={shopList}
+                      shopList={props.shopList}
                       permission={admin.permission}
                       onChangeProduct={updateProductInfo}
                     />
@@ -294,7 +295,10 @@ function Product(props) {
                     </Thead>
                     <Tbody>
                       {productList?.map((item, index) => (
-                        <Tr _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}>
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
                           <Td fontSize={"sm"}>{index + 1}</Td>
                           <Td fontSize={"sm"}>{item.product_name}</Td>
                           <Td fontSize={"sm"}>{item.product_category}</Td>
@@ -310,13 +314,19 @@ function Product(props) {
                               title={<EditIcon />}
                               onClose={async () => {
                                 if (await updateProduct(productInfo)) {
-                                  window.location.reload();
+                                  setProductList(
+                                    productList.map((product) =>
+                                      product.doc_id === productInfo.doc_id
+                                        ? productInfo
+                                        : product
+                                    )
+                                  );
                                 }
                               }}
                             >
                               <ProductInfo
                                 product={item}
-                                shopList={shopList}
+                                shopList={props.shopList}
                                 permission={admin.permission}
                                 onChangeProduct={updateProductInfo}
                               />
