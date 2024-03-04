@@ -527,16 +527,18 @@ function Account(props) {
                 </TableContainer>
               </Stack>
             )}
-            <Flex bgColor={"white"} borderRadius={"10px"} p={"20px"}>
-              <AccountInfo
-                admin={admin}
-                shopList={shopList}
-                visibleAdminInfo={visibleAdminInfo}
-                checkConfirmPassword={checkConfirmPassword}
-                checkValidPassword={checkValidPassword}
-                checkCurrentPassword={checkCurrentPassword}
-              />
-            </Flex>
+            {visibleAdminInfo && (
+              <Flex bgColor={"white"} borderRadius={"10px"} p={"20px"}>
+                <AccountInfo
+                  admin={admin}
+                  shopList={shopList}
+                  visibleAdminInfo={visibleAdminInfo}
+                  checkConfirmPassword={checkConfirmPassword}
+                  checkValidPassword={checkValidPassword}
+                  checkCurrentPassword={checkCurrentPassword}
+                />
+              </Flex>
+            )}
           </Stack>
         </Stack>
       ) : (

@@ -2,10 +2,15 @@ import {
   addDoc,
   collection,
   doc,
+  endBefore,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   setDoc,
+  startAfter,
+  startAt,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -22,12 +27,18 @@ import {
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
 export const fetchProducts = async (collection_name, field_name, shop_id) => {
+  console.log("상품 리스트를 가지고 옵니다.");
   try {
-    const q = query(
-      collection(db, collection_name),
-      where("shop_id", "==", shop_id)
-      // orderBy(field_name)
-    );
+    let q;
+    if (shop_id) {
+      q = query(
+        collection(db, collection_name),
+        where("shop_id", "==", shop_id)
+        // orderBy(field_name)
+      );
+    } else {
+      q = query(collection(db, collection_name));
+    }
     const querySnapshot = await getDocs(q);
     const categories = new Set();
 
@@ -38,6 +49,80 @@ export const fetchProducts = async (collection_name, field_name, shop_id) => {
     });
 
     return { products, categories };
+  } catch (error) {
+    console.error("데이터 가져오기 중 오류 발생:", error);
+    return {};
+  }
+};
+
+export const getProductCount = async (shop_id) => {
+  // 콜렉션 레퍼런스
+  var q = query(collection(db, "PRODUCT"));
+  if (shop_id)
+    q = query(collection(db, "PRODUCT"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot) {
+    return querySnapshot.size;
+  }
+};
+
+export const getProduct = async (lastDocumentSnapshot, shop_id) => {
+  console.log(lastDocumentSnapshot);
+  // 이전 페이지의 마지막 문서 스냅샷
+  const documentsPerPage = 6;
+  console.log("상품 리스트를 가지고 옵니다.");
+  // 시작 위치 계산
+  var startAfterDocument = null;
+
+  // 이전 페이지의 마지막 문서 스냅샷이 존재하는 경우
+  if (lastDocumentSnapshot) {
+    startAfterDocument = lastDocumentSnapshot;
+  }
+
+  try {
+    let q;
+    if (shop_id) {
+      q = query(
+        collection(db, "PRODUCT"),
+        orderBy("product_category"),
+        where("shop_id", "==", shop_id),
+        limit(documentsPerPage)
+      );
+    } else {
+      q = query(
+        collection(db, "PRODUCT"),
+        orderBy("product_category"),
+        limit(documentsPerPage)
+      );
+    }
+
+    // 시작 문서가 있는 경우에만 startAfter() 메서드 사용
+    if (startAfterDocument) {
+      q = query(
+        collection(db, "PRODUCT"),
+        orderBy("product_category"),
+        startAfter(startAfterDocument),
+        limit(documentsPerPage)
+      );
+    }
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.size === 0) {
+      return { products: [], lastDocumentSnapshot: null };
+    }
+
+    lastDocumentSnapshot = querySnapshot.docs[querySnapshot.docs.length - 1];
+    const products = [];
+    querySnapshot.forEach((doc) => {
+      products.push({
+        ...doc.data(),
+        doc_id: doc.id,
+      });
+    });
+
+    return { products, lastDocumentSnapshot };
   } catch (error) {
     console.error("데이터 가져오기 중 오류 발생:", error);
     return {};
