@@ -16,6 +16,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { Footer } from "../../components/RFooter";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -275,15 +276,15 @@ function Home(props) {
           ))}
         </Stack>
       </Stack>
-      <div
-        id="footer"
-        style={{
-          width: "100%",
-          maxWidth: "700px",
-        }}
-      >
-        <div>Footer</div>
-      </div>
+      <Footer
+        companyName="레드스위치"
+        ceoName="이한샘"
+        businessNumber="208-16-70116"
+        address="서울특별시 강남구 역삼로 114, 8층 82호(역삼동, 현죽빌딩)"
+        commNumber="2024-서울강남-1234"
+        tel="02-1234-1234"
+        mail="redswitch@redswitch.kr"
+      />
     </Stack>
   );
 }
