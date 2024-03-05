@@ -1,14 +1,14 @@
 import {
-  Box,
   Button,
   ButtonGroup,
+  Card,
+  CardBody,
   Flex,
   FormControl,
   FormLabel,
   HStack,
   IconButton,
   Input,
-  Modal,
   Select,
   Stack,
   Table,
@@ -37,6 +37,7 @@ import { auth, db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { deleteUser } from "firebase/auth";
 import { debug } from "../../firebase/api";
+import Calender from "../../components/Calender";
 
 function AccountInfo({ permission, admin, shopList, ...props }) {
   const [changePassword, setChangePassword] = useState(false);
@@ -343,6 +344,7 @@ function Account(props) {
 
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
+
             {admin.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>
@@ -452,6 +454,7 @@ function Account(props) {
                     </FormControl>
                   </PopupBase>
                 </ButtonGroup>
+                <Calender />
                 <TableContainer
                   border={"1px solid #d9d9d9"}
                   bgColor={"white"}
@@ -533,8 +536,193 @@ function Account(props) {
       ) : (
         <Flex w={"100%"} h={"100%"}>
           {/* mobile 에서의 레이아웃 */}
-          <Stack>
-            <Text>관리자 설정</Text>
+          <Stack w={"100%"} h={"100%"}>
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {/* <Text>관리자 설정</Text> */}
+              {admin.permission === "supervisor" && (
+                <Stack>
+                  <ButtonGroup size={"sm"}>
+                    <PopupBase
+                      icon={<AddIcon />}
+                      onClose={saveAdmin}
+                      title={"서브 관리자"}
+                      action={"추가"}
+                    >
+                      <FormControl isRequired>
+                        <FormLabel>관리자 이름</FormLabel>
+                        <Input
+                          name="admin_name"
+                          type="text"
+                          placeholder="관리자 이름을 입력하세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>관리자 이메일</FormLabel>
+                        <Input
+                          name="admin_email"
+                          type="text"
+                          placeholder="관리자 이메일을 입력하세요. (변경 불가능)"
+                          onChange={(e) => setEmail(e.target.value)}
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>관리자 패스워드</FormLabel>
+                        <Input
+                          onBlur={(e) => checkValidPassword(e.target.value)}
+                          name="admin_password"
+                          type="password"
+                          placeholder="관리자 패스워드를 입력하세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>관리자 패스워드</FormLabel>
+                        <Input
+                          onBlur={(e) => checkConfirmPassword(e.target.value)}
+                          name="admin_password_confirm"
+                          type="password"
+                          placeholder="관리자 패스워드를 확인해주세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>관리 지점</FormLabel>
+                        <Select name="shop_id">
+                          {props.shopList?.map((shop) => (
+                            <option value={shop.doc_id}>
+                              {shop.shop_name}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>권한 설정</FormLabel>
+                        <Select name="permission">
+                          <option value="advisor">서브 관리자</option>
+                          <option value="supervisor">메인 관리자</option>
+                        </Select>
+                      </FormControl>
+                    </PopupBase>
+                    <PopupBase
+                      icon={<AddIcon />}
+                      variant={"outline"}
+                      title={"지점"}
+                      action={"추가"}
+                      onClose={saveShop}
+                    >
+                      <FormControl isRequired>
+                        <FormLabel>가맹점 id</FormLabel>
+                        <Input
+                          name="doc_id"
+                          type="text"
+                          placeholder="가맹점 id를 입력하세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>가맹점 이름</FormLabel>
+                        <Input
+                          name="shop_name"
+                          type="text"
+                          placeholder="가맹점 이름을 입력하세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>가맹점 주소</FormLabel>
+                        <Input
+                          name="shop_address"
+                          type="text"
+                          placeholder="가맹점 주소를 입력하세요."
+                        ></Input>
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>1차 카테고리</FormLabel>
+                        <RDepth1 />
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>2차 카테고리</FormLabel>
+                        <RDepth2 />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>배너 이미지</FormLabel>
+                        <Input name="shop_img" p={"4px"} type="file" />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>로고 이미지</FormLabel>
+                        <Input name="logo_img" p={"4px"} type="file" />
+                      </FormControl>
+                    </PopupBase>
+                  </ButtonGroup>
+
+                  <Card p={"10px 0px"}>
+                    {adminList.map((item, index) => (
+                      <CardBody p={"10px 20px"}>
+                        <Stack
+                          border={"1px solid #d9d9d9"}
+                          borderRadius={"10px"}
+                          p={"10px"}
+                          w={"100%"}
+                        >
+                          <HStack>
+                            <Flex direction={"column"}>
+                              <Text>No.</Text>
+                              <Text>이름</Text>
+                              <Text>ID</Text>
+                              <Text>관리 지점</Text>
+                            </Flex>
+                            <Flex direction={"column"}>
+                              <Text>{index + 1}</Text>
+                              <Text>{item.admin_name}</Text>
+                              <Text>{item.admin_email}</Text>
+                              <Text>
+                                {item.permission === "supervisor"
+                                  ? "전지점"
+                                  : searchShopName(item.shop_id)}
+                              </Text>
+                            </Flex>
+                          </HStack>
+
+                          <HStack justifyContent={"space-between"}>
+                            <Stack w={"100%"}>
+                              <PopupBase
+                                colorScheme={"gray"}
+                                visibleButton={true}
+                                action={"수정"}
+                                title={<EditIcon />}
+                                onClose={(e) => window.location.reload()}
+                              >
+                                <AccountInfo
+                                  permission={admin.permission}
+                                  admin={item}
+                                  shopList={props.shopList}
+                                  visibleAdminInfo={true}
+                                  checkConfirmPassword={checkConfirmPassword}
+                                  checkValidPassword={checkValidPassword}
+                                  checkCurrentPassword={checkCurrentPassword}
+                                />
+                              </PopupBase>
+                            </Stack>
+                            <Stack w={"100%"}>
+                              <IconButton
+                                onClick={() => deleteAdmin(item.doc_id)}
+                                icon={<DeleteIcon />}
+                              />
+                            </Stack>
+                          </HStack>
+                        </Stack>
+                      </CardBody>
+                    ))}
+                  </Card>
+                </Stack>
+              )}
+              <Flex p={"20px"}>
+                <AccountInfo
+                  admin={admin}
+                  shopList={props.shopList}
+                  visibleAdminInfo={visibleAdminInfo}
+                  checkConfirmPassword={checkConfirmPassword}
+                  checkValidPassword={checkValidPassword}
+                  checkCurrentPassword={checkCurrentPassword}
+                />
+              </Flex>
+            </Stack>
           </Stack>
         </Flex>
       )}
