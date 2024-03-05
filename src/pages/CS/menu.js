@@ -1,9 +1,19 @@
-import { Box, Button, Flex, Image, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Image,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { auth } from "../../firebase/firebase_conf";
-import { postCart } from "../../firebase/firebase_func";
+import { auth, db } from "../../firebase/firebase_conf";
+import { getCart, postCart, updateCart } from "../../firebase/firebase_func";
 import { formatCurrency } from "./home";
+import { debug } from "../../firebase/api";
+import { doc, updateDoc } from "firebase/firestore";
 
 function Menu(props) {
   const navigate = useNavigate();
@@ -15,57 +25,87 @@ function Menu(props) {
     setMenu(location.state.data);
   }, []);
 
-  const addCart = () => {
+  const addCart = async () => {
     // navigate(`/cart/${auth.currentUser.uid}`);
     if (window.confirm("장바구니에 추가하시겠습니까?")) {
-      postCart({
-        ...location.state.data,
-        uid: auth.currentUser.uid,
-        count: count,
+      // 기존에 해당 id의 상품이 담겨있는 경우, 수량만 변경합니다.'
+      const cartlist = await getCart(auth.currentUser.uid);
+      const existCart = cartlist.cart.filter((item) => {
+        console.log(item.product_id, menu.doc_id);
+        if (item.product_id === menu.doc_id) {
+          debug(
+            "이미 장바구니에 해당 상품이 존재합니다.\n",
+            item.product_id,
+            "\n기존 수량 : ",
+            item.count,
+            "\n변경 된 수량 : ",
+            item.count + count
+          );
+
+          // 상품 수량 업로드
+          updateDoc(doc(db, "CART", item.doc_id), {
+            count: item.count + count,
+          });
+
+          return item.doc_id;
+        }
       });
+
+      if (!existCart || existCart.length === 0) {
+        // 장바구니 새로 추가
+        postCart({
+          ...location.state.data,
+          uid: auth.currentUser.uid,
+          count: count,
+        });
+      }
     }
   };
+
   return (
     <Stack gap={"1vh"} id="container" position={"relative"} height={"100vh"}>
-      <Stack
-        id="banner"
-        h={"30vh"}
-        bgColor={"#8c8c8c"}
-        // bgImage={`url(${menu?.product_img})`}
-        backgroundSize={"cover"}
-        backgroundPosition={"center"}
-        backgroundRepeat={"no-repeat"}
-      >
-        <Flex
-          h={"5vh"}
-          margin={"3vh"}
-          align={"center"}
-          justify={"space-between"}
-        >
+      <Stack id="banner" h={"30vh"}>
+        <Center>
           <Image
-            w={"3vh"}
-            h={"3vh"}
-            onClick={() => navigate(-1)}
-            src={require("../../image/CkChevronLeft.png")}
-          />
-          <Image
-            w={"3vh"}
-            h={"3vh"}
-            src={require("../../image/ShoppingCart.png")}
-            onClick={() =>
-              navigate(`/cart`, {
-                state: {
-                  uid: auth.currentUser.uid,
-                  shop_id: location.state.shop_id,
-                },
-              })
-            }
-          />
-        </Flex>
+            objectFit={"center"}
+            height={"100%"}
+            src={menu?.product_images?.[0].replace("http", "https")}
+          ></Image>
+        </Center>
       </Stack>
+      <Flex
+        h={"64px"}
+        w={"100%"}
+        position={"absolute"}
+        top={0}
+        left={0}
+        p={"20px"}
+        align={"center"}
+        justify={"space-between"}
+      >
+        <Image
+          w={"3vh"}
+          h={"3vh"}
+          onClick={() => navigate(-1)}
+          src={require("../../image/CkChevronLeft.png")}
+        />
+        <Image
+          w={"3vh"}
+          h={"3vh"}
+          src={require("../../image/ShoppingCart.png")}
+          onClick={() =>
+            navigate(`/cart`, {
+              state: {
+                uid: auth.currentUser.uid,
+                shop_id: location.state.shop_id,
+              },
+            })
+          }
+        />
+      </Flex>
 
       <Stack id="item" gap={"2vh"} p={"3vh"} bgColor={"white"}>
-        <Text fontSize={"medium"} fontWeight={"bold"}>
+        <Text fontSize={"large"} fontWeight={"bold"}>
           {menu?.product_name}
         </Text>
         <Flex
@@ -129,9 +169,10 @@ function Menu(props) {
           bgColor={"white"}
           position={"absolute"}
           bottom={"0"}
+          p={"20px"}
         >
           <Button
-            w={"80%"}
+            w={"100%"}
             color={"white"}
             bgColor={"#e53e3e"}
             onClick={addCart}

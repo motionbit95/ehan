@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { auth, db } from "../../firebase/firebase_conf";
 import { doc, getDoc } from "firebase/firestore";
-import { fetchProducts, getMessageToken } from "../../firebase/firebase_func";
+import {
+  fetchProducts,
+  getMessageToken,
+  handleMessage,
+} from "../../firebase/firebase_func";
 import {
   Box,
   Button,
   Flex,
   HStack,
   Image,
+  Skeleton,
+  SkeletonText,
   Stack,
   Tab,
   TabList,
@@ -36,6 +42,11 @@ function Home(props) {
   const shop_id = window.location.pathname.split("/")[2];
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // 리액트 컴포넌트 내에서 실행되는 코드
+  useEffect(() => {
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+  }, []);
+
   useEffect(() => {
     // shop id로 샵 정보를 가지고 오는 함수
     const handleShopInfo = async () => {
@@ -50,11 +61,10 @@ function Home(props) {
           setProductList(data);
           setCategories(Array.from(data.categories));
         });
-
-        getMessageToken();
       } catch (error) {
         console.error("shop id로 샵 정보가져오기 오류 발생:", error);
       }
+      getMessageToken();
     };
 
     // 익명 로그인을 처리하는 함수
@@ -97,94 +107,102 @@ function Home(props) {
   };
 
   return (
-    <Stack id="container" position={"relative"} height={"auto"}>
-      <Stack
-        id="banner"
-        height={"30vh"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        backgroundImage={`url(${shopInfo?.shop_img})`}
-        backgroundSize={"cover"}
-        backgroundPosition={"center"}
-        backgroundRepeat={"no-repeat"}
-        opacity={"0.7"}
-        padding={"2vh 3vh"}
-      >
-        <Flex
-          id="header"
-          height={"10vh"}
-          width={"100%"}
-          justifyContent={"space-between"}
+    <Stack
+      id="container"
+      position={"relative"}
+      height={"auto"}
+      bgColor={"white"}
+    >
+      <Skeleton isLoaded={shopInfo !== null}>
+        <Stack
+          id="banner"
+          height={"40vh"}
+          flexDirection={"column"}
           alignItems={"center"}
+          backgroundImage={`url(${shopInfo?.shop_img})`}
+          backgroundSize={"cover"}
+          backgroundPosition={"center"}
+          backgroundRepeat={"no-repeat"}
+          opacity={"0.7"}
+          padding={"2vh 3vh"}
         >
-          <Image
-            src={shopInfo?.shop_logo}
-            w={"7vh"}
-            h={"7vh"}
-            objectFit={"cover"}
-            bgColor={"white"}
-            borderRadius={"8px"}
-            onClick={() =>
-              navigate(`/home`, {
-                state: {
-                  uid: auth.currentUser.uid,
-                  shop_id: shop_id,
-                },
-              })
-            }
-          />
-          <Button
-            bgColor={"white"}
-            w={"5vh"}
-            h={"5vh"}
-            borderRadius={"100%"}
-            p={"0"}
+          <Flex
+            id="header"
+            height={"10vh"}
+            width={"100%"}
+            justifyContent={"space-between"}
+            alignItems={"flex-start"}
           >
             <Image
-              w={"3vh"}
-              h={"3vh"}
-              src={require("../../image/ShoppingCart.png")}
+              src={shopInfo?.logo_img}
+              alt="logo_img"
+              // w={"7vh"}
+              h={"48px"}
+              objectFit={"cover"}
+              // bgColor={"white"}
+              borderRadius={"8px"}
               onClick={() =>
-                navigate(`/cart`, {
+                navigate(`/home/${shopInfo.doc_id}`, {
                   state: {
                     uid: auth.currentUser.uid,
-                    shop_id: shop_id,
+                    shop_id: shopInfo.doc_id,
                   },
                 })
               }
             />
-          </Button>
-        </Flex>
-        <Flex
-          id="title"
-          w={"100%"}
-          h={"10vh"}
-          justify={"space-between"}
-          alignItems={"center"}
-        >
-          <Flex
-            direction={"row"}
-            align={"center"}
-            backgroundColor={"white"}
-            width={"100%"}
-            h={"7vh"}
-            opacity={"0.7"}
-            borderRadius={"1vh"}
-          >
-            <Flex w={"7vh"} h={"7vh"} align={"center"} justify={"center"}>
+            <Button
+              bgColor={"white"}
+              w={"5vh"}
+              h={"5vh"}
+              borderRadius={"100%"}
+              p={"0"}
+            >
               <Image
                 w={"3vh"}
-                h={"2vh"}
-                bgColor={"white"}
-                src={require("../../image/th_tag.png")}
+                h={"3vh"}
+                src={require("../../image/ShoppingCart.png")}
+                onClick={() =>
+                  navigate(`/cart`, {
+                    state: {
+                      uid: auth.currentUser.uid,
+                      shop_id: shop_id,
+                    },
+                  })
+                }
               />
-            </Flex>
-            <Text color={"#666666"} fontSize={"medium"}>
-              {shopInfo?.shop_name}
-            </Text>
+            </Button>
           </Flex>
-        </Flex>
-      </Stack>
+          <Flex
+            id="title"
+            w={"100%"}
+            h={"10vh"}
+            justify={"space-between"}
+            alignItems={"center"}
+          >
+            <Flex
+              direction={"row"}
+              align={"center"}
+              backgroundColor={"white"}
+              width={"100%"}
+              h={"7vh"}
+              opacity={"0.8"}
+              borderRadius={"1vh"}
+            >
+              <Flex w={"7vh"} h={"7vh"} align={"center"} justify={"center"}>
+                <Image
+                  w={"3vh"}
+                  h={"2vh"}
+                  bgColor={"white"}
+                  src={require("../../image/th_tag.png")}
+                />
+              </Flex>
+              <Text color={"black"} fontSize={"medium"}>
+                {shopInfo?.shop_name}
+              </Text>
+            </Flex>
+          </Flex>
+        </Stack>
+      </Skeleton>
       <Stack p={"2vh"}>
         <Stack
           className="scroll_view"
@@ -193,26 +211,35 @@ function Home(props) {
           maxW={"100vw"}
           whiteSpace={"nowrap"}
           position={"sticky"}
-          bg={"#f1f1f1"}
+          bgColor={"white"}
           top={"0"}
           py={"5px"}
         >
           {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-          <Tabs variant="solid-rounded" colorScheme="cyan" isLazy>
-            <TabList gap={"8px"} flexBasis={"content"}>
-              {categories?.map((item, index) => (
-                <Tab
-                  onClick={() => moveToScroll(item)}
-                  w={"auto"}
-                  height={"35px"}
-                  key={index}
-                >
-                  {item}
-                </Tab>
-              ))}
-            </TabList>
-          </Tabs>
+          <Skeleton isLoaded={shopInfo !== null} minH={"35px"}>
+            <Tabs variant="solid-rounded" colorScheme="red" isLazy>
+              <TabList gap={"8px"} flexBasis={"content"}>
+                {categories?.map((item, index) => (
+                  <Tab
+                    onClick={() => moveToScroll(item)}
+                    w={"auto"}
+                    height={"35px"}
+                    key={index}
+                  >
+                    {item}
+                  </Tab>
+                ))}
+              </TabList>
+            </Tabs>
+          </Skeleton>
         </Stack>
+        {shopInfo === null && (
+          <Stack>
+            <SkeletonText isLoaded={shopInfo !== null} />
+            <SkeletonText isLoaded={shopInfo !== null} />
+            <SkeletonText isLoaded={shopInfo !== null} />
+          </Stack>
+        )}
         <Stack id="products">
           {categories?.map((category, index) => (
             <Stack id={category} className="category-box" paddingTop={"1vh"}>
@@ -224,10 +251,10 @@ function Home(props) {
                 (item, index) =>
                   category === item.product_category && (
                     <Flex
-                      p={"1vh"}
-                      bgColor={"white"}
+                      p={"10px"}
+                      bgColor={"#f1f1f1"}
                       key={index}
-                      borderRadius={"1vh"}
+                      borderRadius={"10px"}
                     >
                       <HStack
                         onClick={() =>
@@ -236,19 +263,13 @@ function Home(props) {
                           })
                         }
                         width={"100%"}
-                        justifyContent={"space-between"}
+                        spacing={"20px"}
+                        cursor={"pointer"}
                       >
-                        <Stack gap={"10px"}>
-                          <Text fontSize={"large"} fontWeight={"bold"}>
-                            {item.product_name}
-                          </Text>
-                          <Text color="#9B2C2C">
-                            {formatCurrency(item.product_price)}원
-                          </Text>
-                        </Stack>
                         {item.product_images &&
                         item.product_images.length > 0 ? (
                           <Image
+                            objectFit={"cover"}
                             bgColor={"#d9d9d9"}
                             width={"100px"}
                             height={"100px"}
@@ -256,7 +277,12 @@ function Home(props) {
                             borderRadius={"10px"}
                             alt=""
                             src={
-                              item.product_images ? item.product_images[0] : ""
+                              item.product_images
+                                ? item.product_images[0].replaceAll(
+                                    "http",
+                                    "https"
+                                  )
+                                : ""
                             }
                           />
                         ) : (
@@ -268,6 +294,14 @@ function Home(props) {
                             height={"100px"}
                           />
                         )}
+                        <Stack gap={"10px"} height={"100%"} p={"10px"}>
+                          <Text fontSize={"large"} fontWeight={"bold"}>
+                            {item.product_name}
+                          </Text>
+                          <Text color="#9B2C2C" fontWeight={"bold"}>
+                            {formatCurrency(item.product_price)}원
+                          </Text>
+                        </Stack>
                       </HStack>
                     </Flex>
                   )

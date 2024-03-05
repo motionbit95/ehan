@@ -14,7 +14,7 @@ import Order from "./order";
 import Income from "./income";
 import Product from "./product";
 import Inventory from "./inventory";
-import { auth } from "../../firebase/firebase_conf";
+import { auth, messaging } from "../../firebase/firebase_conf";
 import { useNavigate } from "react-router-dom";
 import { debug } from "../../firebase/api";
 

@@ -9,8 +9,14 @@ import {
   Image,
   Stack,
   Text,
+  Center,
+  CloseButton,
+  Checkbox,
 } from "@chakra-ui/react";
 import { formatCurrency } from "./home";
+import { deleteDoc, doc } from "firebase/firestore";
+import { debug } from "../../firebase/api";
+import { db } from "../../firebase/firebase_conf";
 function Cart(props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +38,10 @@ function Cart(props) {
     getCartList();
   }, []);
 
+  const changeCartState = async (index, checked) => {
+    console.log(index, checked);
+  };
+
   const changeCartCount = async (index, count) => {
     const tempCart = [...cartList];
     tempCart[index].count = count;
@@ -42,13 +52,23 @@ function Cart(props) {
     setCartList(tempCart);
 
     // db의 장바구니 데이터를 수정합니다.
+    await updateCart(tempCart[index]);
+
+    // 총 금액을 업데이트 합니다.
     const cartlist = await getCart(location.state.uid);
     setTotalCost(cartlist.totalCost);
-    await updateCart(tempCart[index]);
+  };
+
+  const deleteCart = async (doc_id) => {
+    if (window.confirm("장바구니에서 해당 상품을 삭제하시겠습니까?")) {
+      await deleteDoc(doc(db, "CART", doc_id));
+      debug("장바구니에서 상품을 삭제하였습니다.\ndoc_id :", doc_id);
+      window.location.reload();
+    }
   };
 
   return (
-    <Stack gap={"1vh"} position={"relative"}>
+    <Stack gap={"1vh"} position={"relative"} minH={"100vh"}>
       <Flex
         bgColor={"white"}
         align={"center"}
@@ -78,8 +98,14 @@ function Cart(props) {
             borderRadius={"10px"}
             key={item.doc_id}
           >
-            <Flex width={"100%"} padding={"1vh"}>
-              <HStack w={"100%"}>
+            <Flex width={"100%"} padding={"10px"}>
+              <HStack w={"100%"} spacing={"20px"} align={"flex-start"}>
+                <Checkbox
+                  onChange={(e) => changeCartState(index, e.target.checked)}
+                  defaultChecked={true}
+                  size={"lg"}
+                  colorScheme="red"
+                />
                 {item.product_images && item.product_images.length > 0 ? (
                   <Image
                     bgColor={"#d9d9d9"}
@@ -97,18 +123,14 @@ function Cart(props) {
                     height={"100px"}
                   />
                 )}
-                <Stack>
+                <Stack height={"100%"}>
                   <Text fontWeight={"bold"}>{item.product_name}</Text>
                   <Text color="#9B2C2C">
                     {formatCurrency(item.product_price)}원
                   </Text>
                 </Stack>
               </HStack>
-              <Image
-                w={"15px"}
-                h={"15px"}
-                src={require("../../image/Delete.png")}
-              />
+              <CloseButton onClick={() => deleteCart(item.doc_id)} />
             </Flex>
 
             <Flex justifyContent={"flex-end"} margin={"0 2vh 2vh 0"}>
@@ -118,6 +140,7 @@ function Cart(props) {
                 p={"1vh"}
                 borderRadius={"1vh"}
                 align={"center"}
+                bgColor={"white"}
               >
                 <Image
                   w={"20px"}
@@ -144,6 +167,12 @@ function Cart(props) {
             </Flex>
           </Stack>
         ))}
+        {cartList?.length === 0 && (
+          <Center minH={"40vh"}>
+            <Text color={"#8c8c8c"}>장바구니에 담긴 상품이 없습니다.</Text>
+          </Center>
+        )}
+        <Stack></Stack>
       </Stack>
       <Stack width={"100%"} gap={"2vh"} p={"2vh"} bgColor={"white"}>
         <HStack justifyContent={"space-between"} width={"100%"}>
@@ -159,7 +188,7 @@ function Cart(props) {
       <Text
         color="#8c8c8c"
         padding={"1vh 2vh"}
-        fontSize={"x-small"}
+        fontSize={"small"}
         lineHeight={"1.5"}
       >
         레드스위치는 통신판매중개자이며, 통신판매의 당사자가 아닙니다. 따라서
@@ -174,10 +203,11 @@ function Cart(props) {
         w={"100%"}
         h={"10vh"}
         bgColor={"white"}
-        position={"absolute"}
-        bottom={"0"}
+        position="sticky"
+        bottom="0"
       >
         <Button
+          isDisabled={cartList?.length === 0 || totalCost === 0}
           w={"80%"}
           color={"white"}
           bgColor={"#e53e3e"}

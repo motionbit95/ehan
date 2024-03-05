@@ -15,7 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 import { auth, db, messaging, vapidKey } from "./firebase_conf";
-import { getToken } from "firebase/messaging";
+import { getToken, onMessage } from "firebase/messaging";
 import {
   EmailAuthCredential,
   EmailAuthProvider,
@@ -144,6 +144,7 @@ export const updateCart = async (data) => {
 
 export const postCart = async (data) => {
   try {
+    console.log(data);
     const docRef = await addDoc(collection(db, "CART"), data);
     console.log("Document written with ID: ", docRef.id);
   } catch (error) {
@@ -159,7 +160,7 @@ export const getCart = async (uid) => {
   let totalCost = 0;
   querySnapshot.forEach((doc) => {
     totalCost += doc.data().product_price * doc.data().count;
-    cart.push({ ...doc.data(), doc_id: doc.id });
+    cart.push({ ...doc.data(), product_id: doc.data().doc_id, doc_id: doc.id });
     console.log(totalCost);
   });
   return { cart, totalCost };
@@ -183,9 +184,20 @@ export const getPayment = async (orderId) => {
   return docSnap.data();
 };
 
+export function handleMessage(event) {
+  const message = event.data;
+  if (message.type === "push") {
+    const pushData = message.data;
+    console.log(pushData);
+    // 여기서 모달 창을 띄우는 로직을 추가합니다.
+    // 예: 모달 상태를 업데이트하고, 모달을 보여줍니다.
+  }
+}
+
 export const getMessageToken = async (uid) => {
   // Get registration token. Initially this makes a network call, once retrieved
   // subsequent calls to getToken will return from cache.
+
   getToken(messaging, {
     vapidKey: vapidKey,
   })
@@ -200,11 +212,13 @@ export const getMessageToken = async (uid) => {
           "No registration token available. Request permission to generate one."
         );
         // ...
+        requestPermission();
       }
     })
     .catch((err) => {
       console.log("An error occurred while retrieving token. ", err);
       // ...
+      return;
     });
 };
 
@@ -470,3 +484,21 @@ export const updateProduct = async (data) => {
     return false;
   }
 };
+
+// 푸시 알림 권한 요청 함수
+function requestPermission() {
+  messaging
+    .requestPermission()
+    .then(() => {
+      console.log("Notification permission granted.");
+      // 권한이 부여되면 FCM 토큰을 가져옵니다.
+      return messaging.getToken();
+    })
+    .then((token) => {
+      console.log("FCM Token:", token);
+      // FCM 토큰을 서버로 전송하거나 저장합니다.
+    })
+    .catch((err) => {
+      console.log("Unable to get permission to notify.", err);
+    });
+}
