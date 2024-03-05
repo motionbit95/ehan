@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Center,
   Flex,
   Grid,
@@ -8,14 +7,9 @@ import {
   Image,
   Stack,
   Table,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const Calendar = () => {
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -60,23 +54,14 @@ const Calendar = () => {
       month: currentMonth,
       day,
     });
-    console.log(selectedDate);
 
     if (!startDate || (startDate && endDate)) {
       // 선택된 시작 날짜가 없거나 이미 시작 날짜와 끝 날짜가 선택된 경우
       setStartDate(day);
       setEndDate(null); // 새로운 시작 날짜가 선택되면 끝 날짜 초기화
-    } else if (selectedDate > startDate && !endDate) {
+    } else if (day > startDate && !endDate) {
       // 선택된 시작 날짜가 있고, 선택된 끝 날짜가 없으면 끝 날짜로 설정
       setEndDate(day);
-    } else if (selectedDate.getMonth() !== currentMonth) {
-      // 선택된 날짜가 현재 월이 아닌 경우 월을 넘어가는 로직
-      const newMonth = selectedDate.getMonth();
-      const newYear = selectedDate.getFullYear();
-
-      setCurrentDate(new Date(newYear, newMonth, 1));
-      setStartDate(day);
-      setEndDate(null);
     } else {
       // 이미 시작 날짜와 끝 날짜가 선택되어 있으면 선택 취소
       setStartDate(null);

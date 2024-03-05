@@ -1,12 +1,18 @@
 import {
+  Box,
   Button,
   ButtonGroup,
+  Card,
+  CardBody,
   Center,
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   IconButton,
+  Image,
   Input,
+  InputGroup,
   Select,
   Stack,
   Table,
@@ -19,7 +25,7 @@ import {
   Tr,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import {
   getProduct,
@@ -30,7 +36,7 @@ import {
 import PopupBase from "../../modals/PopupBase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
-import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
 import { debug } from "../../firebase/api";
 
@@ -73,6 +79,35 @@ function ProductInfo({ shopList, permission, ...props }) {
     }
   };
 
+  const imageRef = useRef();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+
+    if (event.target.files[0]) {
+      // 파일을 Blob으로 변환하여 미리보기 이미지 설정
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const fileAsBlob = new Blob([reader.result], {
+          type: event.target.files[0].type,
+        }); // Blob로 저장
+        setPreviewImage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+      console.log(event.target.files[0]);
+    } else {
+      // 파일이 선택되지 않은 경우 미리보기 이미지 초기화
+      setPreviewImage(null);
+    }
+  };
+
+  function onImageUpload() {
+    if (imageRef) {
+      imageRef.current.click();
+    }
+  }
+
   return (
     <Stack w={"100%"} h={"100%"}>
       <Stack>
@@ -108,23 +143,21 @@ function ProductInfo({ shopList, permission, ...props }) {
         <FormControl>
           <FormLabel>상품 이미지 등록</FormLabel>
           <Stack direction={"column-reverse"}>
-            <Input
-              onChange={handleChange}
-              name="product_images"
-              p={"4px"}
-              type="file"
-              accept="image/*"
-            />
-            {fileList.map((file, index) => (
+            <InputGroup>
               <Input
-                onChange={handleChange}
-                name="product_images"
-                p={"4px"}
                 type="file"
-                accept="image/*"
-                key={index}
+                onChange={handleFileChange}
+                display={"none"}
+                ref={imageRef}
               />
-            ))}
+              <Image
+                onClick={onImageUpload}
+                src={previewImage}
+                w={"100px"}
+                h={"100px"}
+              />
+              <IconButton icon={<CloseIcon />} />
+            </InputGroup>
           </Stack>
         </FormControl>
         <FormControl isRequired>
@@ -359,10 +392,103 @@ function Product(props) {
           </Stack>
         </Stack>
       ) : (
-        <Flex w={"100%"} h={"100%"}>
+        <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
-          <Stack>
-            <Text>상품 관리</Text>
+          <Stack p={"20px"} w={"100%"} h={"100%"}>
+            {/* <Text>관리자 설정</Text> */}
+            {admin.permission === "supervisor" && (
+              <Stack>
+                <ButtonGroup size={"sm"}>
+                  <PopupBase
+                    onClose={addProduct}
+                    icon={<AddIcon />}
+                    title={"상품"}
+                    action={"추가"}
+                  >
+                    <ProductInfo
+                      shopList={props.shopList}
+                      permission={admin.permission}
+                      onChangeProduct={updateProductInfo}
+                    />
+                  </PopupBase>
+                </ButtonGroup>
+                <Card p={"10px 0px"}>
+                  {productList?.map((item, index) => (
+                    <CardBody p={"10px 20px"}>
+                      <Stack
+                        border={"1px solid #d9d9d9"}
+                        borderRadius={"10px"}
+                        p={"10px"}
+                        w={"100%"}
+                      >
+                        <HStack>
+                          <Flex direction={"column"}>
+                            <Text>No.</Text>
+                            <Text>상품명</Text>
+                            <Text>카테고리</Text>
+                            <Text>상품가격</Text>
+                            <Text>관리 지점</Text>
+                          </Flex>
+                          <Flex direction={"column"}>
+                            <Text>{index + 1}</Text>
+                            <Text>{item.product_name}</Text>
+                            <Text>{item.product_category}</Text>
+                            <Text>{formatCurrency(item.product_price)}원</Text>
+                            <Text>{searchShopName(item.shop_id)}</Text>
+                          </Flex>
+                        </HStack>
+
+                        <HStack justifyContent={"space-between"}>
+                          <Stack w={"100%"}>
+                            <PopupBase
+                              colorScheme={"gray"}
+                              visibleButton={true}
+                              action={"수정"}
+                              title={<EditIcon />}
+                              onClose={async () => {
+                                if (await updateProduct(productInfo)) {
+                                  setProductList(
+                                    productList.map((product) =>
+                                      product.doc_id === productInfo.doc_id
+                                        ? productInfo
+                                        : product
+                                    )
+                                  );
+                                }
+                              }}
+                            >
+                              <ProductInfo
+                                product={item}
+                                shopList={props.shopList}
+                                permission={admin.permission}
+                                onChangeProduct={updateProductInfo}
+                              />
+                            </PopupBase>
+                          </Stack>
+                          <Stack w={"100%"}>
+                            <IconButton
+                              onClick={() => deleteProduct(item.doc_id)}
+                              icon={<DeleteIcon />}
+                            />
+                          </Stack>
+                        </HStack>
+                      </Stack>
+                    </CardBody>
+                  ))}
+                </Card>
+                <Center>
+                  <Button
+                    colorScheme="red"
+                    mb={"20px"}
+                    w={"80px"}
+                    display={moreButtonVisible ? "box" : "none"}
+                    onClick={() => getProductList()}
+                  >
+                    더보기
+                  </Button>
+                </Center>
+              </Stack>
+            )}
           </Stack>
         </Flex>
       )}

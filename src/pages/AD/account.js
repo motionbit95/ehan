@@ -534,7 +534,7 @@ function Account(props) {
           </Stack>
         </Stack>
       ) : (
-        <Flex w={"100%"} h={"100%"}>
+        <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"}>
             <Stack p={"20px"} w={"100%"} h={"100%"}>
