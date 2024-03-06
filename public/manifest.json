@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "레드스위치",
+  "name": "태그로 간편하게 결제 레드스위치",
   "icons": [
     {
       "src": "favicon.ico",

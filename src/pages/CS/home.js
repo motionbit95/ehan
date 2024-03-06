@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { auth, db } from "../../firebase/firebase_conf";
 import { doc, getDoc } from "firebase/firestore";
@@ -14,6 +14,7 @@ import {
   HStack,
   Image,
   Skeleton,
+  SkeletonCircle,
   SkeletonText,
   Stack,
   Tab,
@@ -42,9 +43,40 @@ function Home(props) {
   const shop_id = window.location.pathname.split("/")[2];
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const [visibleItemId, setVisibleItemId] = useState(null);
+  const containerRef = useRef();
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // entry.target은 화면에 보이는 요소입니다.
+          setVisibleItemId(entry.target.id);
+          console.log(entry.target.id);
+        }
+      });
+    },
+    { threshold: 0.5 } // 50% 이상이 화면에 보이면 콜백 실행
+  );
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const items = containerRef.current.children;
+      for (let item of items) {
+        observer.observe(item);
+      }
+    }
+
+    // Observer 해제
+    return () => {
+      observer.disconnect();
+    };
+  }, [productList]);
+
   // 리액트 컴포넌트 내에서 실행되는 코드
   useEffect(() => {
-    navigator.serviceWorker.addEventListener("message", handleMessage);
+    // 푸시알림 관련
+    // navigator.serviceWorker.addEventListener("message", handleMessage);
+    // getMessageToken();
   }, []);
 
   useEffect(() => {
@@ -56,6 +88,13 @@ function Home(props) {
         const docSnap = await getDoc(docRef);
         setShopInfo(docSnap.data());
 
+        if (!docSnap.data()) {
+          console.log("가맹점이 없음");
+          // 샵을 못찾았으면 테스트샵으로 이동
+          window.location.replace(`/home/test-shop`);
+          return;
+        }
+
         // 상품 리스트 업데이트
         fetchProducts("PRODUCT", "product_category", shop_id).then((data) => {
           setProductList(data);
@@ -63,8 +102,9 @@ function Home(props) {
         });
       } catch (error) {
         console.error("shop id로 샵 정보가져오기 오류 발생:", error);
+        // 샵을 못찾았으면 테스트샵으로 이동
+        window.location.replace(`/home/test-shop`);
       }
-      getMessageToken();
     };
 
     // 익명 로그인을 처리하는 함수
@@ -128,7 +168,7 @@ function Home(props) {
         >
           <Flex
             id="header"
-            height={"10vh"}
+            height={"48px"}
             width={"100%"}
             justifyContent={"space-between"}
             alignItems={"flex-start"}
@@ -136,11 +176,8 @@ function Home(props) {
             <Image
               src={shopInfo?.logo_img}
               alt="logo_img"
-              // w={"7vh"}
               h={"48px"}
               objectFit={"cover"}
-              // bgColor={"white"}
-              borderRadius={"8px"}
               onClick={() =>
                 navigate(`/home/${shopInfo.doc_id}`, {
                   state: {
@@ -152,8 +189,8 @@ function Home(props) {
             />
             <Button
               bgColor={"white"}
-              w={"5vh"}
-              h={"5vh"}
+              w={"40px"}
+              h={"40px"}
               borderRadius={"100%"}
               p={"0"}
             >
@@ -175,7 +212,7 @@ function Home(props) {
           <Flex
             id="title"
             w={"100%"}
-            h={"10vh"}
+            h={"100%"}
             justify={"space-between"}
             alignItems={"center"}
           >
@@ -184,14 +221,14 @@ function Home(props) {
               align={"center"}
               backgroundColor={"white"}
               width={"100%"}
-              h={"7vh"}
+              h={"48px"}
               opacity={"0.8"}
               borderRadius={"1vh"}
             >
-              <Flex w={"7vh"} h={"7vh"} align={"center"} justify={"center"}>
+              <Flex w={"48px"} h={"48px"} align={"center"} justify={"center"}>
                 <Image
-                  w={"3vh"}
-                  h={"2vh"}
+                  w={"24px"}
+                  h={"24px"}
                   bgColor={"white"}
                   src={require("../../image/th_tag.png")}
                 />
@@ -202,122 +239,122 @@ function Home(props) {
             </Flex>
           </Flex>
         </Stack>
-      </Skeleton>
-      <Stack p={"2vh"}>
-        <Stack
-          className="scroll_view"
-          overflowX="scroll"
-          hideScrollbar
-          maxW={"100vw"}
-          whiteSpace={"nowrap"}
-          position={"sticky"}
-          bgColor={"white"}
-          top={"0"}
-          py={"5px"}
-        >
-          {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-          <Skeleton isLoaded={shopInfo !== null} minH={"35px"}>
-            <Tabs variant="solid-rounded" colorScheme="red" isLazy>
+        <Stack>
+          <Stack
+            className="scroll_view"
+            overflowX="scroll"
+            hideScrollbar
+            width={"100vw"}
+            whiteSpace={"nowrap"}
+            zIndex={"20"}
+            position={"sticky"}
+            boxShadow={"md"}
+            bgColor={"white"}
+            top={"0"}
+            py={"5px"}
+            p={"1vh 2vh"}
+          >
+            {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
+            <Tabs
+              variant="solid-rounded"
+              colorScheme="red"
+              isLazy
+              index={parseInt(visibleItemId)}
+            >
               <TabList gap={"8px"} flexBasis={"content"}>
                 {categories?.map((item, index) => (
                   <Tab
-                    onClick={() => moveToScroll(item)}
+                    onClick={() => moveToScroll(index)}
                     w={"auto"}
                     height={"35px"}
                     key={index}
+                    value={item}
                   >
                     {item}
                   </Tab>
                 ))}
               </TabList>
             </Tabs>
-          </Skeleton>
-        </Stack>
-        {shopInfo === null && (
-          <Stack>
-            <SkeletonText isLoaded={shopInfo !== null} />
-            <SkeletonText isLoaded={shopInfo !== null} />
-            <SkeletonText isLoaded={shopInfo !== null} />
           </Stack>
-        )}
-        <Stack id="products">
-          {categories?.map((category, index) => (
-            <Stack id={category} className="category-box" paddingTop={"1vh"}>
-              <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
-                {category}
-              </Text>
-              {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
-              {productList?.products?.map(
-                (item, index) =>
-                  category === item.product_category && (
-                    <Flex
-                      p={"10px"}
-                      bgColor={"#f1f1f1"}
-                      key={index}
-                      borderRadius={"10px"}
-                    >
-                      <HStack
-                        onClick={() =>
-                          navigate(`/menu`, {
-                            state: { data: item, shop_id: shopInfo?.doc_id },
-                          })
-                        }
-                        width={"100%"}
-                        spacing={"20px"}
-                        cursor={"pointer"}
+          <Stack p={"2vh"} id="products" ref={containerRef}>
+            {categories?.map((category, index) => (
+              <Stack id={index} className="category-box" paddingTop={"1vh"}>
+                <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
+                  {category}
+                </Text>
+                {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
+                {productList?.products?.map(
+                  (item, index) =>
+                    category === item.product_category && (
+                      <Flex
+                        p={"10px"}
+                        bgColor={"#f1f1f1"}
+                        key={index}
+                        borderRadius={"10px"}
                       >
-                        {item.product_images &&
-                        item.product_images.length > 0 ? (
-                          <Image
-                            objectFit={"cover"}
-                            bgColor={"#d9d9d9"}
-                            width={"100px"}
-                            height={"100px"}
-                            marginLeft={"1vh"}
-                            borderRadius={"10px"}
-                            alt=""
-                            src={
-                              item.product_images
-                                ? item.product_images[0].replaceAll(
-                                    "http",
-                                    "https"
-                                  )
-                                : ""
-                            }
-                          />
-                        ) : (
-                          <Box
-                            borderRadius={"10px"}
-                            bgColor={"#d9d9d9"}
-                            marginLeft={"1vh"}
-                            width={"100px"}
-                            height={"100px"}
-                          />
-                        )}
-                        <Stack gap={"10px"} height={"100%"} p={"10px"}>
-                          <Text fontSize={"large"} fontWeight={"bold"}>
-                            {item.product_name}
-                          </Text>
-                          <Text color="#9B2C2C" fontWeight={"bold"}>
-                            {formatCurrency(item.product_price)}원
-                          </Text>
-                        </Stack>
-                      </HStack>
-                    </Flex>
-                  )
-              )}
-            </Stack>
-          ))}
+                        <HStack
+                          onClick={() =>
+                            navigate(`/menu`, {
+                              state: { data: item, shop_id: shopInfo?.doc_id },
+                            })
+                          }
+                          width={"100%"}
+                          spacing={"20px"}
+                          cursor={"pointer"}
+                        >
+                          {item.product_images &&
+                          item.product_images.length > 0 ? (
+                            <Image
+                              objectFit={"cover"}
+                              bgColor={"#d9d9d9"}
+                              width={"100px"}
+                              height={"100px"}
+                              marginLeft={"1vh"}
+                              borderRadius={"10px"}
+                              alt=""
+                              src={
+                                item.product_images
+                                  ? item.product_images[0].replaceAll(
+                                      "http",
+                                      "https"
+                                    )
+                                  : ""
+                              }
+                            />
+                          ) : (
+                            <Box
+                              borderRadius={"10px"}
+                              bgColor={"#d9d9d9"}
+                              marginLeft={"1vh"}
+                              width={"100px"}
+                              height={"100px"}
+                            />
+                          )}
+                          <Stack gap={"10px"} height={"100%"} p={"10px"}>
+                            <Text fontSize={"large"} fontWeight={"bold"}>
+                              {item.product_name}
+                            </Text>
+                            <Text color="#9B2C2C" fontWeight={"bold"}>
+                              {formatCurrency(item.product_price)}원
+                            </Text>
+                          </Stack>
+                        </HStack>
+                      </Flex>
+                    )
+                )}
+              </Stack>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
+      </Skeleton>
       <Footer
         companyName="레드스위치"
         ceoName="이한샘"
         businessNumber="208-16-70116"
         address="서울특별시 강남구 역삼로 114, 8층 82호(역삼동, 현죽빌딩)"
         commNumber="2024-서울강남-1234"
-        tel="02-1234-1234"
-        mail="redswitch@redswitch.kr"
+        tel="010-8859-7942"
+        mail="redswitch@gmail.com"
       />
     </Stack>
   );

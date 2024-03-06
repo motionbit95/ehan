@@ -64,8 +64,8 @@ function Menu(props) {
 
   return (
     <Stack gap={"1vh"} id="container" position={"relative"} height={"100vh"}>
-      <Stack id="banner" h={"30vh"}>
-        <Center>
+      <Stack id="banner">
+        <Center pt={"64px"}>
           <Image
             objectFit={"center"}
             height={"100%"}
