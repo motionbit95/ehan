@@ -108,6 +108,18 @@ function ProductInfo({ shopList, permission, ...props }) {
     }
   }
 
+  function onDeleteImage() {
+    setPreviewImage(null);
+    setProduct({
+      ...product,
+      product_images: [],
+    });
+    props.onChangeProduct({
+      ...product,
+      product_images: [],
+    });
+  }
+
   return (
     <Stack w={"100%"} h={"100%"}>
       <Stack>
@@ -156,7 +168,7 @@ function ProductInfo({ shopList, permission, ...props }) {
                 w={"100px"}
                 h={"100px"}
               />
-              <IconButton icon={<CloseIcon />} />
+              <IconButton onClick={onDeleteImage} icon={<CloseIcon />} />
             </InputGroup>
           </Stack>
         </FormControl>
@@ -229,8 +241,15 @@ function Product(props) {
 
   // C - create product
   const addProduct = async () => {
+    // 여기가 firebase에 넣는건데 파일 리스트를 파이어스토어에 저장시킨다(업로드)
+
+    //링크로 변환해서 리스트에 담는다
+
     if (await postProduct(productInfo)) {
-      setProductList([...productList, productInfo]);
+      setProductList([
+        ...productList,
+        { ...productInfo, product_images: "새로운 배열로 바꿔쳐야겟지" },
+      ]);
     }
   };
 

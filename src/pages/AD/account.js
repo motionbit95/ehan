@@ -38,6 +38,7 @@ import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { deleteUser } from "firebase/auth";
 import { debug } from "../../firebase/api";
 import Calender from "../../components/Calender";
+import Calendar from "../../components/Calendar";
 
 function AccountInfo({ permission, admin, shopList, ...props }) {
   const [changePassword, setChangePassword] = useState(false);
@@ -455,6 +456,7 @@ function Account(props) {
                   </PopupBase>
                 </ButtonGroup>
                 <Calender />
+                <Calendar />
                 <TableContainer
                   border={"1px solid #d9d9d9"}
                   bgColor={"white"}

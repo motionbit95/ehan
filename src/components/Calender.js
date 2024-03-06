@@ -48,12 +48,15 @@ const Calendar = () => {
 
   const handleDateClick = (day) => {
     // 날짜 선택
+    console.log(day);
+
     setSelectedDate({
       // 선택한 날짜를 저장
       year: currentYear,
-      month: currentMonth,
+      month: currentMonth + 1,
       day,
     });
+    console.log(selectedDate);
 
     if (!startDate || (startDate && endDate)) {
       // 선택된 시작 날짜가 없거나 이미 시작 날짜와 끝 날짜가 선택된 경우
@@ -114,7 +117,7 @@ const Calendar = () => {
                 <Flex py={"5px"} gap={0} key={weekIndex}>
                   {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
                     const day = currentMonthDays[weekIndex * 7 + dayIndex];
-                    const isCurrentMonthDays = day !== null; // 저장된 년도와 월이 day에 저장된 날짜와 일치한지?
+                    const isCurrentMonthDays = day !== null; // 날짜가 null값이 아니면? isCurrentMonthDays에 대입
 
                     const isSelected =
                       (day && startDate === day) ||
