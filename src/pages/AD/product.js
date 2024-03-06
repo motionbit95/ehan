@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   ButtonGroup,
   Card,
@@ -35,10 +34,11 @@ import {
 } from "../../firebase/firebase_func";
 import PopupBase from "../../modals/PopupBase";
 import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase/firebase_conf";
+import { db, storage } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
 import { debug } from "../../firebase/api";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function ProductInfo({ shopList, permission, ...props }) {
   const [product, setProduct] = useState(
@@ -54,18 +54,20 @@ function ProductInfo({ shopList, permission, ...props }) {
         }
   );
 
-  const [fileList, setFileList] = useState([]);
-
   const handleChange = (event) => {
     if (event.target.name === "product_images") {
-      setFileList([...fileList, event.target.files[0]]);
+      debug("파일을 선택했습니다. ", event.target.files[0].name);
+      // 03.06 - 이미지는 하나만 선택하도록 변경
+      // setFileList([...fileList, event.target.files[0]]);
       setProduct({
         ...product,
-        [event.target.name]: [...fileList, event.target.files[0].name],
+        // [event.target.name]: [...fileList, event.target.files[0]],
+        [event.target.name]: [event.target.files[0]],
       });
       props.onChangeProduct({
         ...product,
-        [event.target.name]: [...fileList, event.target.files[0].name],
+        // [event.target.name]: [...fileList, event.target.files[0]],
+        [event.target.name]: [event.target.files[0]],
       });
     } else {
       setProduct({
@@ -79,11 +81,14 @@ function ProductInfo({ shopList, permission, ...props }) {
     }
   };
 
+  // 이미지 선택 시 아래의 함수를 사용
   const imageRef = useRef();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(
+    props.product?.product_images[0] ? props.product?.product_images[0] : null
+  );
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+    // 파일 정보를 product 정보에 저장합니다.
+    handleChange(event);
 
     if (event.target.files[0]) {
       // 파일을 Blob으로 변환하여 미리보기 이미지 설정
@@ -95,7 +100,6 @@ function ProductInfo({ shopList, permission, ...props }) {
         setPreviewImage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
       };
       reader.readAsArrayBuffer(event.target.files[0]);
-      console.log(event.target.files[0]);
     } else {
       // 파일이 선택되지 않은 경우 미리보기 이미지 초기화
       setPreviewImage(null);
@@ -109,6 +113,8 @@ function ProductInfo({ shopList, permission, ...props }) {
   }
 
   function onDeleteImage() {
+    // 파일 ui 에 담긴 정보도 지워줘야한다.
+    imageRef.current.value = "";
     setPreviewImage(null);
     setProduct({
       ...product,
@@ -155,20 +161,53 @@ function ProductInfo({ shopList, permission, ...props }) {
         <FormControl>
           <FormLabel>상품 이미지 등록</FormLabel>
           <Stack direction={"column-reverse"}>
-            <InputGroup>
+            <InputGroup w={"100px"}>
               <Input
                 type="file"
+                name="product_images"
                 onChange={handleFileChange}
                 display={"none"}
                 ref={imageRef}
+                accept="image/*"
               />
-              <Image
-                onClick={onImageUpload}
-                src={previewImage}
-                w={"100px"}
-                h={"100px"}
-              />
-              <IconButton onClick={onDeleteImage} icon={<CloseIcon />} />
+              {previewImage ? (
+                <>
+                  <Image
+                    onClick={onImageUpload}
+                    src={previewImage}
+                    w={"100px"}
+                    h={"100px"}
+                  />
+                  <IconButton
+                    size={"xs"}
+                    position={"absolute"}
+                    top={0}
+                    right={0}
+                    onClick={onDeleteImage}
+                    icon={<CloseIcon />}
+                    // variant={"ghost"}
+                  />
+                </>
+              ) : (
+                <Flex
+                  border={"1px solid #d9d9d9"}
+                  borderRadius={"10px"}
+                  onClick={onImageUpload}
+                  src={previewImage}
+                  w={"100px"}
+                  h={"100px"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <IconButton
+                    onClick={onDeleteImage}
+                    icon={<AddIcon />}
+                    variant={"ghost"}
+                    size={"lg"}
+                    _hover={{ bg: "none" }}
+                  />
+                </Flex>
+              )}
             </InputGroup>
           </Stack>
         </FormControl>
@@ -239,17 +278,37 @@ function Product(props) {
     return null;
   }
 
+  // 파일 업로드 부분
+  const uploadFile = async (file) => {
+    // uid 부여를 위해 현재 시각을 파일명에 적어줌
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줌
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const uploaded_file = await uploadBytes(
+      ref(storage, `product_image/${file.name}-${year + month + day}`),
+      file
+    );
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+    console.log(file_url);
+    return file_url;
+  };
+
   // C - create product
   const addProduct = async () => {
-    // 여기가 firebase에 넣는건데 파일 리스트를 파이어스토어에 저장시킨다(업로드)
+    // firebase의 storage에 이미지 파일을 파이어스토어에 저장시킨다(업로드)
+    if (productInfo.product_images && productInfo.product_images.length > 0) {
+      productInfo.product_images.forEach(async (image) => {
+        const url = await uploadFile(image);
+        productInfo.product_images = [url];
 
-    //링크로 변환해서 리스트에 담는다
-
-    if (await postProduct(productInfo)) {
-      setProductList([
-        ...productList,
-        { ...productInfo, product_images: "새로운 배열로 바꿔쳐야겟지" },
-      ]);
+        //링크로 변환해서 리스트에 담는다
+        if (await postProduct(productInfo)) {
+          setProductList([...productList, productInfo]);
+        }
+      });
     }
   };
 
@@ -257,7 +316,7 @@ function Product(props) {
   const getProductList = async () => {
     // 상품 목록을 조회합니다.
     await getProduct(lastDocumentSnapshot, admin.shop_id).then((data) => {
-      if (data.products.length > 0) {
+      if (data.products && data.products.length > 0) {
         setProductList([...productList, ...data.products]);
         setLastDocumentSnapshot(data.lastDocumentSnapshot);
         if (data.products.length < 10) {
