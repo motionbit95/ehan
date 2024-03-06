@@ -1,7 +1,9 @@
 // 상수(고정적인 값)
 export const BUILD_MODE = "dev"; // 배포 시 이 부분을 production으로 변경
 export const SERVER_URL =
-  "https://port-0-nicepay-module-17xco2nlszge3vt.sel5.cloudtype.app";
+  BUILD_MODE === "dev"
+    ? "https://port-0-nicepay-module-17xco2nlszge3vt.sel5.cloudtype.app"
+    : "https://port-0-nicepay-test-17xco2nlszge3vt.sel5.cloudtype.app";
 export const PG_CLIENT_ID = "S2_af4543a0be4d49a98122e01ec2059a56";
 // const secretKey = "9eb85607103646da9f9c02b128f2e5ee";
 
