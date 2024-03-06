@@ -463,8 +463,8 @@ function Account(props) {
                   borderRadius={"10px"}
                   p={"10px"}
                 >
-                  <Table variant="simple">
-                    <Thead>
+                  <Table variant="simple" size={"sm"}>
+                    <Thead h={"40px"}>
                       <Tr>
                         <Th>No</Th>
                         <Th>이름</Th>
@@ -491,6 +491,7 @@ function Account(props) {
                           </Td>
                           <Td>
                             <PopupBase
+                              size={"sm"}
                               colorScheme={"gray"}
                               visibleButton={true}
                               action={"수정"}
@@ -510,6 +511,7 @@ function Account(props) {
                           </Td>
                           <Td>
                             <IconButton
+                              size={"sm"}
                               onClick={() => deleteAdmin(item.doc_id)}
                               icon={<DeleteIcon />}
                             />

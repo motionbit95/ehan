@@ -260,10 +260,9 @@ function Product(props) {
 
   useEffect(() => {
     if (admin.doc_id) {
-      // getProductList();
       setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
     }
-  }, [admin]);
+  }, [admin, productList]);
 
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {
@@ -292,7 +291,6 @@ function Product(props) {
     );
 
     const file_url = await getDownloadURL(uploaded_file.ref);
-    console.log(file_url);
     return file_url;
   };
 
@@ -422,6 +420,7 @@ function Product(props) {
                               colorScheme={"gray"}
                               visibleButton={true}
                               action={"수정"}
+                              size={"sm"}
                               title={<EditIcon />}
                               onClose={async () => {
                                 if (await updateProduct(productInfo)) {
@@ -445,6 +444,7 @@ function Product(props) {
                           </Td>
                           <Td>
                             <IconButton
+                              size={"sm"}
                               onClick={() => deleteProduct(item.doc_id)}
                               icon={<DeleteIcon />}
                             />

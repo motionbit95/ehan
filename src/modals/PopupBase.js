@@ -30,14 +30,16 @@ function PopupBase({ visibleButton = true, ...props }) {
   return (
     <>
       <Button
+        size={props.size ? props.size : "md"}
         leftIcon={props.icon ? props.icon : null}
         colorScheme={props.colorScheme ? props.colorScheme : "red"}
         variant={props.variant ? props.variant : "solid"}
         onClick={onOpen}
       >
-        {props.title}
+        {props.text ? props.text : props.title}
       </Button>
       <Modal
+        {...props}
         isCentered
         finalFocusRef={finalRef}
         isOpen={isOpen}

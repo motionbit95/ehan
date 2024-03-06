@@ -184,6 +184,66 @@ export const getPayment = async (orderId) => {
   return docSnap.data();
 };
 
+export const getOrder = async (lastDocumentSnapshot, shop_id) => {
+  // 이전 페이지의 마지막 문서 스냅샷
+  const documentsPerPage = 10;
+  // 시작 위치 계산
+  var startAfterDocument = null;
+
+  // 이전 페이지의 마지막 문서 스냅샷이 존재하는 경우
+  if (lastDocumentSnapshot) {
+    startAfterDocument = lastDocumentSnapshot;
+  }
+
+  try {
+    let q;
+    if (shop_id) {
+      q = query(
+        collection(db, "PAYMENT"),
+        where("shop_id", "==", shop_id),
+        orderBy("pay_date", "desc"),
+        limit(documentsPerPage)
+      );
+    } else {
+      q = query(
+        collection(db, "PAYMENT"),
+        orderBy("pay_date", "desc"),
+        limit(documentsPerPage)
+      );
+    }
+
+    // 시작 문서가 있는 경우에만 startAfter() 메서드 사용
+    if (startAfterDocument) {
+      q = query(
+        collection(db, "PAYMENT"),
+        orderBy("pay_date", "desc"),
+        startAfter(startAfterDocument),
+        limit(documentsPerPage)
+      );
+    }
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.size === 0) {
+      return { products: [], lastDocumentSnapshot: null };
+    }
+
+    lastDocumentSnapshot = querySnapshot.docs[querySnapshot.docs.length - 1];
+    const products = [];
+    querySnapshot.forEach((doc) => {
+      products.push({
+        ...doc.data(),
+        doc_id: doc.id,
+      });
+    });
+
+    return { products, lastDocumentSnapshot };
+  } catch (error) {
+    console.error("데이터 가져오기 중 오류 발생:", error);
+    return {};
+  }
+};
+
 export function handleMessage(event) {
   const message = event.data;
   if (message.type === "push") {
