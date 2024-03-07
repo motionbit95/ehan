@@ -348,45 +348,7 @@ function Order(props) {
                           p={"10px"}
                           w={"100%"}
                         >
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>결제(환불)일</Text>
-                              <Text>결제내역</Text>
-                              <Text>결제(환불)금액</Text>
-                              <Text>배송지</Text>
-                            </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <Text>{item?.pay_date?.split("T")[0]}</Text>
-                              <Text>
-                                {item?.pay_product[0]?.product_name} 외{" "}
-                                {item?.pay_product?.length}건
-                              </Text>
-                              <Text>
-                                {item?.pay_price
-                                  ? formatCurrency(item?.pay_price)
-                                  : "0"}
-                              </Text>
-                              <Text>{item?.order_address}</Text>
-                            </Flex>
-                          </HStack>
-
-                          <HStack justifyContent={"space-between"}>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                size={"sm"}
-                                icon={<CopyIcon />}
-                                onClick={() => window.open(item?.receipt_url)}
-                              />
-                            </Stack>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                size={"sm"}
-                                icon={<DeleteIcon />}
-                                onClick={() => deleteOrder(item?.doc_id)}
-                              />
-                            </Stack>
+                          <Flex>
                             <Stack>
                               <PopupBase
                                 size={"xs"}
@@ -431,6 +393,46 @@ function Order(props) {
                                   </Stack>
                                 </RadioGroup>
                               </PopupBase>
+                            </Stack>
+                          </Flex>
+                          <HStack>
+                            <Flex direction={"column"}>
+                              <Text>No.</Text>
+                              <Text>결제(환불)일</Text>
+                              <Text>결제내역</Text>
+                              <Text>결제(환불)금액</Text>
+                              <Text>배송지</Text>
+                            </Flex>
+                            <Flex direction={"column"}>
+                              <Text>{index + 1}</Text>
+                              <Text>{item?.pay_date?.split("T")[0]}</Text>
+                              <Text>
+                                {item?.pay_product[0]?.product_name} 외{" "}
+                                {item?.pay_product?.length}건
+                              </Text>
+                              <Text>
+                                {item?.pay_price
+                                  ? formatCurrency(item?.pay_price)
+                                  : "0"}
+                              </Text>
+                              <Text>{item?.order_address}</Text>
+                            </Flex>
+                          </HStack>
+
+                          <HStack justifyContent={"space-between"}>
+                            <Stack w={"100%"}>
+                              <IconButton
+                                size={"sm"}
+                                icon={<CopyIcon />}
+                                onClick={() => window.open(item?.receipt_url)}
+                              />
+                            </Stack>
+                            <Stack w={"100%"}>
+                              <IconButton
+                                size={"sm"}
+                                icon={<DeleteIcon />}
+                                onClick={() => deleteOrder(item?.doc_id)}
+                              />
                             </Stack>
                           </HStack>
                         </Stack>
