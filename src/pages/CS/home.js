@@ -51,7 +51,6 @@ function Home(props) {
         if (entry.isIntersecting) {
           // entry.target은 화면에 보이는 요소입니다.
           setVisibleItemId(entry.target.id);
-          console.log(entry.target.id);
         }
       });
     },
