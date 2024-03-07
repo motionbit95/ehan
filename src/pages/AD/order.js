@@ -1,6 +1,8 @@
 import {
   Badge,
   Button,
+  Card,
+  CardBody,
   Center,
   Flex,
   FormControl,
@@ -296,7 +298,161 @@ function Order(props) {
           </Stack>
         </Stack>
       ) : (
-        <Flex>모바일 뷰 주문관리</Flex>
+        <Flex w={"100%"} h={"100%"} minW={"350px"}>
+          {/* mobile 에서의 레이아웃 */}
+
+          <Stack w={"100%"} h={"100%"}>
+            <RFilter
+              render={
+                <>
+                  <Stack spacing={"20px"}>
+                    <FormControl>
+                      <FormLabel>정렬</FormLabel>
+                      <RadioGroup>
+                        <HStack>
+                          <Radio>결제일순</Radio>
+                          <Radio>금액순</Radio>
+                          <Radio>배송상태순</Radio>
+                        </HStack>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>검색</FormLabel>
+                      <HStack>
+                        <Select>
+                          <option>상품명</option>
+                          <option>결제금액</option>
+                          <option>배송지</option>
+                          <option>배송상태</option>
+                        </Select>
+                        <Input />
+                      </HStack>
+                    </FormControl>
+                    <HStack justifyContent={"flex-end"}>
+                      <Button>적용</Button>
+                    </HStack>
+                  </Stack>
+                </>
+              }
+            />
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {/* <Text>관리자 설정</Text> */}
+              {admin.permission === "supervisor" && (
+                <Stack>
+                  <Card p={"10px 0px"}>
+                    {orderList?.map((item, index) => (
+                      <CardBody p={"10px 20px"}>
+                        <Stack
+                          border={"1px solid #d9d9d9"}
+                          borderRadius={"10px"}
+                          p={"10px"}
+                          w={"100%"}
+                        >
+                          <HStack>
+                            <Flex direction={"column"}>
+                              <Text>No.</Text>
+                              <Text>결제(환불)일</Text>
+                              <Text>결제내역</Text>
+                              <Text>결제(환불)금액</Text>
+                              <Text>배송지</Text>
+                            </Flex>
+                            <Flex direction={"column"}>
+                              <Text>{index + 1}</Text>
+                              <Text>{item?.pay_date?.split("T")[0]}</Text>
+                              <Text>
+                                {item?.pay_product[0]?.product_name} 외{" "}
+                                {item?.pay_product?.length}건
+                              </Text>
+                              <Text>
+                                {item?.pay_price
+                                  ? formatCurrency(item?.pay_price)
+                                  : "0"}
+                              </Text>
+                              <Text>{item?.order_address}</Text>
+                            </Flex>
+                          </HStack>
+
+                          <HStack justifyContent={"space-between"}>
+                            <Stack w={"100%"}>
+                              <IconButton
+                                size={"sm"}
+                                icon={<CopyIcon />}
+                                onClick={() => window.open(item?.receipt_url)}
+                              />
+                            </Stack>
+                            <Stack w={"100%"}>
+                              <IconButton
+                                size={"sm"}
+                                icon={<DeleteIcon />}
+                                onClick={() => deleteOrder(item?.doc_id)}
+                              />
+                            </Stack>
+                            <Stack>
+                              <PopupBase
+                                size={"xs"}
+                                colorScheme={
+                                  item?.pay_state === "0000"
+                                    ? "gray"
+                                    : item?.pay_state === "0001"
+                                    ? "orange"
+                                    : "green"
+                                }
+                                title={"배송상태"}
+                                text={
+                                  item?.pay_state === "0000"
+                                    ? "배송전"
+                                    : item?.pay_state === "0001"
+                                    ? "배송시작"
+                                    : "배송완료"
+                                }
+                                action={"변경"}
+                                onClose={(e) => {
+                                  handleChangeState(state, item);
+                                }}
+                              >
+                                <RadioGroup
+                                  id="pay_state"
+                                  colorScheme="red"
+                                  defaultValue={item?.pay_state}
+                                  onChange={(e) => {
+                                    setState(e);
+                                  }}
+                                >
+                                  <Stack>
+                                    <Radio size={"lg"} value="0000">
+                                      배송전
+                                    </Radio>
+                                    <Radio size={"lg"} value="0001">
+                                      배송시작
+                                    </Radio>
+                                    <Radio size={"lg"} value="0002">
+                                      배송완료
+                                    </Radio>
+                                  </Stack>
+                                </RadioGroup>
+                              </PopupBase>
+                            </Stack>
+                          </HStack>
+                        </Stack>
+                      </CardBody>
+                    ))}
+                  </Card>
+                  <Center>
+                    <Button
+                      colorScheme="red"
+                      mb={"20px"}
+                      w={"80px"}
+                      display={moreButtonVisible ? "box" : "none"}
+                      onClick={() => getOrderList()}
+                    >
+                      더보기
+                    </Button>
+                  </Center>
+                </Stack>
+              )}
+            </Stack>
+          </Stack>
+        </Flex>
       )}
     </Flex>
   );
