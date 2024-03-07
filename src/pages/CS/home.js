@@ -41,16 +41,21 @@ function Home(props) {
   const [productList, setProductList] = useState([]);
   const [categories, setCategories] = useState([]);
   const shop_id = window.location.pathname.split("/")[2];
-  const [isScrolled, setIsScrolled] = useState(false);
 
-  const [visibleItemId, setVisibleItemId] = useState(null);
+  const [visibleItemId, setVisibleItemId] = useState(0);
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const containerRef = useRef();
+
+  const [scrolling, setScrolling] = useState(false);
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           // entry.target은 화면에 보이는 요소입니다.
-          setVisibleItemId(entry.target.id);
+          if (!scrolling) {
+            setVisibleItemId(entry.target.id);
+          }
         }
       });
     },
@@ -71,6 +76,32 @@ function Home(props) {
     };
   }, [productList]);
 
+  useEffect(() => {
+    let timeoutId;
+
+    const handleScroll = () => {
+      setScrolling(true);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setScrolling(false);
+      }, 100); // 200ms 이후에 스크롤이 멈춘 것으로 간주
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (scrolling) {
+      setSelectedItemId(null);
+    } else {
+      setSelectedItemId(parseInt(visibleItemId));
+    }
+  }, [scrolling]);
+
   // 리액트 컴포넌트 내에서 실행되는 코드
   useEffect(() => {
     // 푸시알림 관련
@@ -88,7 +119,6 @@ function Home(props) {
         setShopInfo(docSnap.data());
 
         if (!docSnap.data()) {
-          console.log("가맹점이 없음");
           // 샵을 못찾았으면 테스트샵으로 이동
           window.location.replace(`/home/test-shop`);
           return;
@@ -116,7 +146,6 @@ function Home(props) {
             // 로그인 성공
             const uid = userCredential.user.uid;
             setUser(uid); // UID 설정
-            console.log(uid);
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -138,10 +167,13 @@ function Home(props) {
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
 
   const moveToScroll = (id) => {
-    console.log(id);
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
     }
   };
 
@@ -258,12 +290,19 @@ function Home(props) {
               variant="solid-rounded"
               colorScheme="red"
               isLazy
-              index={parseInt(visibleItemId)}
+              defaultIndex={parseInt(visibleItemId)}
+              index={
+                selectedItemId
+                  ? parseInt(selectedItemId)
+                  : parseInt(visibleItemId)
+              }
             >
               <TabList gap={"8px"} flexBasis={"content"}>
                 {categories?.map((item, index) => (
                   <Tab
-                    onClick={() => moveToScroll(index)}
+                    onClick={async () => {
+                      moveToScroll(index);
+                    }}
                     w={"auto"}
                     height={"35px"}
                     key={index}

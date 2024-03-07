@@ -134,7 +134,11 @@ function Cart(props) {
                       height={"100px"}
                       borderRadius={"10px"}
                       alt=""
-                      src={item.product_images ? item.product_images[0] : ""}
+                      src={
+                        item.product_images
+                          ? item.product_images[0].replace("http", "https")
+                          : ""
+                      }
                     />
                   ) : (
                     <Box

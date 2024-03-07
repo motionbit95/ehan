@@ -4,6 +4,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
+import { getDatabase } from "firebase/database";
 //import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,5 +31,6 @@ const app = initializeApp(firebaseConfig);
 // 인스턴스 추가
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const realtimeDB = getDatabase(app);
 export const auth = getAuth(app);
 export const messaging = getMessaging(app);
