@@ -8,6 +8,7 @@ import {
   limit,
   orderBy,
   query,
+  serverTimestamp,
   setDoc,
   startAfter,
   startAt,
@@ -25,6 +26,7 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { debug, error } from "./api";
+import { getDatabase, onValue, ref, set } from "firebase/database";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
 export const fetchProducts = async (collection_name, field_name, shop_id) => {
@@ -562,3 +564,44 @@ function requestPermission() {
       console.log("Unable to get permission to notify.", err);
     });
 }
+
+//# 다시 체크해봐야함
+export function createInventoryData(shop_id, product_id) {
+  const db = getDatabase();
+  set(ref(db, "inventory/" + shop_id), {
+    shop_id: shop_id,
+    product_id: product_id,
+    inventory_use: false,
+    inventory_count: 0,
+    createAt: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+  });
+}
+
+export async function readInventoryData(shop_id) {
+  const db = getDatabase();
+  const starCountRef = ref(db, "inventory/" + shop_id);
+  const inventoryData = [];
+  await onValue(starCountRef, (snapshot) => {
+    const data = snapshot.val();
+    const inventory = Object.values(data);
+    inventory.forEach(async (item) => {
+      await inventoryData.push(item);
+    });
+  });
+  return inventoryData;
+}
+
+export const getTotalProducts = async (shop_id) => {
+  // 콜렉션 레퍼런스
+  var q = query(collection(db, "PRODUCT"));
+  if (shop_id)
+    q = query(collection(db, "PRODUCT"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  const products = [];
+  querySnapshot.forEach((doc) => {
+    products.push({ ...doc.data(), doc_id: doc.id });
+  });
+
+  return products;
+};

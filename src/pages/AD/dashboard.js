@@ -64,7 +64,7 @@ function Dashboard(props) {
       case "income":
         return <Income />;
       case "inventory":
-        return <Inventory />;
+        return <Inventory shopList={shopList} />;
       case "product":
         return <Product shopList={shopList} />;
       default:
