@@ -275,7 +275,7 @@ function Home(props) {
             className="scroll_view"
             overflowX="scroll"
             hideScrollbar
-            width={"100vw"}
+            width={"100%"}
             whiteSpace={"nowrap"}
             zIndex={"20"}
             position={"sticky"}

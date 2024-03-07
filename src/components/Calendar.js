@@ -1,78 +1,98 @@
-import { Box, Flex, FormLabel, Text } from "@chakra-ui/react";
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
+import { Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
 
 function Calendar() {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
 
   return (
-    <Flex
-      flexDirection="row"
-      gap={"20px"}
-      p={"20px"}
-      border={"1px solid black"}
-      borderRadius={"10px"}
-      bgColor={"#d9d9d9"}
-    >
-      <label>시작일</label>
-      <Flex
-        bgColor={"white"}
-        border={"1px solid black"}
-        borderRadius={"10px"}
-        p={"5px"}
-      >
-        <DatePicker
-          selected={startDate}
-          onChange={handleStartDateChange}
-          selectsStart
+    <Stack>
+      <Flex>
+        <StyleDatePicker
+          customInput={
+            <Flex>
+              <CustomInput />
+              <IconButton icon={<CalendarIcon />} />
+            </Flex>
+          }
+          renderCustomHeader={({
+            date,
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <Flex
+              bgColor={"white"}
+              justify={"space-between"}
+              align={"center"}
+              p={"0 10px"}
+            >
+              <Text fontWeight={"bold"} fontSize={"lg"}>
+                {date.getFullYear()} . {date.getMonth() + 1}
+              </Text>
+              <Box>
+                <IconButton
+                  bgColor={"white"}
+                  onClick={decreaseMonth}
+                  disabled={prevMonthButtonDisabled}
+                  icon={<ChevronLeftIcon />}
+                />
+                <IconButton
+                  bgColor={"white"}
+                  onClick={increaseMonth}
+                  disabled={nextMonthButtonDisabled}
+                  icon={<ChevronRightIcon />}
+                />
+              </Box>
+            </Flex>
+          )}
+          dateFormat="yyyy.MM.dd"
+          selectsRange={true}
           startDate={startDate}
           endDate={endDate}
-          dateFormat="yyyy-MM-dd"
-          placeholderText="시작 날짜를 선택하세요"
+          onChange={(update) => {
+            setDateRange(update);
+          }}
         />
       </Flex>
-      <label>종료일</label>
-      <Flex
-        bgColor={"white"}
-        border={"1px solid black"}
-        borderRadius={"10px"}
-        p={"5px"}
-      >
-        <DatePicker
-          selected={endDate}
-          onChange={handleEndDateChange}
-          selectsEnd
-          startDate={startDate}
-          endDate={endDate}
-          minDate={startDate}
-          dateFormat="yyyy-MM-dd"
-          placeholderText="종료 날짜를 선택하세요"
-        />
+      <Flex>
+        {startDate && endDate && (
+          <Box
+            bgColor={"white"}
+            border={"1px solid black"}
+            borderRadius={"10px"}
+            p={"5px"}
+            textAlign={"center"}
+          >
+            <Text>선택되면 출력</Text>
+            {startDate.toLocaleDateString()} ~ {endDate.toLocaleDateString()}
+          </Box>
+        )}
       </Flex>
-      {startDate && endDate && (
-        <Box
-          bgColor={"white"}
-          border={"1px solid black"}
-          borderRadius={"10px"}
-          p={"5px"}
-          textAlign={"center"}
-        >
-          <Text>선택되면 출력</Text>
-          {startDate.toLocaleDateString()} ~ {endDate.toLocaleDateString()}
-        </Box>
-      )}
-    </Flex>
+    </Stack>
   );
 }
 
 export default Calendar;
+
+const StyleDatePicker = styled(DatePicker)`
+  display: flex;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  gap: 10px;
+`;
+
+const CustomInput = styled.input`
+  background-color: #d9d9d9;
+`;
