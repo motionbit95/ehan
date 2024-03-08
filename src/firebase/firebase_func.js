@@ -566,29 +566,27 @@ function requestPermission() {
 }
 
 //# 다시 체크해봐야함
-export function createInventoryData(shop_id, product_id) {
-  const db = getDatabase();
-  set(ref(db, "inventory/" + shop_id), {
-    shop_id: shop_id,
-    product_id: product_id,
-    inventory_use: false,
-    inventory_count: 0,
-    createAt: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
-  });
+export async function createInventoryData(data) {
+  try {
+    const docRef = await addDoc(collection(db, "INVENTORY"), data);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
 }
 
 export async function readInventoryData(shop_id) {
-  const db = getDatabase();
-  const starCountRef = ref(db, "inventory/" + shop_id);
-  const inventoryData = [];
-  await onValue(starCountRef, (snapshot) => {
-    const data = snapshot.val();
-    const inventory = Object.values(data);
-    inventory.forEach(async (item) => {
-      await inventoryData.push(item);
-    });
+  var q = query(collection(db, "INVENTORY"));
+  if (shop_id)
+    q = query(collection(db, "INVENTORY"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  const inventories = [];
+  querySnapshot.forEach((doc) => {
+    inventories.push({ ...doc.data(), doc_id: doc.id });
   });
-  return inventoryData;
+
+  return inventories;
 }
 
 export const getTotalProducts = async (shop_id) => {

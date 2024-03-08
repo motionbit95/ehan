@@ -20,6 +20,8 @@ import {
   Card,
   CardBody,
   HStack,
+  Switch,
+  Image,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -29,8 +31,41 @@ import {
 } from "../../firebase/firebase_func";
 import { useGlobalState } from "../../GlobalState";
 import PopupBase from "../../modals/PopupBase";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
+
+function ProductColumn({ productList, product_id }) {
+  const [product, setProduct] = useState(null);
+  useEffect(() => {
+    searchProduct();
+  }, []);
+  function searchProduct() {
+    // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
+    for (let item of productList) {
+      console.log(item.doc_id, product_id);
+      // 타겟 값과 일치하는 항목을 찾았을 때 해당 정보 반환
+      if (item.doc_id === product_id) {
+        setProduct(item);
+      }
+    }
+    // 타겟 값과 일치하는 항목이 없을 경우 null 반환 또는 다른 예외처리 수행
+    return null;
+  }
+
+  return (
+    <>
+      <Td>
+        <Text>{product?.product_name}</Text>
+      </Td>
+      <Td>
+        <Text>{product?.product_category}</Text>
+      </Td>
+      <Td>
+        <Text>{product?.product_price}</Text>
+      </Td>
+    </>
+  );
+}
 
 function Inventory({ ...props }) {
   const { admin } = useGlobalState();
@@ -72,11 +107,13 @@ function Inventory({ ...props }) {
   };
 
   const addInventory = (e) => {
-    // console.log("재고추가");
-    // console.log(e.target[0].name, e.target[0].value);
-    // console.log(e.target[1].name, e.target[1].value);
-
-    createInventoryData(e.target[0].value, e.target[1].value);
+    createInventoryData({
+      createAt: new Date(),
+      shop_id: e.target[0].value,
+      product_id: e.target[1].value,
+      inventory_use: true,
+      inventory_count: 0,
+    });
   };
 
   const readInventory = async () => {
@@ -103,7 +140,11 @@ function Inventory({ ...props }) {
             {/* <Text>관리자 설정</Text> */}
             {admin.permission === "supervisor" && (
               <Stack>
-                <ButtonGroup size={"sm"}>
+                <ButtonGroup
+                  size={"md"}
+                  w={"100%"}
+                  justifyContent={"space-between"}
+                >
                   <PopupBase
                     onClose={addInventory}
                     icon={<AddIcon />}
@@ -133,6 +174,9 @@ function Inventory({ ...props }) {
                       </FormControl>
                     </Stack>
                   </PopupBase>
+                  <Button colorScheme="red" leftIcon={<EditIcon />}>
+                    저장
+                  </Button>
                 </ButtonGroup>
                 <TableContainer
                   border={"1px solid #d9d9d9"}
@@ -149,12 +193,9 @@ function Inventory({ ...props }) {
                         <Th>카테고리</Th>
                         <Th>상품가격</Th>
                         <Th>관리지점</Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          수정
-                        </Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          삭제
-                        </Th>
+                        <Th textAlign={"center"}>재고수량</Th>
+                        <Th textAlign={"center"}>재고사용여부</Th>
+                        <Th w={"30px"}>삭제</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -164,13 +205,41 @@ function Inventory({ ...props }) {
                           _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
                         >
                           <Td fontSize={"sm"}>{index + 1}</Td>
-                          <Td fontSize={"sm"}>{item.product_name}</Td>
-                          <Td fontSize={"sm"}>{item.product_category}</Td>
-                          <Td fontSize={"sm"}>
-                            {formatCurrency(item.product_price)}원
-                          </Td>
+                          <ProductColumn
+                            productList={totalProducts}
+                            product_id={item.product_id}
+                          />
                           <Td>{searchShopName(item.shop_id)}</Td>
-
+                          <Td>
+                            <HStack
+                              spacing={"10px"}
+                              border={"1px solid #d9d9d9"}
+                              p={"10px"}
+                              borderRadius={"10px"}
+                              justifyContent={"space-between"}
+                            >
+                              <Image
+                                src={require("../../image/HiMinus.png")}
+                                // onClick={() => {
+                                //   if (count > 1) {
+                                //     setCount(count - 1);
+                                //   }
+                                // }}
+                              />
+                              <Text>{item.inventory_count}</Text>
+                              <Image
+                                src={require("../../image/HiPlus.png")}
+                                // onClick={() => {
+                                //   if (count < 100) {
+                                //     setCount(count + 1);
+                                //   }
+                                // }}
+                              />
+                            </HStack>
+                          </Td>
+                          <Td textAlign={"center"}>
+                            <Switch defaultChecked={item.inventory_use} />
+                          </Td>
                           <Td>
                             <IconButton
                               size={"sm"}
@@ -190,82 +259,7 @@ function Inventory({ ...props }) {
       ) : (
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
-          <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {/* <Text>관리자 설정</Text> */}
-            {admin.permission === "supervisor" && (
-              <Stack>
-                <ButtonGroup size={"sm"}>
-                  <PopupBase
-                    onClose={addInventory}
-                    icon={<AddIcon />}
-                    title={"재고"}
-                    action={"추가"}
-                  >
-                    <Stack>
-                      <FormControl>
-                        <FormLabel>관리 지점</FormLabel>
-                        <Select name="shop_id">
-                          {props.shopList?.map((shop) => (
-                            <option value={shop.doc_id}>
-                              {shop.shop_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl>
-                        <FormLabel>상품 선택</FormLabel>
-                        <Select name="product_id">
-                          {totalProducts?.map((product) => (
-                            <option value={product.doc_id}>
-                              {product.product_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </PopupBase>
-                </ButtonGroup>
-                <Card p={"10px 0px"}>
-                  {inventoryList?.map((item, index) => (
-                    <CardBody p={"10px 20px"}>
-                      <Stack
-                        border={"1px solid #d9d9d9"}
-                        borderRadius={"10px"}
-                        p={"10px"}
-                        w={"100%"}
-                      >
-                        <HStack>
-                          <Flex direction={"column"}>
-                            <Text>No.</Text>
-                            <Text>상품명</Text>
-                            <Text>카테고리</Text>
-                            <Text>상품가격</Text>
-                            <Text>관리 지점</Text>
-                          </Flex>
-                          <Flex direction={"column"}>
-                            <Text>{index + 1}</Text>
-                            <Text>{item.product_name}</Text>
-                            <Text>{item.product_category}</Text>
-                            <Text>{formatCurrency(item.product_price)}원</Text>
-                            <Text>{searchShopName(item.shop_id)}</Text>
-                          </Flex>
-                        </HStack>
-
-                        <HStack justifyContent={"space-between"}>
-                          <Stack w={"100%"}>
-                            <IconButton
-                              // onClick={() => deleteProduct(item.doc_id)}
-                              icon={<DeleteIcon />}
-                            />
-                          </Stack>
-                        </HStack>
-                      </Stack>
-                    </CardBody>
-                  ))}
-                </Card>
-              </Stack>
-            )}
-          </Stack>
+          <Text>모바일 뷰 인벤토리</Text>
         </Flex>
       )}
     </Flex>
