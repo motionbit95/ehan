@@ -29,7 +29,7 @@ export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
     style: "currency",
     currency: currencyCode,
-  }).format(number);
+  }).format(Math.abs(number));
 
   return formattedNumber.substring(1);
 }

@@ -19,6 +19,7 @@ function Calendar({ defaultRange, ...props }) {
     <Stack>
       <Box>
         <DatePicker
+          formatWeekDay={(day) => day.slice(0, 3).toUpperCase()}
           onCalendarClose={() => {
             props.onSelectDate(dateRange);
           }}
@@ -36,8 +37,8 @@ function Calendar({ defaultRange, ...props }) {
             nextMonthButtonDisabled,
           }) => (
             <Flex justify={"space-between"} align={"center"} p={"5px 15px"}>
-              <Text fontWeight={"bold"} fontSize={"24px"}>
-                {date.getFullYear()} . {date.getMonth() + 1}
+              <Text fontWeight={"bold"} fontSize={"lg"}>
+                {date.getFullYear()} . {date.getUTCMonth() + 1}
               </Text>
               <Box>
                 <IconButton

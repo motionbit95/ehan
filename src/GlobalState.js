@@ -38,6 +38,8 @@ export const GlobalStateProvider = ({ children }) => {
       );
       setAdmin(currentAdmin);
       setUid(uid);
+
+      localStorage.setItem("admin_id", currentAdmin.admin_email);
     }
   };
 

@@ -19,6 +19,45 @@ export function debug(...args) {
   );
 }
 
+export function isNumber(e) {
+  if (!/[0-9,]/.test(e.key) && e.key !== "Backspace") {
+    e.preventDefault();
+    alert("숫자만 입력해주세요");
+    return;
+  }
+}
+export function addCommas(number) {
+  // 숫자를 문자열로 변환하여 뒤집기
+  let numberStr = String(number).split("").reverse().join("");
+  let result = "";
+
+  // 세 자리씩 콤마를 추가하면서 결과 문자열 생성
+  for (let i = 0; i < numberStr.length; i += 3) {
+    result += numberStr.slice(i, i + 3) + ",";
+  }
+
+  // 마지막에 콤마가 추가되므로 제거하고 다시 뒤집기
+  result = result.split("").reverse().join("").replace(/^,/, "");
+
+  return result;
+}
+
+export const timestampToDate = (timestamp) => {
+  // Convert Firestore timestamp to milliseconds
+  const milliseconds =
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+
+  // Convert milliseconds to a Date object
+  const date = new Date(milliseconds);
+
+  // Format the date as a string (adjust format as needed)
+  const dateString = date.toLocaleDateString(); // Example format, adjust as needed
+
+  console.log(dateString); // Output the formatted date string
+
+  return dateString;
+};
+
 // 지역명 데이터
 export const cities = [
   "강원도",

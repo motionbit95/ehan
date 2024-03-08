@@ -67,6 +67,7 @@ const Login = () => {
                     type="text"
                     background="white"
                     placeholder="아이디"
+                    defaultValue={localStorage.getItem("admin_id") || ""}
                   />
                   <Input
                     focusBorderColor="red.500"

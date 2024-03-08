@@ -25,7 +25,7 @@ import {
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
-import { debug, error } from "./api";
+import { debug, error, timestampToDate } from "./api";
 import { get, getDatabase, onValue, ref, set } from "firebase/database";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
@@ -184,6 +184,37 @@ export const getPayment = async (orderId) => {
   const docRef = doc(db, "PAYMENT", orderId);
   const docSnap = await getDoc(docRef);
   return docSnap.data();
+};
+
+export const getTotalOrder = async (dateRange, shop_id) => {
+  // 콜렉션 레퍼런스
+  console.log(dateRange);
+  var q = query(collection(db, "PAYMENT"));
+  if (shop_id)
+    q = query(collection(db, "PAYMENT"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  const order = [];
+  let totalPrice = 0;
+  let totalOriginPrice = 0;
+  const startDate = dateRange[0].toLocaleDateString();
+  const endDate = dateRange[1].toLocaleDateString();
+  querySnapshot.forEach((doc) => {
+    const createAt = timestampToDate(doc.data().createAt);
+    if (createAt >= startDate && createAt <= endDate) {
+      order.push({ ...doc.data(), doc_id: doc.id });
+      totalPrice += parseFloat(doc.data().pay_price);
+      for (let i = 0; i < doc.data().pay_product.length; i++) {
+        totalOriginPrice += parseFloat(
+          doc.data().pay_product[i].product_origin_price
+        );
+      }
+    }
+    // console.log(totalOriginPrice);
+  });
+  console.log(totalOriginPrice);
+
+  return { order, totalPrice, totalOriginPrice };
 };
 
 export const getOrder = async (lastDocumentSnapshot, shop_id) => {
@@ -622,4 +653,35 @@ export const queryShop = async (shop_depth1, shop_depth2) => {
     console.error("Error querying posts:", error);
   }
   return shops;
+};
+
+// 손익 저장함수
+export const postIncome = async (income) => {
+  const incomeInfo = {
+    ...income,
+    createAt: new Date(),
+  };
+
+  try {
+    const docRef = await addDoc(collection(db, "INCOME"), incomeInfo);
+    debug("[INCOME] 문서가 저장되었습니다.\n문서번호 :", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+
+  return true;
+};
+
+export const getIncomeList = async (shop_id) => {
+  var q = query(collection(db, "INCOME"));
+  if (shop_id)
+    q = query(collection(db, "INCOME"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  const incomes = [];
+  querySnapshot.forEach((doc) => {
+    incomes.push({ ...doc.data(), doc_id: doc.id });
+  });
+
+  return incomes;
 };
