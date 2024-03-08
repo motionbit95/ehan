@@ -38,9 +38,13 @@
 }
 
 .scroll_view {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .scroll_view::-webkit-scrollbar {
   display: none;
+}
+
+.highlighted-range {
+  background-color: pink !important;
 }

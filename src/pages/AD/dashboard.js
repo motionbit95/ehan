@@ -62,7 +62,7 @@ function Dashboard(props) {
       case "order":
         return <Order shopList={shopList} />;
       case "income":
-        return <Income />;
+        return <Income shopList={shopList} />;
       case "inventory":
         return <Inventory shopList={shopList} />;
       case "product":
