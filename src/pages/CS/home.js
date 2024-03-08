@@ -196,6 +196,7 @@ function Home(props) {
           backgroundRepeat={"no-repeat"}
           opacity={"0.7"}
           padding={"2vh 3vh"}
+          bgColor={"#eee"}
         >
           <Flex
             id="header"
@@ -205,6 +206,7 @@ function Home(props) {
             alignItems={"flex-start"}
           >
             <Image
+              visibility={shopInfo?.logo_img ? "visible" : "hidden"}
               src={shopInfo?.logo_img}
               alt="logo_img"
               h={"48px"}

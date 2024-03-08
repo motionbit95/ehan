@@ -1,12 +1,18 @@
 import { Select } from "@chakra-ui/react";
 import React from "react";
+import { districts } from "../firebase/api";
 
-function RDepth2(props) {
+function RDepth2({ depth1, ...props }) {
   return (
-    <Select name="shop_depth2" placeholder="중분류를 선택해주세요.">
-      <option value="중분류 1">중분류 1</option>
-      <option value="중분류 2">중분류 2</option>
-      <option value="중분류 3">중분류 3</option>
+    <Select
+      {...props}
+      name="shop_depth2"
+      placeholder="전체"
+      onChange={(e) => props.onChangeDepth2(e.target.value)}
+    >
+      {districts[depth1 ? depth1 : "서울특별시"].map((district) => (
+        <option value={district}>{district}</option>
+      ))}
     </Select>
   );
 }

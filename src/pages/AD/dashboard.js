@@ -56,7 +56,7 @@ function Dashboard(props) {
   const getPage = () => {
     switch (menu) {
       case "home":
-        return <Home />;
+        return <Home shopList={shopList} />;
       case "account":
         return <Account shopList={shopList} />;
       case "order":

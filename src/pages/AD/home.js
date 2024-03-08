@@ -1,9 +1,11 @@
 import React from "react";
 import { Flex, HStack, Stack, useMediaQuery } from "@chakra-ui/react";
 import RFilter from "../../components/RFilter";
+import { useGlobalState } from "../../GlobalState";
 
 function Home(props) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
+  const { admin } = useGlobalState();
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -15,7 +17,11 @@ function Home(props) {
           left={"200px"}
           // p={"2vh"}
         >
-          <RFilter />
+          <RFilter
+            shopList={props.shopList}
+            admin={admin}
+            onChangeShop={(shopId) => console.log(shopId)}
+          />
           {/* desktop 에서의 레이아웃 */}
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             <HStack w={"100%"} h={"20%"}>
@@ -58,7 +64,11 @@ function Home(props) {
         </Stack>
       ) : (
         <Flex bgColor={"green"} w={"100%"} h={"100%"}>
-          <RFilter />
+          <RFilter
+            shopList={props.shopList}
+            admin={admin}
+            onChangeShop={(shopId) => console.log(shopId)}
+          />
         </Flex>
       )}
     </Flex>

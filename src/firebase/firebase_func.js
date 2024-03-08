@@ -26,7 +26,7 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { debug, error } from "./api";
-import { getDatabase, onValue, ref, set } from "firebase/database";
+import { get, getDatabase, onValue, ref, set } from "firebase/database";
 
 // 상품 컬렉션(collection)을 기준으로 카테고리 필드(field)를 오름차순으로 정렬하여 가져오는 예제
 export const fetchProducts = async (collection_name, field_name, shop_id) => {
@@ -602,4 +602,24 @@ export const getTotalProducts = async (shop_id) => {
   });
 
   return products;
+};
+
+export const queryShop = async (shop_depth1, shop_depth2) => {
+  console.log(shop_depth1, shop_depth2);
+  const shops = [];
+  try {
+    const q = query(
+      collection(db, "SHOP"),
+      where("shop_depth1", "==", shop_depth1),
+      where("shop_depth2", "==", shop_depth2)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      shops.push({ ...doc.data(), doc_id: doc.id });
+    });
+  } catch (error) {
+    console.error("Error querying posts:", error);
+  }
+  return shops;
 };
