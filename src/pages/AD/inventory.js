@@ -199,56 +199,57 @@ function Inventory({ ...props }) {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {inventoryList?.map((item, index) => (
-                        <Tr
-                          key={index}
-                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                        >
-                          <Td fontSize={"sm"}>{index + 1}</Td>
-                          <ProductColumn
-                            productList={totalProducts}
-                            product_id={item.product_id}
-                          />
-                          <Td>{searchShopName(item.shop_id)}</Td>
-                          <Td>
-                            <HStack
-                              spacing={"10px"}
-                              border={"1px solid #d9d9d9"}
-                              p={"10px"}
-                              borderRadius={"10px"}
-                              justifyContent={"space-between"}
-                            >
-                              <Image
-                                src={require("../../image/HiMinus.png")}
-                                // onClick={() => {
-                                //   if (count > 1) {
-                                //     setCount(count - 1);
-                                //   }
-                                // }}
-                              />
-                              <Text>{item.inventory_count}</Text>
-                              <Image
-                                src={require("../../image/HiPlus.png")}
-                                // onClick={() => {
-                                //   if (count < 100) {
-                                //     setCount(count + 1);
-                                //   }
-                                // }}
-                              />
-                            </HStack>
-                          </Td>
-                          <Td textAlign={"center"}>
-                            <Switch defaultChecked={item.inventory_use} />
-                          </Td>
-                          <Td>
-                            <IconButton
-                              size={"sm"}
-                              // onClick={() => deleteProduct(item.doc_id)}
-                              icon={<DeleteIcon />}
+                      {totalProducts &&
+                        inventoryList?.map((item, index) => (
+                          <Tr
+                            key={index}
+                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                          >
+                            <Td fontSize={"sm"}>{index + 1}</Td>
+                            <ProductColumn
+                              productList={totalProducts}
+                              product_id={item.product_id}
                             />
-                          </Td>
-                        </Tr>
-                      ))}
+                            <Td>{searchShopName(item.shop_id)}</Td>
+                            <Td>
+                              <HStack
+                                spacing={"10px"}
+                                border={"1px solid #d9d9d9"}
+                                p={"10px"}
+                                borderRadius={"10px"}
+                                justifyContent={"space-between"}
+                              >
+                                <Image
+                                  src={require("../../image/HiMinus.png")}
+                                  // onClick={() => {
+                                  //   if (count > 1) {
+                                  //     setCount(count - 1);
+                                  //   }
+                                  // }}
+                                />
+                                <Text>{item.inventory_count}</Text>
+                                <Image
+                                  src={require("../../image/HiPlus.png")}
+                                  // onClick={() => {
+                                  //   if (count < 100) {
+                                  //     setCount(count + 1);
+                                  //   }
+                                  // }}
+                                />
+                              </HStack>
+                            </Td>
+                            <Td textAlign={"center"}>
+                              <Switch defaultChecked={item.inventory_use} />
+                            </Td>
+                            <Td>
+                              <IconButton
+                                size={"sm"}
+                                // onClick={() => deleteProduct(item.doc_id)}
+                                icon={<DeleteIcon />}
+                              />
+                            </Td>
+                          </Tr>
+                        ))}
                     </Tbody>
                   </Table>
                 </TableContainer>
