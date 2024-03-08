@@ -36,8 +36,6 @@ import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { deleteUser } from "firebase/auth";
-import { debug } from "../../firebase/api";
-import Calendar from "../../components/Calendar";
 function AccountInfo({ permission, admin, shopList, ...props }) {
   const [changePassword, setChangePassword] = useState(false);
   const [name, setName] = useState(admin.name);
@@ -342,9 +340,6 @@ function Account(props) {
           {/* desktop 에서의 레이아웃 */}
 
           <Stack p={"20px"} w={"100%"} h={"100%"}>
-            <Calendar />
-            {/* <Text>관리자 설정</Text> */}
-
             {admin.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>

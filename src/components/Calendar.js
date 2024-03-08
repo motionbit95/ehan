@@ -3,23 +3,28 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Input, Stack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import styled from "styled-components";
 
-function Calendar() {
-  const [dateRange, setDateRange] = useState([null, null]);
+function Calendar({ defaultRange, ...props }) {
+  const [dateRange, setDateRange] = useState(
+    defaultRange ? defaultRange : [null, null]
+  );
   const [startDate, endDate] = dateRange;
+
+  //   console.log(dateRange);
 
   return (
     <Stack>
-      <Flex>
-        <StyleDatePicker
+      <Box>
+        <DatePicker
+          onCalendarClose={() => {
+            props.onSelectDate(dateRange);
+          }}
+          showPopperArrow={false}
           customInput={
             <Flex>
-              <CustomInput />
               <IconButton icon={<CalendarIcon />} />
             </Flex>
           }
@@ -30,27 +35,26 @@ function Calendar() {
             prevMonthButtonDisabled,
             nextMonthButtonDisabled,
           }) => (
-            <Flex
-              bgColor={"white"}
-              justify={"space-between"}
-              align={"center"}
-              p={"0 10px"}
-            >
-              <Text fontWeight={"bold"} fontSize={"lg"}>
+            <Flex justify={"space-between"} align={"center"} p={"5px 15px"}>
+              <Text fontWeight={"bold"} fontSize={"24px"}>
                 {date.getFullYear()} . {date.getMonth() + 1}
               </Text>
               <Box>
                 <IconButton
-                  bgColor={"white"}
                   onClick={decreaseMonth}
                   disabled={prevMonthButtonDisabled}
-                  icon={<ChevronLeftIcon />}
+                  icon={<ChevronLeftIcon w="24px" h={"24px"} />}
+                  color={"red"}
+                  size="sm"
+                  variant={"ghost"}
                 />
                 <IconButton
-                  bgColor={"white"}
                   onClick={increaseMonth}
                   disabled={nextMonthButtonDisabled}
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon w="24px" h={"24px"} />}
+                  color={"red"}
+                  size="sm"
+                  variant={"ghost"}
                 />
               </Box>
             </Flex>
@@ -62,37 +66,38 @@ function Calendar() {
           onChange={(update) => {
             setDateRange(update);
           }}
+          dayClassName={(d) => {
+            const calDate =
+              d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate();
+            let startDate, endDate;
+            if (dateRange[0]) {
+              startDate =
+                dateRange[0].getFullYear() +
+                "." +
+                (dateRange[0].getMonth() + 1) +
+                "." +
+                dateRange[0].getDate();
+            }
+
+            if (dateRange[1]) {
+              endDate =
+                dateRange[1].getFullYear() +
+                "." +
+                (dateRange[1].getMonth() + 1) +
+                "." +
+                dateRange[1].getDate();
+            }
+
+            if (startDate === calDate || endDate === calDate) {
+              return "selectedDay";
+            } else {
+              return "unselectedDay";
+            }
+          }}
         />
-      </Flex>
-      <Flex>
-        {startDate && endDate && (
-          <Box
-            bgColor={"white"}
-            border={"1px solid black"}
-            borderRadius={"10px"}
-            p={"5px"}
-            textAlign={"center"}
-          >
-            <Text>선택되면 출력</Text>
-            {startDate.toLocaleDateString()} ~ {endDate.toLocaleDateString()}
-          </Box>
-        )}
-      </Flex>
+      </Box>
     </Stack>
   );
 }
 
 export default Calendar;
-
-const StyleDatePicker = styled(DatePicker)`
-  display: flex;
-  width: 100%;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 10px;
-  gap: 10px;
-`;
-
-const CustomInput = styled.input`
-  background-color: #d9d9d9;
-`;
