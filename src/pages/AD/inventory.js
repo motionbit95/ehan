@@ -115,7 +115,7 @@ function Inventory({ ...props }) {
   const setTotalProduct = async () => {
     // 현재 지점의 상품 리스트를 받아온다.(supervisor의 경우 전체)
     const totalProducts = await getTotalProducts(
-      admin.shop_id ? admin.shop_id : ""
+      admin?.shop_id ? admin?.shop_id : ""
     );
     setTotalProducts(totalProducts);
   };
@@ -132,7 +132,7 @@ function Inventory({ ...props }) {
 
   const readInventory = async () => {
     const inventoryList = await readInventoryData(
-      admin.shop_id ? admin.shop_id : "test-shop"
+      admin?.shop_id ? admin?.shop_id : "test-shop"
     );
     setInventoryList(inventoryList);
   };
@@ -163,7 +163,7 @@ function Inventory({ ...props }) {
           <RFilter />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup
                   size={"md"}
@@ -297,7 +297,7 @@ function Inventory({ ...props }) {
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             <RFilter />
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup
                   size={"md"}

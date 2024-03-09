@@ -639,11 +639,21 @@ export const queryShop = async (shop_depth1, shop_depth2) => {
   console.log(shop_depth1, shop_depth2);
   const shops = [];
   try {
-    const q = query(
-      collection(db, "SHOP"),
-      where("shop_depth1", "==", shop_depth1),
-      where("shop_depth2", "==", shop_depth2)
-    );
+    let q;
+    if (shop_depth1 === "" && shop_depth2 === "") {
+      // 전체
+      q = query(collection(db, "SHOP"));
+    } else if (shop_depth2 === "") {
+      q = query(
+        collection(db, "SHOP"),
+        where("shop_depth1", "==", shop_depth1)
+      );
+    } else
+      q = query(
+        collection(db, "SHOP"),
+        where("shop_depth1", "==", shop_depth1),
+        where("shop_depth2", "==", shop_depth2)
+      );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       console.log(doc.data());

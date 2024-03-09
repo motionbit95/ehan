@@ -52,7 +52,7 @@ function Order(props) {
 
   useEffect(() => {
     if (admin.doc_id) {
-      setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
+      setMoreButtonVisible(getProductCount(admin?.shop_id) < 10 ? false : true);
     }
   }, [admin]);
 
@@ -72,7 +72,7 @@ function Order(props) {
   // R - read order
   const getOrderList = async () => {
     // 상품 목록을 조회합니다.
-    await getOrder(lastDocumentSnapshot, admin.shop_id).then((data) => {
+    await getOrder(lastDocumentSnapshot, admin?.shop_id).then((data) => {
       if (data.products && data.products.length > 0) {
         setOrderList([...orderList, ...data.products]);
         setLastDocumentSnapshot(data.lastDocumentSnapshot);
@@ -166,7 +166,7 @@ function Order(props) {
           />
           <Stack p={"20px"} pt={"0px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <TableContainer
                   border={"1px solid #d9d9d9"}
@@ -337,7 +337,7 @@ function Order(props) {
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {/* <Text>관리자 설정</Text> */}
-              {admin.permission === "supervisor" && (
+              {admin?.permission === "supervisor" && (
                 <Stack>
                   <Card p={"10px 0px"}>
                     {orderList?.map((item, index) => (

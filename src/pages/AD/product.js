@@ -261,7 +261,7 @@ function Product(props) {
 
   useEffect(() => {
     if (admin.doc_id) {
-      setMoreButtonVisible(getProductCount(admin.shop_id) < 10 ? false : true);
+      setMoreButtonVisible(getProductCount(admin?.shop_id) < 10 ? false : true);
     }
   }, [admin, productList]);
 
@@ -314,7 +314,7 @@ function Product(props) {
   // R - read product
   const getProductList = async () => {
     // 상품 목록을 조회합니다.
-    await getProduct(lastDocumentSnapshot, admin.shop_id).then((data) => {
+    await getProduct(lastDocumentSnapshot, admin?.shop_id).then((data) => {
       if (data.products && data.products.length > 0) {
         setProductList([...productList, ...data.products]);
         setLastDocumentSnapshot(data.lastDocumentSnapshot);
@@ -364,7 +364,7 @@ function Product(props) {
           <RFilter />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>
                   <PopupBase
@@ -375,7 +375,7 @@ function Product(props) {
                   >
                     <ProductInfo
                       shopList={props.shopList}
-                      permission={admin.permission}
+                      permission={admin?.permission}
                       onChangeProduct={updateProductInfo}
                     />
                   </PopupBase>
@@ -438,7 +438,7 @@ function Product(props) {
                               <ProductInfo
                                 product={item}
                                 shopList={props.shopList}
-                                permission={admin.permission}
+                                permission={admin?.permission}
                                 onChangeProduct={updateProductInfo}
                               />
                             </PopupBase>
@@ -476,7 +476,7 @@ function Product(props) {
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             <RFilter />
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>
                   <PopupBase
@@ -487,7 +487,7 @@ function Product(props) {
                   >
                     <ProductInfo
                       shopList={props.shopList}
-                      permission={admin.permission}
+                      permission={admin?.permission}
                       onChangeProduct={updateProductInfo}
                     />
                   </PopupBase>
@@ -540,7 +540,7 @@ function Product(props) {
                               <ProductInfo
                                 product={item}
                                 shopList={props.shopList}
-                                permission={admin.permission}
+                                permission={admin?.permission}
                                 onChangeProduct={updateProductInfo}
                               />
                             </PopupBase>

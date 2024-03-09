@@ -116,8 +116,9 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
                 onChange={handleChangeShop}
                 isDisabled={permission !== "supervisor"}
                 name="shop_id"
-                defaultValue={admin.shop_id}
+                defaultValue={admin?.shop_id}
               >
+                <option value="">관리 지점를 선택하세요.</option>
                 {shopList?.map((shop) => (
                   <option key={shop.doc_id} value={shop.doc_id}>
                     {shop.shop_name}
@@ -130,7 +131,7 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
                 <FormControl isRequired>
                   <FormLabel>권한 설정</FormLabel>
                   <Select
-                    defaultValue={admin.permission}
+                    defaultValue={admin?.permission}
                     name="permission"
                     onChange={handleChangePermission}
                   >
@@ -236,11 +237,11 @@ function Account(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibleAdminInfo, setVisibleAdminInfo] = useState(
-    admin.permission === "advisor" ? true : false
+    admin?.permission === "advisor" ? true : false
   );
 
   useEffect(() => {
-    if (admin.permission === "advisor") {
+    if (admin?.permission === "advisor") {
       setVisibleAdminInfo(true);
     } else {
       setVisibleAdminInfo(false);
@@ -298,7 +299,7 @@ function Account(props) {
 
   useEffect(() => {
     // supervisor의 경우 전체 관리자 목록 조회를 진행합니다.
-    if (admin.permission === "supervisor") {
+    if (admin?.permission === "supervisor") {
       if (adminList) {
         getAdminList();
       }
@@ -342,7 +343,7 @@ function Account(props) {
           {/* desktop 에서의 레이아웃 */}
 
           <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {admin.permission === "supervisor" && (
+            {admin?.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>
                   <PopupBase
@@ -389,6 +390,7 @@ function Account(props) {
                     <FormControl isRequired>
                       <FormLabel>관리 지점</FormLabel>
                       <Select name="shop_id">
+                        <option value="">관리 지점를 선택하세요.</option>
                         {props.shopList?.map((shop) => (
                           <option key={shop.doc_id} value={shop.doc_id}>
                             {shop.shop_name}
@@ -498,7 +500,7 @@ function Account(props) {
                               onClose={(e) => window.location.reload()}
                             >
                               <AccountInfo
-                                permission={admin.permission}
+                                permission={admin?.permission}
                                 admin={item}
                                 shopList={props.shopList}
                                 visibleAdminInfo={true}
@@ -542,7 +544,7 @@ function Account(props) {
           <Stack w={"100%"} h={"100%"}>
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {/* <Text>관리자 설정</Text> */}
-              {admin.permission === "supervisor" && (
+              {admin?.permission === "supervisor" && (
                 <Stack>
                   <ButtonGroup size={"sm"}>
                     <PopupBase
@@ -692,7 +694,7 @@ function Account(props) {
                                 onClose={(e) => window.location.reload()}
                               >
                                 <AccountInfo
-                                  permission={admin.permission}
+                                  permission={admin?.permission}
                                   admin={item}
                                   shopList={props.shopList}
                                   visibleAdminInfo={true}
