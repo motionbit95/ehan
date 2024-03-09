@@ -1,5 +1,5 @@
 // 상수(고정적인 값)
-export const BUILD_MODE = "production"; // 배포 시 이 부분을 production으로 변경
+export const BUILD_MODE = "dev"; // 배포 시 이 부분을 production으로 변경
 export const SERVER_URL =
   BUILD_MODE === "dev"
     ? "https://port-0-nicepay-module-17xco2nlszge3vt.sel5.cloudtype.app"
@@ -53,7 +53,7 @@ export const timestampToDate = (timestamp) => {
   // Format the date as a string (adjust format as needed)
   const dateString = date.toLocaleDateString(); // Example format, adjust as needed
 
-  console.log(dateString); // Output the formatted date string
+  // console.log(dateString); // Output the formatted date string
 
   return dateString;
 };

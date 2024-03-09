@@ -51,11 +51,8 @@ function RFilter({ useSearch = true, ...props }) {
   }, [admin]);
 
   const getShopList = async (depth1, depth2) => {
-    console.log(depth1, depth2);
-    setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
     let filterShop = await queryShop(depth1, depth2);
-    console.log(filterShop);
     setFilteredShopList(filterShop);
   };
 
@@ -68,6 +65,10 @@ function RFilter({ useSearch = true, ...props }) {
     }
     return null;
   };
+
+  useEffect(() => {
+    props.onChangeCategory([depth1, depth2, depth3]);
+  }, [depth1, depth2, depth3]);
 
   return (
     <Flex
@@ -111,8 +112,7 @@ function RFilter({ useSearch = true, ...props }) {
             value={selectedShop?.doc_id}
             w={"20%"}
             onChange={(e) => {
-              /* 이곳에 부모에서 필터 된 상점의 id를 반환한다. */
-              props.onChangeShop(e.target.value);
+              setDepth3(e.target.value);
             }}
           >
             <option value={""}>전체</option>
@@ -139,6 +139,7 @@ function RFilter({ useSearch = true, ...props }) {
               defaultRange={dateRange}
               onSelectDate={(dateRange) => {
                 setDateRange(dateRange);
+                props.onChangeDateRange(dateRange);
               }}
             />
           </HStack>
@@ -174,8 +175,7 @@ function RFilter({ useSearch = true, ...props }) {
               isDisabled={!depth2 || admin?.permission !== "supervisor"}
               w={"100%"}
               onChange={(e) => {
-                /* 이곳에 부모에서 필터 된 상점의 id를 반환한다. */
-                props.onChangeShop(e.target.value);
+                setDepth3(e.target.value);
               }}
             >
               <option value={""}>전체</option>
@@ -202,6 +202,7 @@ function RFilter({ useSearch = true, ...props }) {
               defaultRange={dateRange}
               onSelectDate={(dateRange) => {
                 setDateRange(dateRange);
+                props.onChangeDateRange(dateRange);
               }}
             />
           </HStack>
