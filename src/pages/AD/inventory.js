@@ -33,6 +33,7 @@ import { useGlobalState } from "../../GlobalState";
 import PopupBase from "../../modals/PopupBase";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
+import RFilter from "../../components/RFilter";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -159,7 +160,7 @@ function Inventory({ ...props }) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-
+          <RFilter />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin.permission === "supervisor" && (
@@ -292,8 +293,10 @@ function Inventory({ ...props }) {
       ) : (
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
+
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
+            <RFilter />
             {admin.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup
@@ -401,7 +404,7 @@ function Inventory({ ...props }) {
                             </HStack>
                           </Stack>
                           <HStack justifyContent={"space-between"}>
-                            <Stack w={"10x0%"}>
+                            <Stack w={"100%"}>
                               <IconButton
                                 size={"sm"}
                                 // onClick={() => deleteProduct(item.doc_id)}
