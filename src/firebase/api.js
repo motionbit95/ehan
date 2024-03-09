@@ -53,7 +53,7 @@ export const timestampToDate = (timestamp) => {
   // Format the date as a string (adjust format as needed)
   const dateString = date.toLocaleDateString(); // Example format, adjust as needed
 
-  console.log(dateString); // Output the formatted date string
+  // console.log(dateString); // Output the formatted date string
 
   return dateString;
 };

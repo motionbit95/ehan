@@ -187,8 +187,6 @@ export const getPayment = async (orderId) => {
 };
 
 export const getTotalOrder = async (dateRange, shop_id) => {
-  // 콜렉션 레퍼런스
-  console.log(dateRange);
   var q = query(collection(db, "PAYMENT"));
   if (shop_id)
     q = query(collection(db, "PAYMENT"), where("shop_id", "==", shop_id));
@@ -210,9 +208,7 @@ export const getTotalOrder = async (dateRange, shop_id) => {
         );
       }
     }
-    // console.log(totalOriginPrice);
   });
-  console.log(totalOriginPrice);
 
   return { order, totalPrice, totalOriginPrice };
 };
@@ -636,17 +632,25 @@ export const getTotalProducts = async (shop_id) => {
 };
 
 export const queryShop = async (shop_depth1, shop_depth2) => {
-  console.log(shop_depth1, shop_depth2);
   const shops = [];
   try {
-    const q = query(
-      collection(db, "SHOP"),
-      where("shop_depth1", "==", shop_depth1),
-      where("shop_depth2", "==", shop_depth2)
-    );
+    let q;
+    if (shop_depth1 === "" && shop_depth2 === "") {
+      // 전체
+      q = query(collection(db, "SHOP"));
+    } else if (shop_depth2 === "") {
+      q = query(
+        collection(db, "SHOP"),
+        where("shop_depth1", "==", shop_depth1)
+      );
+    } else
+      q = query(
+        collection(db, "SHOP"),
+        where("shop_depth1", "==", shop_depth1),
+        where("shop_depth2", "==", shop_depth2)
+      );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.data());
       shops.push({ ...doc.data(), doc_id: doc.id });
     });
   } catch (error) {
@@ -684,4 +688,36 @@ export const getIncomeList = async (shop_id) => {
   });
 
   return incomes;
+};
+
+export const getFilteredShop = async (value) => {
+  var q = query(collection(db, "SHOP"));
+  if (!value[0]) {
+    var q = query(collection(db, "SHOP"));
+  } else if (value[0] && !value[1]) {
+    var q = query(collection(db, "SHOP"), where("shop_depth1", "==", value[0]));
+  } else if (value[0] && value[1] && !value[2]) {
+    var q = query(
+      collection(db, "SHOP"),
+      where("shop_depth1", "==", value[0]),
+      where("shop_depth2", "==", value[1])
+    );
+  } else if (value[0] && value[1] && value[2]) {
+    var q = query(
+      collection(db, "SHOP"),
+      where("shop_depth1", "==", value[0]),
+      where("shop_depth2", "==", value[1]),
+      where("shop_id", "==", value[2])
+    );
+  } else {
+    var q = query(collection(db, "SHOP"));
+  }
+  const querySnapshot = await getDocs(q);
+
+  const filteredList = [];
+  querySnapshot.forEach((doc) => {
+    filteredList.push({ ...doc.data(), doc_id: doc.id });
+  });
+
+  return filteredList;
 };

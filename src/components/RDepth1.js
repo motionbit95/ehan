@@ -6,11 +6,12 @@ function RDepth1(props) {
   return (
     <Select
       {...props}
-      defaultValue={"서울특별시"}
+      // defaultValue={props.defaultValue}
+      _disabled={{ opacity: 1, pointerEvents: "none", bgColor: "#f5f5f5" }}
       name="shop_depth1"
-      placeholder="시/도"
       onChange={(e) => props.onChangeDepth1(e.target.value)}
     >
+      <option value="">전체</option>
       {cities.map((city, index) => (
         <option key={index} value={city}>
           {city}

@@ -157,7 +157,7 @@ function Income({ ...props }) {
             <RFilter
               shopList={props.shopList}
               admin={admin}
-              onChangeShop={(shopId) => setShopId(shopId)}
+              onChangeCategory={(value) => console.log(value)}
             />
             <PopupBase
               icon={<AddIcon />}
@@ -409,7 +409,7 @@ function Income({ ...props }) {
             <RFilter
               shopList={props.shopList}
               admin={admin}
-              onChangeShop={(shopId) => setShopId(shopId)}
+              onChangeCategory={(value) => console.log(value)}
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {/* <Text>관리자 설정</Text> */}
