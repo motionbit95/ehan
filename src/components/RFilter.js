@@ -67,8 +67,13 @@ function RFilter({ useSearch = true, ...props }) {
   };
 
   useEffect(() => {
-    props.onChangeCategory([depth1, depth2, depth3]);
+    if (props.onChangeCategory)
+      props.onChangeCategory([depth1, depth2, depth3]);
   }, [depth1, depth2, depth3]);
+
+  // useEffect(() => {
+  //   props.onChangeCategory([depth1, depth2, depth3]);
+  // }, [depth1, depth2, depth3]);
 
   return (
     <Flex
