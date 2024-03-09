@@ -50,11 +50,26 @@ function Order(props) {
   const [lastDocumentSnapshot, setLastDocumentSnapshot] = useState(null);
   const [moreButtonVisible, setMoreButtonVisible] = useState(false);
 
+  // filter
+  const [shopFilter, setShopFilter] = useState(null);
+  const [dateRange, setDateRange] = useState([
+    new Date(
+      `${new Date().getFullYear()}-${new Date().getMonth()}-${
+        new Date().getDate() + 1
+      }`
+    ),
+    new Date(),
+  ]);
+
   useEffect(() => {
     if (admin.doc_id) {
       setMoreButtonVisible(getProductCount(admin?.shop_id) < 10 ? false : true);
     }
   }, [admin]);
+
+  const getFilteredCategory = (value, range) => {
+    setState(value, range);
+  };
 
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {
@@ -132,6 +147,12 @@ function Order(props) {
         >
           {/* desktop 에서의 레이아웃 */}
           <RFilter
+            shopList={props.shopList}
+            admin={admin}
+            onChangeCategory={(value) => getFilteredCategory(value, dateRange)}
+            onChangeDateRange={(value) =>
+              getFilteredCategory(shopFilter, value)
+            }
             render={
               <>
                 <Stack spacing={"20px"}>
@@ -302,6 +323,14 @@ function Order(props) {
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
+              shopList={props.shopList}
+              admin={admin}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
               render={
                 <>
                   <Stack spacing={"20px"}>

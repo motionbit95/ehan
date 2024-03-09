@@ -8,7 +8,9 @@ function RDepth2({ depth1, ...props }) {
       {...props}
       _disabled={{ opacity: 1, pointerEvents: "none", bgColor: "#f5f5f5" }}
       name="shop_depth2"
-      onChange={(e) => props.onChangeDepth2(e.target.value)}
+      onChange={(e) => {
+        if (props.onChangeDepth2) props.onChangeDepth2(e.target.value);
+      }}
     >
       <option value="">전체</option>
       {districts[depth1 ? depth1 : "서울특별시"].map((district, index) => (

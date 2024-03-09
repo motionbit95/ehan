@@ -16,6 +16,7 @@ import Calendar from "./Calendar";
 import RDepth1 from "./RDepth1";
 import RDepth2 from "./RDepth2";
 import { queryShop } from "../firebase/firebase_func";
+import { debug } from "../firebase/api";
 
 function RFilter({ useSearch = true, ...props }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -51,8 +52,17 @@ function RFilter({ useSearch = true, ...props }) {
   }, [admin]);
 
   const getShopList = async (depth1, depth2) => {
+    setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
     let filterShop = await queryShop(depth1, depth2);
+    console.log(
+      "상점 정보를 가지고 옵니다. ",
+      depth1,
+      " ",
+      depth2,
+      "\n",
+      filterShop
+    );
     setFilteredShopList(filterShop);
   };
 
@@ -218,7 +228,7 @@ function RFilter({ useSearch = true, ...props }) {
           p={"20px"}
           bgColor={"white"}
           position={"absolute"}
-          top={"48px"}
+          top={"56px"}
           boxShadow={"md"}
           borderRadius={"10px"}
         >
