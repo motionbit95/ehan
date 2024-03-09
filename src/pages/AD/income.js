@@ -405,241 +405,244 @@ function Income({ ...props }) {
       ) : (
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
-          <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {/* <Text>관리자 설정</Text> */}
+          <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
               shopList={props.shopList}
               admin={admin}
               onChangeShop={(shopId) => setShopId(shopId)}
             />
-            <ButtonGroup size={"sm"}>
-              <PopupBase
-                icon={<AddIcon />}
-                title="분석"
-                action="추가"
-                text="분석 추가"
-                onClose={addIncome}
-              >
-                <Text fontSize={"lg"} fontWeight={"bold"}>
-                  기본정보
-                </Text>
-                <FormControl isRequired>
-                  <FormLabel>매장명</FormLabel>
-                  <Select
-                    name="shop_id"
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        shop_id: e.target.value,
-                      });
-                      setShopId(e.target.value);
-                      getSales(dateRange, e.target.value);
-                    }}
-                  >
-                    <option value="">전체</option>
-                    {props.shopList?.map((shop, index) => (
-                      <option key={index} value={shop.doc_id}>
-                        {shop.shop_name}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>분석기간</FormLabel>
-                  <HStack w={"100%"}>
-                    <Input
-                      name="date"
-                      w={"100%"}
-                      value={
-                        dateRange
-                          ? dateRange[0]?.toLocaleDateString() +
-                            " ~ " +
-                            dateRange[1]?.toLocaleDateString()
-                          : ""
-                      }
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {/* <Text>관리자 설정</Text> */}
+
+              <ButtonGroup size={"sm"}>
+                <PopupBase
+                  icon={<AddIcon />}
+                  title="분석"
+                  action="추가"
+                  text="분석 추가"
+                  onClose={addIncome}
+                >
+                  <Text fontSize={"lg"} fontWeight={"bold"}>
+                    기본정보
+                  </Text>
+                  <FormControl isRequired>
+                    <FormLabel>매장명</FormLabel>
+                    <Select
+                      name="shop_id"
                       onChange={(e) => {
                         setIncomeData({
                           ...incomeData,
-                          start_date: dateRange[0] ? dateRange[0] : "",
-                          end_date: dateRange[1] ? dateRange[1] : "",
+                          shop_id: e.target.value,
+                        });
+                        setShopId(e.target.value);
+                        getSales(dateRange, e.target.value);
+                      }}
+                    >
+                      <option value="">전체</option>
+                      {props.shopList?.map((shop, index) => (
+                        <option key={index} value={shop.doc_id}>
+                          {shop.shop_name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>분석기간</FormLabel>
+                    <HStack w={"100%"}>
+                      <Input
+                        name="date"
+                        w={"100%"}
+                        value={
+                          dateRange
+                            ? dateRange[0]?.toLocaleDateString() +
+                              " ~ " +
+                              dateRange[1]?.toLocaleDateString()
+                            : ""
+                        }
+                        onChange={(e) => {
+                          setIncomeData({
+                            ...incomeData,
+                            start_date: dateRange[0] ? dateRange[0] : "",
+                            end_date: dateRange[1] ? dateRange[1] : "",
+                          });
+                        }}
+                      />
+                      <Calendar
+                        defaultRange={dateRange}
+                        onSelectDate={(dateRange) => {
+                          setDateRange(dateRange);
+                          // 기간 내 매출 계산
+                          getSales(dateRange, shop_id);
+                        }}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>매출금액</FormLabel>
+                    <Input
+                      isDisabled
+                      name="sales"
+                      defaultValue={formatCurrency(incomeData.sales)}
+                      value={formatCurrency(salesPrice)}
+                      bgColor={"gray.200"}
+                      color={"gray.600"}
+                      onChange={(e) => {
+                        setIncomeData({
+                          ...incomeData,
+                          sales: e.target.value,
                         });
                       }}
                     />
-                    <Calendar
-                      defaultRange={dateRange}
-                      onSelectDate={(dateRange) => {
-                        setDateRange(dateRange);
-                        // 기간 내 매출 계산
-                        getSales(dateRange, shop_id);
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>매입금액</FormLabel>
+                    <Input
+                      name="purchase"
+                      defaultValue={formatCurrency(incomeData.purchase)}
+                      value={formatCurrency(originPrice)}
+                      onKeyDown={(e) => isNumber(e)}
+                      onChange={(e) => {
+                        setIncomeData({
+                          ...incomeData,
+                          purchase: e.target.value,
+                        });
+                        setOriginPrice(e.target.value.replaceAll(",", ""));
                       }}
                     />
-                  </HStack>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>매출금액</FormLabel>
-                  <Input
-                    isDisabled
-                    name="sales"
-                    defaultValue={formatCurrency(incomeData.sales)}
-                    value={formatCurrency(salesPrice)}
-                    bgColor={"gray.200"}
-                    color={"gray.600"}
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        sales: e.target.value,
-                      });
-                    }}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>매입금액</FormLabel>
-                  <Input
-                    name="purchase"
-                    defaultValue={formatCurrency(incomeData.purchase)}
-                    value={formatCurrency(originPrice)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        purchase: e.target.value,
-                      });
-                      setOriginPrice(e.target.value.replaceAll(",", ""));
-                    }}
-                  />
-                </FormControl>
-                <Text fontSize={"lg"} fontWeight={"bold"}>
-                  추가정보
-                </Text>
-                <FormControl>
-                  <FormLabel>임차료</FormLabel>
-                  <Input
-                    name="hire"
-                    value={formatCurrency(incomeData.hire)}
-                    defaultValue={formatCurrency(incomeData.hire)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        hire: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>인건비</FormLabel>
-                  <Input
-                    name="personnel"
-                    defaultValue={formatCurrency(incomeData.personnel)}
-                    value={formatCurrency(incomeData.personnel)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        personnel: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>공과금</FormLabel>
-                  <Input
-                    name="dues"
-                    defaultValue={formatCurrency(incomeData.dues)}
-                    value={formatCurrency(incomeData.dues)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        dues: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>기타비용</FormLabel>
-                  <Input
-                    name="etc"
-                    value={formatCurrency(incomeData.etc)}
-                    defaultValue={formatCurrency(incomeData.etc)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        etc: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-              </PopupBase>
-            </ButtonGroup>
-            <Card p={"10px 0px"}>
-              {incomeList?.map((item, index) => (
-                <CardBody p={"10px 20px"}>
-                  <Stack
-                    border={"1px solid #d9d9d9"}
-                    borderRadius={"10px"}
-                    p={"10px"}
-                    w={"100%"}
-                  >
-                    <HStack>
-                      <Flex direction={"column"}>
-                        <Text>No.</Text>
-                        <Text>분석날짜</Text>
-                        <Text>지점명</Text>
-                        <Text>조회기간</Text>
-                        <Text>예상손익</Text>
-                        <Text>예상손익률</Text>
-                      </Flex>
-                      <Flex direction={"column"}>
-                        <Text>{index + 1}</Text>
-                        <Text>{`${timestampToDate(item.createAt)}`}</Text>
-                        <Text>{searchShopName(item.shop_id)}</Text>
-                        <Text>{item.date}</Text>
-                        <Text>
-                          {item.sales -
-                            item.purchase -
-                            item.etc -
-                            item.dues -
-                            item.hire -
-                            item.personnel <
-                          0
-                            ? "-"
-                            : "+"}
-                          {formatCurrency(
-                            item.sales -
+                  </FormControl>
+                  <Text fontSize={"lg"} fontWeight={"bold"}>
+                    추가정보
+                  </Text>
+                  <FormControl>
+                    <FormLabel>임차료</FormLabel>
+                    <Input
+                      name="hire"
+                      value={formatCurrency(incomeData.hire)}
+                      defaultValue={formatCurrency(incomeData.hire)}
+                      onKeyDown={(e) => isNumber(e)}
+                      onChange={(e) =>
+                        setIncomeData({
+                          ...incomeData,
+                          hire: e.target.value.replaceAll(",", ""),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>인건비</FormLabel>
+                    <Input
+                      name="personnel"
+                      defaultValue={formatCurrency(incomeData.personnel)}
+                      value={formatCurrency(incomeData.personnel)}
+                      onKeyDown={(e) => isNumber(e)}
+                      onChange={(e) =>
+                        setIncomeData({
+                          ...incomeData,
+                          personnel: e.target.value.replaceAll(",", ""),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>공과금</FormLabel>
+                    <Input
+                      name="dues"
+                      defaultValue={formatCurrency(incomeData.dues)}
+                      value={formatCurrency(incomeData.dues)}
+                      onKeyDown={(e) => isNumber(e)}
+                      onChange={(e) =>
+                        setIncomeData({
+                          ...incomeData,
+                          dues: e.target.value.replaceAll(",", ""),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>기타비용</FormLabel>
+                    <Input
+                      name="etc"
+                      value={formatCurrency(incomeData.etc)}
+                      defaultValue={formatCurrency(incomeData.etc)}
+                      onKeyDown={(e) => isNumber(e)}
+                      onChange={(e) =>
+                        setIncomeData({
+                          ...incomeData,
+                          etc: e.target.value.replaceAll(",", ""),
+                        })
+                      }
+                    />
+                  </FormControl>
+                </PopupBase>
+              </ButtonGroup>
+              <Card p={"10px 0px"}>
+                {incomeList?.map((item, index) => (
+                  <CardBody p={"10px 20px"}>
+                    <Stack
+                      border={"1px solid #d9d9d9"}
+                      borderRadius={"10px"}
+                      p={"10px"}
+                      w={"100%"}
+                    >
+                      <HStack>
+                        <Flex direction={"column"}>
+                          <Text>No.</Text>
+                          <Text>분석날짜</Text>
+                          <Text>지점명</Text>
+                          <Text>조회기간</Text>
+                          <Text>예상손익</Text>
+                          <Text>예상손익률</Text>
+                        </Flex>
+                        <Flex direction={"column"}>
+                          <Text>{index + 1}</Text>
+                          <Text>{`${timestampToDate(item.createAt)}`}</Text>
+                          <Text>{searchShopName(item.shop_id)}</Text>
+                          <Text>{item.date}</Text>
+                          <Text>
+                            {item.sales -
                               item.purchase -
                               item.etc -
                               item.dues -
                               item.hire -
-                              item.personnel
-                          )}
-                        </Text>
-                        <Text
-                          color={
-                            Math.round(item.ratio * 100) < 0
-                              ? "#E53E3E"
-                              : "#34C759"
-                          }
-                        >
-                          {Math.round(item.ratio * 100) < 0 ? "" : "+"}
-                          {Math.round(item.ratio * 100)}%
-                        </Text>
-                      </Flex>
-                    </HStack>
+                              item.personnel <
+                            0
+                              ? "-"
+                              : "+"}
+                            {formatCurrency(
+                              item.sales -
+                                item.purchase -
+                                item.etc -
+                                item.dues -
+                                item.hire -
+                                item.personnel
+                            )}
+                          </Text>
+                          <Text
+                            color={
+                              Math.round(item.ratio * 100) < 0
+                                ? "#E53E3E"
+                                : "#34C759"
+                            }
+                          >
+                            {Math.round(item.ratio * 100) < 0 ? "" : "+"}
+                            {Math.round(item.ratio * 100)}%
+                          </Text>
+                        </Flex>
+                      </HStack>
 
-                    <HStack justifyContent={"space-between"}>
-                      <Stack w={"100%"}>
-                        <IconButton
-                          onClick={() => deleteIncome(item.doc_id)}
-                          icon={<DeleteIcon />}
-                        />
-                      </Stack>
-                    </HStack>
-                  </Stack>
-                </CardBody>
-              ))}
-            </Card>
+                      <HStack justifyContent={"space-between"}>
+                        <Stack w={"100%"}>
+                          <IconButton
+                            onClick={() => deleteIncome(item.doc_id)}
+                            icon={<DeleteIcon />}
+                          />
+                        </Stack>
+                      </HStack>
+                    </Stack>
+                  </CardBody>
+                ))}
+              </Card>
+            </Stack>
           </Stack>
         </Flex>
       )}

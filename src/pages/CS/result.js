@@ -113,6 +113,9 @@ function Result(props) {
               bgColor={"white"}
               color={"#e53e3e"}
               size={"xs"}
+              onClick={() => {
+                navigate(`/search/`);
+              }}
             >
               결제 영수증 보기
             </Button>

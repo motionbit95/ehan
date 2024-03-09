@@ -22,6 +22,9 @@ import {
   HStack,
   Switch,
   Image,
+  RadioGroup,
+  Radio,
+  Input,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -160,7 +163,39 @@ function Inventory({ ...props }) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-          <RFilter />
+          <RFilter
+            render={
+              <>
+                <Stack spacing={"20px"}>
+                  <FormControl>
+                    <FormLabel>정렬</FormLabel>
+                    <RadioGroup>
+                      <HStack>
+                        <Radio>카테고리순</Radio>
+                        <Radio>금액순</Radio>
+                        <Radio>관리지점순</Radio>
+                      </HStack>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>검색</FormLabel>
+                    <HStack>
+                      <Select>
+                        <option>상품명</option>
+                        <option>카테고리</option>
+                        <option>상품가격</option>
+                        <option>관리지점</option>
+                      </Select>
+                      <Input />
+                    </HStack>
+                  </FormControl>
+                  <HStack justifyContent={"flex-end"}>
+                    <Button>적용</Button>
+                  </HStack>
+                </Stack>
+              </>
+            }
+          />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin.permission === "supervisor" && (
@@ -293,131 +328,137 @@ function Inventory({ ...props }) {
       ) : (
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
-
-          <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {/* <Text>관리자 설정</Text> */}
+          <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter />
-            {admin.permission === "supervisor" && (
-              <Stack>
-                <ButtonGroup
-                  size={"md"}
-                  w={"100%"}
-                  justifyContent={"space-between"}
-                >
-                  <PopupBase
-                    onClose={addInventory}
-                    icon={<AddIcon />}
-                    title={"재고"}
-                    action={"추가"}
+
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {/* <Text>관리자 설정</Text> */}
+
+              {admin.permission === "supervisor" && (
+                <Stack>
+                  <ButtonGroup
+                    size={"md"}
+                    w={"100%"}
+                    justifyContent={"space-between"}
                   >
-                    <Stack>
-                      <FormControl>
-                        <FormLabel>관리 지점</FormLabel>
-                        <Select name="shop_id">
-                          {props.shopList?.map((shop) => (
-                            <option key={shop.doc_id} value={shop.doc_id}>
-                              {shop.shop_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl>
-                        <FormLabel>상품 선택</FormLabel>
-                        <Select name="product_id">
-                          {totalProducts?.map((product) => (
-                            <option key={product.doc_id} value={product.doc_id}>
-                              {product.product_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </PopupBase>
-                  <Button colorScheme="red" leftIcon={<EditIcon />}>
-                    저장
-                  </Button>
-                </ButtonGroup>
-                <Card p={"10px 0px"}>
-                  {totalProducts &&
-                    inventoryList?.map((item, index) => (
-                      <CardBody key={index} p={"10px 20px"}>
-                        <Stack
-                          border={"1px solid #d9d9d9"}
-                          borderRadius={"10px"}
-                          p={"10px"}
-                          w={"100%"}
-                        >
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>상품명</Text>
-                              <Text>카테고리</Text>
-                              <Text>상품가격</Text>
-                              <Text>관리 지점</Text>
-                              <Text>재고사용여부</Text>
-                            </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <ProductColumn
-                                productList={totalProducts}
-                                product_id={item.product_id}
-                              />
-                              <Text>{searchShopName(item.shop_id)}</Text>
-                              <Flex textAlign={"center"}>
-                                <Switch defaultChecked={item.inventory_use} />
+                    <PopupBase
+                      onClose={addInventory}
+                      icon={<AddIcon />}
+                      title={"재고"}
+                      action={"추가"}
+                    >
+                      <Stack>
+                        <FormControl>
+                          <FormLabel>관리 지점</FormLabel>
+                          <Select name="shop_id">
+                            {props.shopList?.map((shop) => (
+                              <option key={shop.doc_id} value={shop.doc_id}>
+                                {shop.shop_name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl>
+                          <FormLabel>상품 선택</FormLabel>
+                          <Select name="product_id">
+                            {totalProducts?.map((product) => (
+                              <option
+                                key={product.doc_id}
+                                value={product.doc_id}
+                              >
+                                {product.product_name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Stack>
+                    </PopupBase>
+                    <Button colorScheme="red" leftIcon={<EditIcon />}>
+                      저장
+                    </Button>
+                  </ButtonGroup>
+                  <Card p={"10px 0px"}>
+                    {totalProducts &&
+                      inventoryList?.map((item, index) => (
+                        <CardBody key={index} p={"10px 20px"}>
+                          <Stack
+                            border={"1px solid #d9d9d9"}
+                            borderRadius={"10px"}
+                            p={"10px"}
+                            w={"100%"}
+                          >
+                            <HStack>
+                              <Flex direction={"column"}>
+                                <Text>No.</Text>
+                                <Text>상품명</Text>
+                                <Text>카테고리</Text>
+                                <Text>상품가격</Text>
+                                <Text>관리 지점</Text>
+                                <Text>재고사용여부</Text>
                               </Flex>
-                            </Flex>
-                          </HStack>
-                          <Stack>
-                            <HStack
-                              spacing={"10px"}
-                              border={"1px solid #d9d9d9"}
-                              p={"10px 7px"}
-                              borderRadius={"10px"}
-                              justifyContent={"space-between"}
-                            >
-                              <Image
-                                w={"16px"}
-                                h={"16px"}
-                                src={require("../../image/HiMinus.png")}
-                                onClick={() => {
-                                  if (item.inventory_count > 1) {
+                              <Flex direction={"column"}>
+                                <Text>{index + 1}</Text>
+                                <ProductColumn
+                                  productList={totalProducts}
+                                  product_id={item.product_id}
+                                />
+                                <Text>{searchShopName(item.shop_id)}</Text>
+                                <Flex textAlign={"center"}>
+                                  <Switch defaultChecked={item.inventory_use} />
+                                </Flex>
+                              </Flex>
+                            </HStack>
+                            <Stack>
+                              <HStack
+                                spacing={"10px"}
+                                border={"1px solid #d9d9d9"}
+                                p={"10px 7px"}
+                                borderRadius={"10px"}
+                                justifyContent={"space-between"}
+                              >
+                                <Image
+                                  w={"16px"}
+                                  h={"16px"}
+                                  src={require("../../image/HiMinus.png")}
+                                  onClick={() => {
+                                    if (item.inventory_count > 1) {
+                                      changeInventoryCount(
+                                        index,
+                                        item.inventory_count - 1
+                                      );
+                                    }
+                                  }}
+                                />
+                                <Text>{item.inventory_count}</Text>
+                                <Image
+                                  w={"16px"}
+                                  h={"16px"}
+                                  src={require("../../image/HiPlus.png")}
+                                  onClick={() => {
                                     changeInventoryCount(
                                       index,
-                                      item.inventory_count - 1
+                                      item.inventory_count + 1
                                     );
-                                  }
-                                }}
-                              />
-                              <Text>{item.inventory_count}</Text>
-                              <Image
-                                w={"16px"}
-                                h={"16px"}
-                                src={require("../../image/HiPlus.png")}
-                                onClick={() => {
-                                  changeInventoryCount(
-                                    index,
-                                    item.inventory_count + 1
-                                  );
-                                }}
-                              />
+                                  }}
+                                />
+                              </HStack>
+                            </Stack>
+                            <HStack justifyContent={"space-between"}>
+                              <Stack w={"100%"}>
+                                <IconButton
+                                  size={"sm"}
+                                  // onClick={() => deleteProduct(item.doc_id)}
+                                  icon={<DeleteIcon />}
+                                />
+                              </Stack>
                             </HStack>
                           </Stack>
-                          <HStack justifyContent={"space-between"}>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                size={"sm"}
-                                // onClick={() => deleteProduct(item.doc_id)}
-                                icon={<DeleteIcon />}
-                              />
-                            </Stack>
-                          </HStack>
-                        </Stack>
-                      </CardBody>
-                    ))}
-                </Card>
-              </Stack>
-            )}
+                        </CardBody>
+                      ))}
+                  </Card>
+                </Stack>
+              )}
+            </Stack>
           </Stack>
         </Flex>
       )}

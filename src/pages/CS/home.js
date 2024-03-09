@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../components/RFooter";
+import { CopyIcon, SearchIcon } from "@chakra-ui/icons";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -220,27 +221,50 @@ function Home(props) {
                 })
               }
             />
-            <Button
-              bgColor={"white"}
-              w={"40px"}
-              h={"40px"}
-              borderRadius={"100%"}
-              p={"0"}
-            >
-              <Image
-                w={"3vh"}
-                h={"3vh"}
-                src={require("../../image/ShoppingCart.png")}
-                onClick={() =>
-                  navigate(`/cart`, {
-                    state: {
-                      uid: auth.currentUser.uid,
-                      shop_id: shop_id,
-                    },
-                  })
-                }
-              />
-            </Button>
+            <HStack gap={"40px"}>
+              <Button
+                bgColor={"white"}
+                w={"40px"}
+                h={"40px"}
+                borderRadius={"100%"}
+                p={"0"}
+              >
+                <Image
+                  w={"3vh"}
+                  h={"3vh"}
+                  icon={<SearchIcon />}
+                  onClick={() =>
+                    navigate(`/search`, {
+                      state: {
+                        uid: auth.currentUser.uid,
+                        shop_id: shop_id,
+                      },
+                    })
+                  }
+                />
+              </Button>
+              <Button
+                bgColor={"white"}
+                w={"40px"}
+                h={"40px"}
+                borderRadius={"100%"}
+                p={"0"}
+              >
+                <Image
+                  w={"3vh"}
+                  h={"3vh"}
+                  src={require("../../image/ShoppingCart.png")}
+                  onClick={() =>
+                    navigate(`/cart`, {
+                      state: {
+                        uid: auth.currentUser.uid,
+                        shop_id: shop_id,
+                      },
+                    })
+                  }
+                />
+              </Button>
+            </HStack>
           </Flex>
           <Flex
             id="title"

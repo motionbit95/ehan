@@ -224,8 +224,6 @@ function Cart(props) {
           레드스위치는 상품, 거래정보 및 거래에 대하여 책임을 지지않습니다.
         </Text>
       </Stack>
-
-      <Box h={"15vh"} />
       <Flex
         id="button"
         align={"center"}

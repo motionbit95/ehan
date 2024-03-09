@@ -16,6 +16,7 @@ import Menu from "./pages/CS/menu";
 import Login from "./pages/AD/login";
 import { Center, ChakraProvider, Container } from "@chakra-ui/react";
 import { GlobalStateProvider } from "./GlobalState";
+import SearchOrder from "./pages/CS/searchOrder";
 
 function App() {
   // url 주소에 admin이 포함되어있으면 관리자 페이지입니다.
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/result" element={<Result />} />
+                <Route path="/search" element={<SearchOrder />} />
                 <Route path="/admin/*" element={<Dashboard />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/account" element={<Account />} />
