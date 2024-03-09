@@ -33,6 +33,7 @@ import { useGlobalState } from "../../GlobalState";
 import PopupBase from "../../modals/PopupBase";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
+import RFilter from "../../components/RFilter";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -159,7 +160,7 @@ function Inventory({ ...props }) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-
+          <RFilter />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin.permission === "supervisor" && (
@@ -292,8 +293,10 @@ function Inventory({ ...props }) {
       ) : (
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
+
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
+            <RFilter />
             {admin.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup
@@ -334,89 +337,6 @@ function Inventory({ ...props }) {
                     저장
                   </Button>
                 </ButtonGroup>
-                {/* <TableContainer
-                  border={"1px solid #d9d9d9"}
-                  bgColor={"white"}
-                  borderRadius={"10px"}
-                  p={"10px"}
-                  mb={"20px"}
-                >
-                  <Table variant="simple" size={"sm"}>
-                    <Thead h={"40px"}>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>상품명</Th>
-                        <Th>카테고리</Th>
-                        <Th>상품가격</Th>
-                        <Th>관리지점</Th>
-                        <Th textAlign={"center"}>재고수량</Th>
-                        <Th textAlign={"center"}>재고사용여부</Th>
-                        <Th w={"30px"}>삭제</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {totalProducts &&
-                        inventoryList?.map((item, index) => (
-                          <Tr
-                            key={index}
-                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                          >
-                            <Td fontSize={"sm"}>{index + 1}</Td>
-                            <ProductColumn
-                              productList={totalProducts}
-                              product_id={item.product_id}
-                            />
-                            <Td>{searchShopName(item.shop_id)}</Td>
-                            <Td>
-                              <HStack
-                                spacing={"10px"}
-                                border={"1px solid #d9d9d9"}
-                                p={"10px 7px"}
-                                borderRadius={"10px"}
-                                justifyContent={"space-between"}
-                              >
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiMinus.png")}
-                                  onClick={() => {
-                                    if (item.inventory_count > 1) {
-                                      changeInventoryCount(
-                                        index,
-                                        item.inventory_count - 1
-                                      );
-                                    }
-                                  }}
-                                />
-                                <Text>{item.inventory_count}</Text>
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiPlus.png")}
-                                  onClick={() => {
-                                    changeInventoryCount(
-                                      index,
-                                      item.inventory_count + 1
-                                    );
-                                  }}
-                                />
-                              </HStack>
-                            </Td>
-                            <Td textAlign={"center"}>
-                              <Switch defaultChecked={item.inventory_use} />
-                            </Td>
-                            <Td>
-                              <IconButton
-                                size={"sm"}
-                                // onClick={() => deleteProduct(item.doc_id)}
-                                icon={<DeleteIcon />}
-                              />
-                            </Td>
-                          </Tr>
-                        ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer> */}
                 <Card p={"10px 0px"}>
                   {totalProducts &&
                     inventoryList?.map((item, index) => (
@@ -484,7 +404,7 @@ function Inventory({ ...props }) {
                             </HStack>
                           </Stack>
                           <HStack justifyContent={"space-between"}>
-                            <Stack w={"10x0%"}>
+                            <Stack w={"100%"}>
                               <IconButton
                                 size={"sm"}
                                 // onClick={() => deleteProduct(item.doc_id)}

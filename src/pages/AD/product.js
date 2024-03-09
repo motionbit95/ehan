@@ -39,6 +39,7 @@ import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
 import { debug } from "../../firebase/api";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import RFilter from "../../components/RFilter";
 
 function ProductInfo({ shopList, permission, ...props }) {
   const [product, setProduct] = useState(
@@ -360,7 +361,7 @@ function Product(props) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-
+          <RFilter />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin.permission === "supervisor" && (
@@ -474,6 +475,7 @@ function Product(props) {
           {/* mobile 에서의 레이아웃 */}
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
+            <RFilter />
             {admin.permission === "supervisor" && (
               <Stack>
                 <ButtonGroup size={"sm"}>

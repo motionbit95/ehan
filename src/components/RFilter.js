@@ -60,7 +60,14 @@ function RFilter(props) {
   };
 
   return (
-    <Flex w={"100%"} p={"10px"} bgColor={"white"}>
+    <Flex
+      w={"100%"}
+      p={"10px"}
+      bgColor={"white"}
+      position={"sticky"}
+      top={"0"}
+      zIndex={"20"}
+    >
       {isDesktop ? (
         <HStack w={"100%"}>
           <IconButton
