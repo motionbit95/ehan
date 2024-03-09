@@ -44,6 +44,7 @@ export function addCommas(number) {
 
 export const timestampToDate = (timestamp) => {
   // Convert Firestore timestamp to milliseconds
+
   const milliseconds =
     timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
@@ -57,6 +58,16 @@ export const timestampToDate = (timestamp) => {
 
   return dateString;
 };
+
+export function getRandomColor() {
+  // 16진수 색상 코드 생성
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
 // 지역명 데이터
 export const cities = [

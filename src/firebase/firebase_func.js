@@ -198,14 +198,16 @@ export const getTotalOrder = async (dateRange, shop_id) => {
   const startDate = dateRange[0].toLocaleDateString();
   const endDate = dateRange[1].toLocaleDateString();
   querySnapshot.forEach((doc) => {
-    const createAt = timestampToDate(doc.data().createAt);
-    if (createAt >= startDate && createAt <= endDate) {
-      order.push({ ...doc.data(), doc_id: doc.id });
-      totalPrice += parseFloat(doc.data().pay_price);
-      for (let i = 0; i < doc.data().pay_product.length; i++) {
-        totalOriginPrice += parseFloat(
-          doc.data().pay_product[i].product_origin_price
-        );
+    if (doc.data().createAt) {
+      const createAt = timestampToDate(doc.data().createAt);
+      if (createAt >= startDate && createAt <= endDate) {
+        order.push({ ...doc.data(), doc_id: doc.id });
+        totalPrice += parseFloat(doc.data().pay_price);
+        for (let i = 0; i < doc.data().pay_product.length; i++) {
+          totalOriginPrice += parseFloat(
+            doc.data().pay_product[i].product_origin_price
+          );
+        }
       }
     }
   });

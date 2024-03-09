@@ -335,88 +335,89 @@ function Order(props) {
               }
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
-              {/* <Text>관리자 설정</Text> */}
-              {admin?.permission === "supervisor" && (
-                <Stack>
-                  <Card p={"10px 0px"}>
-                    {orderList?.map((item, index) => (
-                      <CardBody key={index} p={"10px 20px"}>
-                        <Stack
-                          border={"1px solid #d9d9d9"}
-                          borderRadius={"10px"}
-                          p={"10px"}
-                          w={"100%"}
-                        >
-                          <Flex>
-                            <Stack>
-                              <PopupBase
-                                size={"xs"}
-                                colorScheme={
-                                  item?.pay_state === "0000"
-                                    ? "gray"
-                                    : item?.pay_state === "0001"
-                                    ? "orange"
-                                    : "green"
-                                }
-                                title={"배송상태"}
-                                text={
-                                  item?.pay_state === "0000"
-                                    ? "배송전"
-                                    : item?.pay_state === "0001"
-                                    ? "배송시작"
-                                    : "배송완료"
-                                }
-                                action={"변경"}
-                                onClose={(e) => {
-                                  handleChangeState(state, item);
-                                }}
-                              >
-                                <RadioGroup
-                                  id="pay_state"
-                                  colorScheme="red"
-                                  defaultValue={item?.pay_state}
-                                  onChange={(e) => {
-                                    setState(e);
+              <Stack>
+                {/* <Text>관리자 설정</Text> */}
+                {admin?.permission === "supervisor" && (
+                  <Stack>
+                    <Card p={"10px 0px"}>
+                      {orderList?.map((item, index) => (
+                        <CardBody key={index} p={"10px 20px"}>
+                          <Stack
+                            border={"1px solid #d9d9d9"}
+                            borderRadius={"10px"}
+                            p={"10px"}
+                            w={"100%"}
+                          >
+                            <Flex>
+                              <Stack>
+                                <PopupBase
+                                  size={"xs"}
+                                  colorScheme={
+                                    item?.pay_state === "0000"
+                                      ? "gray"
+                                      : item?.pay_state === "0001"
+                                      ? "orange"
+                                      : "green"
+                                  }
+                                  title={"배송상태"}
+                                  text={
+                                    item?.pay_state === "0000"
+                                      ? "배송전"
+                                      : item?.pay_state === "0001"
+                                      ? "배송시작"
+                                      : "배송완료"
+                                  }
+                                  action={"변경"}
+                                  onClose={(e) => {
+                                    handleChangeState(state, item);
                                   }}
                                 >
-                                  <Stack>
-                                    <Radio size={"lg"} value="0000">
-                                      배송전
-                                    </Radio>
-                                    <Radio size={"lg"} value="0001">
-                                      배송시작
-                                    </Radio>
-                                    <Radio size={"lg"} value="0002">
-                                      배송완료
-                                    </Radio>
-                                  </Stack>
-                                </RadioGroup>
-                              </PopupBase>
-                            </Stack>
-                          </Flex>
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>결제(환불)일</Text>
-                              <Text>결제내역</Text>
-                              <Text>결제(환불)금액</Text>
-                              <Text>배송지</Text>
+                                  <RadioGroup
+                                    id="pay_state"
+                                    colorScheme="red"
+                                    defaultValue={item?.pay_state}
+                                    onChange={(e) => {
+                                      setState(e);
+                                    }}
+                                  >
+                                    <Stack>
+                                      <Radio size={"lg"} value="0000">
+                                        배송전
+                                      </Radio>
+                                      <Radio size={"lg"} value="0001">
+                                        배송시작
+                                      </Radio>
+                                      <Radio size={"lg"} value="0002">
+                                        배송완료
+                                      </Radio>
+                                    </Stack>
+                                  </RadioGroup>
+                                </PopupBase>
+                              </Stack>
                             </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <Text>{item?.pay_date?.split("T")[0]}</Text>
-                              <Text>
-                                {item?.pay_product[0]?.product_name} 외{" "}
-                                {item?.pay_product?.length}건
-                              </Text>
-                              <Text>
-                                {item?.pay_price
-                                  ? formatCurrency(item?.pay_price)
-                                  : "0"}
-                              </Text>
-                              <Text>{item?.order_address}</Text>
-                            </Flex>
-                          </HStack>
+                            <HStack>
+                              <Flex direction={"column"}>
+                                <Text>No.</Text>
+                                <Text>결제(환불)일</Text>
+                                <Text>결제내역</Text>
+                                <Text>결제(환불)금액</Text>
+                                <Text>배송지</Text>
+                              </Flex>
+                              <Flex direction={"column"}>
+                                <Text>{index + 1}</Text>
+                                <Text>{item?.pay_date?.split("T")[0]}</Text>
+                                <Text>
+                                  {item?.pay_product[0]?.product_name} 외{" "}
+                                  {item?.pay_product?.length}건
+                                </Text>
+                                <Text>
+                                  {item?.pay_price
+                                    ? formatCurrency(item?.pay_price)
+                                    : "0"}
+                                </Text>
+                                <Text>{item?.order_address}</Text>
+                              </Flex>
+                            </HStack>
 
                             <HStack justifyContent={"space-between"}>
                               <Stack w={"100%"}>

@@ -1,0 +1,50 @@
+.recharts-legend-item-text {
+  color: black !important;
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}
+.recharts-legend-icon,
+.recharts-symbols {
+  border-radius: 4px !important; /* 예시 */
+}
+
+.custom-pie-chart .recharts-wrapper .recharts-surface {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.recharts-wrapper,
+.recharts-sector,
+.recharts-sector:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+.recharts-legend-item:focus {
+  outline: none;
+}
+
+.custom-tooltip {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.custom-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgba(0, 0, 0, 0.8);
+  transform: translateX(-50%);
+}
+
+.custom-tooltip-text {
+  position: absolute;
+  color: white;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}

@@ -1,6 +1,7 @@
 //import logo from "./logo.svg";
 import "./App.css";
 import "./style/react-datepicker.css";
+import "./style/recharts.css";
 
 import Dashboard from "./pages/AD/dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
