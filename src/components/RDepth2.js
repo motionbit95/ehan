@@ -10,8 +10,10 @@ function RDepth2({ depth1, ...props }) {
       placeholder="전체"
       onChange={(e) => props.onChangeDepth2(e.target.value)}
     >
-      {districts[depth1 ? depth1 : "서울특별시"].map((district) => (
-        <option value={district}>{district}</option>
+      {districts[depth1 ? depth1 : "서울특별시"].map((district, index) => (
+        <option key={index} value={district}>
+          {district}
+        </option>
       ))}
     </Select>
   );

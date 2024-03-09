@@ -76,7 +76,7 @@ const RHeader = (props) => {
 
         <HStack>
           <Button size={"sm"} onClick={() => auth.signOut()}>
-            로그아웃
+            {admin?.admin_name ? "로그아웃" : "로그인"}
           </Button>
           {/* 햄버거 아이콘 (모바일 화면에서만 보임) */}
           <IconButton

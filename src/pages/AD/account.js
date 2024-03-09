@@ -119,7 +119,9 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
                 defaultValue={admin.shop_id}
               >
                 {shopList?.map((shop) => (
-                  <option value={shop.doc_id}>{shop.shop_name}</option>
+                  <option key={shop.doc_id} value={shop.doc_id}>
+                    {shop.shop_name}
+                  </option>
                 ))}
               </Select>
             </FormControl>
@@ -388,7 +390,9 @@ function Account(props) {
                       <FormLabel>관리 지점</FormLabel>
                       <Select name="shop_id">
                         {props.shopList?.map((shop) => (
-                          <option value={shop.doc_id}>{shop.shop_name}</option>
+                          <option key={shop.doc_id} value={shop.doc_id}>
+                            {shop.shop_name}
+                          </option>
                         ))}
                       </Select>
                     </FormControl>
@@ -472,7 +476,10 @@ function Account(props) {
                     </Thead>
                     <Tbody>
                       {adminList.map((item, index) => (
-                        <Tr _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}>
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
                           <Td fontSize={"sm"}>{index + 1}</Td>
                           <Td fontSize={"sm"}>{item.admin_name}</Td>
                           <Td fontSize={"sm"}>{item.admin_email}</Td>
@@ -583,7 +590,7 @@ function Account(props) {
                         <FormLabel>관리 지점</FormLabel>
                         <Select name="shop_id">
                           {props.shopList?.map((shop) => (
-                            <option value={shop.doc_id}>
+                            <option key={shop.doc_id} value={shop.doc_id}>
                               {shop.shop_name}
                             </option>
                           ))}
@@ -649,7 +656,7 @@ function Account(props) {
 
                   <Card p={"10px 0px"}>
                     {adminList.map((item, index) => (
-                      <CardBody p={"10px 20px"}>
+                      <CardBody key={index} p={"10px 20px"}>
                         <Stack
                           border={"1px solid #d9d9d9"}
                           borderRadius={"10px"}

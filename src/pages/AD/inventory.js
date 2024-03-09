@@ -180,7 +180,7 @@ function Inventory({ ...props }) {
                         <FormLabel>관리 지점</FormLabel>
                         <Select name="shop_id">
                           {props.shopList?.map((shop) => (
-                            <option value={shop.doc_id}>
+                            <option key={shop.doc_id} value={shop.doc_id}>
                               {shop.shop_name}
                             </option>
                           ))}
@@ -190,7 +190,7 @@ function Inventory({ ...props }) {
                         <FormLabel>상품 선택</FormLabel>
                         <Select name="product_id">
                           {totalProducts?.map((product) => (
-                            <option value={product.doc_id}>
+                            <option key={product.doc_id} value={product.doc_id}>
                               {product.product_name}
                             </option>
                           ))}
@@ -312,7 +312,7 @@ function Inventory({ ...props }) {
                         <FormLabel>관리 지점</FormLabel>
                         <Select name="shop_id">
                           {props.shopList?.map((shop) => (
-                            <option value={shop.doc_id}>
+                            <option key={shop.doc_id} value={shop.doc_id}>
                               {shop.shop_name}
                             </option>
                           ))}
@@ -322,7 +322,7 @@ function Inventory({ ...props }) {
                         <FormLabel>상품 선택</FormLabel>
                         <Select name="product_id">
                           {totalProducts?.map((product) => (
-                            <option value={product.doc_id}>
+                            <option key={product.doc_id} value={product.doc_id}>
                               {product.product_name}
                             </option>
                           ))}
@@ -334,93 +334,10 @@ function Inventory({ ...props }) {
                     저장
                   </Button>
                 </ButtonGroup>
-                {/* <TableContainer
-                  border={"1px solid #d9d9d9"}
-                  bgColor={"white"}
-                  borderRadius={"10px"}
-                  p={"10px"}
-                  mb={"20px"}
-                >
-                  <Table variant="simple" size={"sm"}>
-                    <Thead h={"40px"}>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>상품명</Th>
-                        <Th>카테고리</Th>
-                        <Th>상품가격</Th>
-                        <Th>관리지점</Th>
-                        <Th textAlign={"center"}>재고수량</Th>
-                        <Th textAlign={"center"}>재고사용여부</Th>
-                        <Th w={"30px"}>삭제</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {totalProducts &&
-                        inventoryList?.map((item, index) => (
-                          <Tr
-                            key={index}
-                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                          >
-                            <Td fontSize={"sm"}>{index + 1}</Td>
-                            <ProductColumn
-                              productList={totalProducts}
-                              product_id={item.product_id}
-                            />
-                            <Td>{searchShopName(item.shop_id)}</Td>
-                            <Td>
-                              <HStack
-                                spacing={"10px"}
-                                border={"1px solid #d9d9d9"}
-                                p={"10px 7px"}
-                                borderRadius={"10px"}
-                                justifyContent={"space-between"}
-                              >
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiMinus.png")}
-                                  onClick={() => {
-                                    if (item.inventory_count > 1) {
-                                      changeInventoryCount(
-                                        index,
-                                        item.inventory_count - 1
-                                      );
-                                    }
-                                  }}
-                                />
-                                <Text>{item.inventory_count}</Text>
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiPlus.png")}
-                                  onClick={() => {
-                                    changeInventoryCount(
-                                      index,
-                                      item.inventory_count + 1
-                                    );
-                                  }}
-                                />
-                              </HStack>
-                            </Td>
-                            <Td textAlign={"center"}>
-                              <Switch defaultChecked={item.inventory_use} />
-                            </Td>
-                            <Td>
-                              <IconButton
-                                size={"sm"}
-                                // onClick={() => deleteProduct(item.doc_id)}
-                                icon={<DeleteIcon />}
-                              />
-                            </Td>
-                          </Tr>
-                        ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer> */}
                 <Card p={"10px 0px"}>
                   {totalProducts &&
                     inventoryList?.map((item, index) => (
-                      <CardBody p={"10px 20px"}>
+                      <CardBody key={index} p={"10px 20px"}>
                         <Stack
                           border={"1px solid #d9d9d9"}
                           borderRadius={"10px"}

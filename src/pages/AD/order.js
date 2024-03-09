@@ -341,7 +341,7 @@ function Order(props) {
                 <Stack>
                   <Card p={"10px 0px"}>
                     {orderList?.map((item, index) => (
-                      <CardBody p={"10px 20px"}>
+                      <CardBody key={index} p={"10px 20px"}>
                         <Stack
                           border={"1px solid #d9d9d9"}
                           borderRadius={"10px"}

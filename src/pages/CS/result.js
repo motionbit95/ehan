@@ -128,7 +128,7 @@ function Result(props) {
         >
           {order?.pay_product?.length > 0 &&
             order.pay_product.map((value, index) => (
-              <>
+              <Box key={index}>
                 <HStack gap={"1vh"}>
                   <Text>{value.product_name}</Text>
                   <Text>{value.count}개</Text>
@@ -137,7 +137,7 @@ function Result(props) {
                 {index !== order?.pay_product?.length - 1 && (
                   <Box borderBottom={"1px solid #d9d9d9"} />
                 )}
-              </>
+              </Box>
             ))}
         </Stack>
         <Stack width={"100%"} gap={"1vh"} padding={"2vh"} bgColor={"white"}>

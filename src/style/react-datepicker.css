@@ -70,7 +70,7 @@
   text-align: center;
   /* border-bottom: 1px solid #aeaeae; */
   border-top-left-radius: 0.3rem;
-  /* padding: 8px 0; */
+  padding: 8px 0;
   position: relative;
 }
 .react-datepicker__header--time {

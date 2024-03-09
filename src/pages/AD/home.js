@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Flex, HStack, Stack, useMediaQuery } from "@chakra-ui/react";
 import RFilter from "../../components/RFilter";
 import { useGlobalState } from "../../GlobalState";
@@ -6,6 +6,11 @@ import { useGlobalState } from "../../GlobalState";
 function Home(props) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { admin } = useGlobalState();
+
+  useEffect(() => {
+    console.log(admin);
+  }, [admin]);
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -18,6 +23,7 @@ function Home(props) {
           // p={"2vh"}
         >
           <RFilter
+            useSearch={false}
             shopList={props.shopList}
             admin={admin}
             onChangeShop={(shopId) => console.log(shopId)}

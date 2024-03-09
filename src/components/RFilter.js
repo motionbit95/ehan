@@ -17,7 +17,7 @@ import RDepth1 from "./RDepth1";
 import RDepth2 from "./RDepth2";
 import { queryShop } from "../firebase/firebase_func";
 
-function RFilter(props) {
+function RFilter({ useSearch = true, ...props }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [depth1, setDepth1] = useState("서울특별시");
   const [depth2, setDepth2] = useState("강남구");
@@ -64,12 +64,13 @@ function RFilter(props) {
       {isDesktop ? (
         <HStack w={"100%"}>
           <IconButton
+            display={useSearch ? "block" : "none"}
             onClick={() => setViewFilter(!viewFilter)}
             icon={<Search2Icon />}
           />
           <RDepth1 w={"20%"} onChangeDepth1={setDepth1}></RDepth1>
           <RDepth2
-            isDesable={!depth1}
+            isDisabled={!depth1}
             w={"20%"}
             depth1={depth1}
             onChangeDepth2={getShopList}
@@ -84,7 +85,9 @@ function RFilter(props) {
           >
             <option value={null}>전체</option>
             {filteredShopList?.map((shop) => (
-              <option value={shop.doc_id}>{shop.shop_name}</option>
+              <option key={shop.doc_id} value={shop.doc_id}>
+                {shop.shop_name}
+              </option>
             ))}
           </Select>
 
@@ -113,7 +116,7 @@ function RFilter(props) {
           <HStack w={"100%"}>
             <RDepth1 w={"100%"} onChangeDepth1={setDepth1}></RDepth1>
             <RDepth2
-              isDesable={!depth1}
+              isDisabled={!depth1}
               w={"100%"}
               depth1={depth1}
               onChangeDepth2={getShopList}
@@ -130,7 +133,9 @@ function RFilter(props) {
             >
               <option value={null}>전체</option>
               {filteredShopList?.map((shop) => (
-                <option value={shop.doc_id}>{shop.shop_name}</option>
+                <option key={shop.doc_id} value={shop.doc_id}>
+                  {shop.shop_name}
+                </option>
               ))}
             </Select>
             <HStack w={"100%"}>

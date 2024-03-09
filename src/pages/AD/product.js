@@ -492,7 +492,7 @@ function Product(props) {
                 </ButtonGroup>
                 <Card p={"10px 0px"}>
                   {productList?.map((item, index) => (
-                    <CardBody p={"10px 20px"}>
+                    <CardBody key={index} p={"10px 20px"}>
                       <Stack
                         border={"1px solid #d9d9d9"}
                         borderRadius={"10px"}

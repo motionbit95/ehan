@@ -11,8 +11,10 @@ function RDepth1(props) {
       placeholder="시/도"
       onChange={(e) => props.onChangeDepth1(e.target.value)}
     >
-      {cities.map((city) => (
-        <option value={city}>{city}</option>
+      {cities.map((city, index) => (
+        <option key={index} value={city}>
+          {city}
+        </option>
       ))}
     </Select>
   );

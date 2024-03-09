@@ -318,7 +318,12 @@ function Home(props) {
           </Stack>
           <Stack p={"2vh"} id="products" ref={containerRef}>
             {categories?.map((category, index) => (
-              <Stack id={index} className="category-box" paddingTop={"1vh"}>
+              <Stack
+                key={index}
+                id={index}
+                className="category-box"
+                paddingTop={"1vh"}
+              >
                 <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
                   {category}
                 </Text>
