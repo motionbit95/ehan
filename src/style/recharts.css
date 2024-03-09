@@ -48,3 +48,15 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+.recharts-legend-wrapper {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.recharts-legend-wrapper::-webkit-scrollbar {
+  display: none;
+}

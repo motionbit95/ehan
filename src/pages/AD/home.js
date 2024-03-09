@@ -140,7 +140,7 @@ function Home(props) {
               >
                 <Stack w={"100%"}>
                   <Text>총 매출</Text>
-                  <Skeleton minW={400} w={"100%"} isLoaded={totalCost}>
+                  <Skeleton minW={300} w={"100%"} isLoaded={totalCost}>
                     <HStack>
                       <Text fontSize={"3xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost)}
@@ -159,7 +159,7 @@ function Home(props) {
               >
                 <Stack w={"100%"}>
                   <Text>실 매출</Text>
-                  <Skeleton minW={400} w={"100%"} isLoaded={totalOrigin}>
+                  <Skeleton minW={300} w={"100%"} isLoaded={totalOrigin}>
                     <HStack>
                       <Text fontSize={"3xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost - totalOrigin)}
@@ -211,15 +211,101 @@ function Home(props) {
           </Stack>
         </Stack>
       ) : (
-        <Flex bgColor={"green"} w={"100%"} h={"100%"}>
-          <RFilter
-            shopList={props.shopList}
-            admin={admin}
-            onChangeCategory={(value) => getFilteredCategory(value, dateRange)}
-            onChangeDateRange={(value) =>
-              getFilteredCategory(shopFilter, value)
-            }
-          />
+        <Flex w={"100%"} h={"100%"} minW={"350px"}>
+          {/* mobile 에서의 레이아웃 */}
+          <Stack w={"100%"} h={"100%"} minW={"350px"}>
+            <RFilter
+              shopList={props.shopList}
+              admin={admin}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
+            />
+
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              <Stack>
+                <Flex
+                  borderRadius={"10px"}
+                  bgColor={"white"}
+                  w={"100%"}
+                  h={"100%"}
+                  p={"20px"}
+                >
+                  <Stack w={"100%"}>
+                    <Text>총 매출</Text>
+                    <Skeleton minW={400} w={"100%"} isLoaded={totalCost}>
+                      <HStack>
+                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                          {formatCurrency(totalCost)}
+                        </Text>
+                        <Text>원</Text>
+                      </HStack>
+                    </Skeleton>
+                  </Stack>
+                </Flex>
+                <Flex
+                  borderRadius={"10px"}
+                  bgColor={"white"}
+                  w={"100%"}
+                  h={"100%"}
+                  p={"20px"}
+                >
+                  <Stack w={"100%"}>
+                    <Text>실 매출</Text>
+                    <Skeleton minW={400} w={"100%"} isLoaded={totalOrigin}>
+                      <HStack>
+                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                          {formatCurrency(totalCost - totalOrigin)}
+                        </Text>
+                        <Text>원</Text>
+                      </HStack>
+                    </Skeleton>
+                  </Stack>
+                </Flex>
+              </Stack>
+              <Stack>
+                <Flex
+                  borderRadius={"10px"}
+                  bgColor={"white"}
+                  w={"100%"}
+                  h={"100%"}
+                  p={"20px"}
+                >
+                  <Text position={"absolute"} mt={0} ml={0}>
+                    결제 수단별 매출
+                  </Text>
+                  <Flex justify={"center"} w={"100%"} h={"100%"}>
+                    <DonutChart data={payMethod} />
+                  </Flex>
+                </Flex>
+                <Flex
+                  borderRadius={"10px"}
+                  bgColor={"white"}
+                  w={"100%"}
+                  h={"100%"}
+                  p={"20px"}
+                >
+                  <Text position={"absolute"} mt={0} ml={0}>
+                    상품별 매출
+                  </Text>
+                  <Flex justify={"center"} w={"100%"} h={"100%"}>
+                    <DonutChart data={payProduct} />
+                  </Flex>
+                </Flex>
+              </Stack>
+              <HStack w={"100%"} h={"40%"}>
+                <Flex
+                  borderRadius={"10px"}
+                  bgColor={"white"}
+                  w={"100%"}
+                  h={"100%"}
+                ></Flex>
+              </HStack>
+            </Stack>
+          </Stack>
         </Flex>
       )}
     </Flex>

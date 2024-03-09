@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from "@chakra-ui/react";
+import { Box, Center, Flex, Stack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 import { getRandomColor } from "../firebase/api";
@@ -35,8 +35,8 @@ const DonutChart = ({ data }) => {
   }, [data]);
 
   return (
-    <Flex>
-      <PieChart width={400} height={210}>
+    <Flex w={"100%"} h={"100%"} justifyContent={"center"} alignItems={"center"}>
+      <PieChart width={400} height={220}>
         <Pie data={data} innerRadius={48} outerRadius={72} dataKey="value">
           {data?.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -51,12 +51,15 @@ const DonutChart = ({ data }) => {
         <Legend
           wrapperStyle={{
             padding: "10px",
-            // backgroundColor: "#f5f5f5",
-            // border: "1px solid #d5d5d5",
-            // borderRadius: 3,
             lineHeight: "40px",
-            height: "180px",
-            overflow: "scroll",
+            display: "flex",
+            alignItems: data.length === 4 ? "center" : "flex-start",
+            overflowY: "auto",
+            height: "100%",
+            width: "50%",
+            fontSize: "12px",
+            top: "0px",
+            right: "0px",
           }}
           iconSize={20}
           iconType="circle"
