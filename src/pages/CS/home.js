@@ -222,7 +222,7 @@ function Home(props) {
                 })
               }
             />
-            <HStack gap={"40px"}>
+            <HStack gap={"20px"}>
               <IconButton
                 isRounded={"full"}
                 bgColor={"white"}
@@ -230,7 +230,7 @@ function Home(props) {
                 h={"40px"}
                 borderRadius={"100%"}
                 size={"sm"}
-                icon={<CopyIcon />}
+                icon={<CopyIcon w={"24px"} h={"24px"} />}
                 onClick={() =>
                   navigate(`/search`, {
                     state: {
@@ -310,11 +310,6 @@ function Home(props) {
               colorScheme="red"
               isLazy
               defaultIndex={parseInt(visibleItemId)}
-              index={
-                selectedItemId
-                  ? parseInt(selectedItemId)
-                  : parseInt(visibleItemId)
-              }
             >
               <TabList gap={"8px"} flexBasis={"content"}>
                 {categories?.map((item, index) => (
@@ -326,6 +321,11 @@ function Home(props) {
                     height={"35px"}
                     key={index}
                     value={item}
+                    index={
+                      selectedItemId
+                        ? parseInt(selectedItemId)
+                        : parseInt(visibleItemId)
+                    }
                   >
                     {item}
                   </Tab>

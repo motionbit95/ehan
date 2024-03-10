@@ -63,101 +63,108 @@ function Menu(props) {
   };
 
   return (
-    <Stack gap={"1vh"} id="container" position={"relative"} height={"100vh"}>
-      <Stack id="banner">
-        <Center pt={"64px"}>
-          <Image
-            objectFit={"center"}
-            height={"100%"}
-            src={menu?.product_images?.[0].replace("http", "https")}
-          ></Image>
-        </Center>
-      </Stack>
-      <Flex
-        h={"64px"}
-        w={"100%"}
-        position={"absolute"}
-        top={0}
-        left={0}
-        p={"20px"}
-        align={"center"}
-        justify={"space-between"}
-      >
-        <Image
-          w={"3vh"}
-          h={"3vh"}
-          onClick={() => navigate(-1)}
-          src={require("../../image/CkChevronLeft.png")}
-        />
-        <Image
-          w={"3vh"}
-          h={"3vh"}
-          src={require("../../image/ShoppingCart.png")}
-          onClick={() =>
-            navigate(`/cart`, {
-              state: {
-                uid: auth.currentUser.uid,
-                shop_id: location.state.shop_id,
-              },
-            })
-          }
-        />
-      </Flex>
-
-      <Stack id="item" gap={"2vh"} p={"3vh"} bgColor={"white"}>
-        <Text fontSize={"large"} fontWeight={"bold"}>
-          {menu?.product_name}
-        </Text>
+    <Stack
+      position={"relative"}
+      height={window.innerHeight}
+      gap={"1vh"}
+      alignItems={"space-between"}
+    >
+      <Stack overflow={"auto"}>
+        <Stack id="banner">
+          <Center pt={"64px"}>
+            <Image
+              objectFit={"center"}
+              height={"100%"}
+              src={menu?.product_images?.[0].replace("http", "https")}
+            ></Image>
+          </Center>
+        </Stack>
         <Flex
-          display={"flex"}
+          h={"64px"}
+          w={"100%"}
+          position={"absolute"}
+          top={0}
+          left={0}
+          p={"20px"}
+          align={"center"}
           justify={"space-between"}
+        >
+          <Image
+            w={"3vh"}
+            h={"3vh"}
+            onClick={() => navigate(-1)}
+            src={require("../../image/CkChevronLeft.png")}
+          />
+          <Image
+            w={"3vh"}
+            h={"3vh"}
+            src={require("../../image/ShoppingCart.png")}
+            onClick={() =>
+              navigate(`/cart`, {
+                state: {
+                  uid: auth.currentUser.uid,
+                  shop_id: location.state.shop_id,
+                },
+              })
+            }
+          />
+        </Flex>
+
+        <Stack id="item" gap={"2vh"} p={"3vh"} bgColor={"white"}>
+          <Text fontSize={"large"} fontWeight={"bold"}>
+            {menu?.product_name}
+          </Text>
+          <Flex
+            display={"flex"}
+            justify={"space-between"}
+            fontSize={"medium"}
+            fontWeight={"bold"}
+          >
+            <Text>가격</Text>
+            <Text>{formatCurrency(menu?.product_price)}원</Text>
+          </Flex>
+        </Stack>
+        <Flex
+          id="count"
+          bgColor={"white"}
+          justify={"space-between"}
+          p={"3vh"}
+          align={"center"}
           fontSize={"medium"}
           fontWeight={"bold"}
         >
-          <Text>가격</Text>
-          <Text>{formatCurrency(menu?.product_price)}원</Text>
+          <Text>수량</Text>
+          <Flex
+            gap={"5vh"}
+            border={"1px solid #d9d9d9"}
+            p={"1vh"}
+            borderRadius={"1vh"}
+            align={"center"}
+          >
+            <Image
+              w={"20px"}
+              h={"20px"}
+              src={require("../../image/HiMinus.png")}
+              onClick={() => {
+                if (count > 1) {
+                  setCount(count - 1);
+                }
+              }}
+            />
+            <Text>{count}</Text>
+            <Image
+              w={"20px"}
+              h={"20px"}
+              src={require("../../image/HiPlus.png")}
+              onClick={() => {
+                if (count < 100) {
+                  setCount(count + 1);
+                }
+              }}
+            />
+          </Flex>
         </Flex>
       </Stack>
-      <Flex
-        id="count"
-        bgColor={"white"}
-        justify={"space-between"}
-        p={"3vh"}
-        align={"center"}
-        fontSize={"medium"}
-        fontWeight={"bold"}
-      >
-        <Text>수량</Text>
-        <Flex
-          gap={"5vh"}
-          border={"1px solid #d9d9d9"}
-          p={"1vh"}
-          borderRadius={"1vh"}
-          align={"center"}
-        >
-          <Image
-            w={"20px"}
-            h={"20px"}
-            src={require("../../image/HiMinus.png")}
-            onClick={() => {
-              if (count > 1) {
-                setCount(count - 1);
-              }
-            }}
-          />
-          <Text>{count}</Text>
-          <Image
-            w={"20px"}
-            h={"20px"}
-            src={require("../../image/HiPlus.png")}
-            onClick={() => {
-              if (count < 100) {
-                setCount(count + 1);
-              }
-            }}
-          />
-        </Flex>
-      </Flex>
 
       <Box h={"10vh"}>
         <Flex
@@ -165,7 +172,6 @@ function Menu(props) {
           align={"center"}
           justify={"center"}
           w={"100%"}
-          h={"10vh"}
           bgColor={"white"}
           position={"absolute"}
           bottom={"0"}

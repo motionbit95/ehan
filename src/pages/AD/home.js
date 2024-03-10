@@ -140,7 +140,7 @@ function Home(props) {
               >
                 <Stack w={"100%"} justify={"center"}>
                   <Text>총 매출</Text>
-                  <Skeleton w={"100%"} isLoaded={totalCost}>
+                  <Skeleton minW={"400px"} w={"100%"} isLoaded={totalCost}>
                     <HStack>
                       <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost)}
@@ -159,7 +159,7 @@ function Home(props) {
               >
                 <Stack w={"100%"} justify={"center"}>
                   <Text>실 매출</Text>
-                  <Skeleton w={"100%"} isLoaded={totalOrigin}>
+                  <Skeleton minW={"400px"} w={"100%"} isLoaded={totalOrigin}>
                     <HStack>
                       <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost - totalOrigin)}

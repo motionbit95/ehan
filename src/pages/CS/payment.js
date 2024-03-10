@@ -70,43 +70,51 @@ function Payment(props) {
   };
 
   return (
-    <Stack position={"relative"} height={"100vh"} gap={"1vh"}>
-      <Stack overflow={"scroll"} height={"calc(100vh - 60px)"}>
-        <Flex
-          bgColor={"white"}
-          align={"center"}
-          w={"100%"}
-          h={"40px"}
-          p={"25px 20px"}
-          justify={"space-between"}
-          position={"sticky"}
-          top={0}
-          zIndex={"20"}
-          boxShadow={"lg"}
-        >
-          <Image
-            w={"3vh"}
-            h={"3vh"}
-            onClick={() => navigate(-1)}
-            src={require("../../image/CkChevronLeft.png")}
-          />
-          <Text fontSize={"large"} fontWeight={"bold"}>
-            결제하기
-          </Text>
-          <Image
-            src={require("../../image/Homebutton.png")}
-            onClick={() => navigate(`/home/${location.state.shop_id}`)}
-          />
-        </Flex>
-        <form onSubmit={handleSubmit}>
-          <Stack>
+    <Stack
+      position={"relative"}
+      gap={"10px"}
+      height={window.innerHeight}
+      overflow={"auto"}
+    >
+      <Flex
+        bgColor={"white"}
+        align={"center"}
+        w={"100%"}
+        h={"40px"}
+        p={"25px 20px"}
+        justify={"space-between"}
+        position={"sticky"}
+        top={0}
+        zIndex={"20"}
+        boxShadow={"lg"}
+      >
+        <Image
+          w={"3vh"}
+          h={"3vh"}
+          onClick={() => navigate(-1)}
+          src={require("../../image/CkChevronLeft.png")}
+        />
+        <Text fontSize={"large"} fontWeight={"bold"}>
+          결제하기
+        </Text>
+        <Image
+          src={require("../../image/Homebutton.png")}
+          onClick={() => navigate(`/home/${location.state.shop_id}`)}
+        />
+      </Flex>
+      <form onSubmit={handleSubmit}>
+        <Stack minH={"calc(100vh - 60px)"} justify={"space-between"}>
+          <Stack overflow={"auto"}>
             <Stack padding={"2vh"} bgColor={"white"}>
               <FormControl isRequired>
                 <FormLabel>배송지</FormLabel>
                 <Input
                   placeholder="배달받을 주소를 입력하세요."
                   onChange={(e) =>
-                    setFormData({ ...formData, order_address: e.target.value })
+                    setFormData({
+                      ...formData,
+                      order_address: e.target.value,
+                    })
                   }
                 />
               </FormControl>
@@ -124,7 +132,10 @@ function Payment(props) {
                 <Input
                   placeholder="배송메세지를 입력하세요."
                   onChange={(e) =>
-                    setFormData({ ...formData, order_message: e.target.value })
+                    setFormData({
+                      ...formData,
+                      order_message: e.target.value,
+                    })
                   }
                 />
               </FormControl>
@@ -138,12 +149,7 @@ function Payment(props) {
                 />
               </FormControl>
             </Stack>
-            {/* {payMethod === "vbank" && (
-        <div>
-          예금주명
-          <input></input>
-        </div>
-      )} */}
+
             <Stack padding={"2vh"} bgColor={"white"}>
               <FormControl isRequired>
                 <FormLabel>결제수단</FormLabel>
@@ -203,30 +209,23 @@ function Payment(props) {
               따라서 레드스위치는 상품, 거래정보 및 거래에 대하여 책임을
               지지않습니다.
             </Text>
-
-            <Box />
-            <Flex
-              id="button"
-              align={"center"}
-              justify={"center"}
-              w={"100%"}
-              h={"60px"}
-              bgColor={"white"}
-              position={"absolute"}
-              bottom={"0"}
-            >
-              <Button
-                w={"80%"}
-                color={"white"}
-                bgColor={"#e53e3e"}
-                type="submit"
-              >
-                {formatCurrency(location.state.totalCost)}원 결제하기
-              </Button>
-            </Flex>
           </Stack>
-        </form>
-      </Stack>
+          <Flex
+            id="button"
+            align={"center"}
+            justify={"center"}
+            w={"100%"}
+            bgColor={"white"}
+            position={"sticky"}
+            bottom={"0"}
+            p={"20px"}
+          >
+            <Button w={"80%"} color={"white"} bgColor={"#e53e3e"} type="submit">
+              {formatCurrency(location.state.totalCost)}원 결제하기
+            </Button>
+          </Flex>
+        </Stack>
+      </form>
     </Stack>
   );
 }

@@ -13,19 +13,34 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getPayment } from "../../firebase/firebase_func";
 
 function SearchOrder(props) {
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // 주문번호를 확인하였을 때
+    console.log(event.target[0].value);
+
+    let orderResult = await getPayment(event.target[0].value);
+
+    let jsonOrder = JSON.stringify(orderResult);
+    var encodedData = encodeURIComponent(jsonOrder);
+    console.log(encodedData);
+
+    var decodedData = decodeURIComponent(encodedData);
+    var recievedData = JSON.parse(decodedData);
+
+    console.log(decodedData);
+
     console.log("주문번호를 확인하였습니다!! 결제창으로 돌아가자");
+    navigate(`/result?data=${decodedData}`);
   };
 
   return (
     <Stack position={"relative"} height={"100vh"}>
-      <Stack overflow={"scroll"}>
+      <Stack overflow={"auto"}>
         <Flex
           bgColor={"white"}
           align={"center"}

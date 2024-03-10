@@ -10,13 +10,19 @@ export const PG_CLIENT_ID = "S2_af4543a0be4d49a98122e01ec2059a56";
 export function debug(...args) {
   if (BUILD_MODE === "production") return;
   const stackTrace = new Error().stack;
-  const caller = stackTrace.split("\n")[2].match(/\s+at\s+(\S+)/)[1]; // 호출자 이름 추출
-  console.log(
-    `%c${new Date().toLocaleTimeString()} \n%c[${caller}] \n%c${args.join("")}`,
-    "color: white; font-weight: bold",
-    "color: skyblue; font-weight: bold",
-    "color: white; font-weight: bold"
-  );
+  try {
+    const caller = stackTrace?.split("\n")[2].match(/\s+at\s+(\S+)/)[1]; // 호출자 이름 추출
+    console.log(
+      `%c${new Date().toLocaleTimeString()} \n%c[${caller}] \n%c${args.join(
+        ""
+      )}`,
+      "color: white; font-weight: bold",
+      "color: skyblue; font-weight: bold",
+      "color: white; font-weight: bold"
+    );
+  } catch (e) {
+    return;
+  }
 }
 
 export function isNumber(e) {

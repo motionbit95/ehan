@@ -31,7 +31,7 @@ function App() {
             w={"100%"}
             maxW={isAdmin ? "100%" : "700px"}
             bgColor={"#f1f1f1"}
-            minH={"100vh"}
+            minH={window.innerHeight}
           >
             <BrowserRouter>
               <Routes>

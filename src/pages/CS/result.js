@@ -28,7 +28,8 @@ function Result(props) {
   }, []);
 
   const getOrder = async () => {
-    const order = await getPayment(data.orderId);
+    let orderId = data.orderId ? data.orderId : data.order_id;
+    const order = await getPayment(orderId);
     console.log(order.pay_product);
     setOrder(order);
 
@@ -39,6 +40,7 @@ function Result(props) {
       pay_price: data.amount,
       pay_id: data.tid,
       pay_method: data.payMethod,
+      vbank: data.vbank,
       pay_state: data.resultCode,
       pay_result: data.resultMsg,
       receipt_url: data.receiptUrl,
@@ -58,8 +60,8 @@ function Result(props) {
   };
 
   return (
-    <Stack position={"relative"} height={"100vh"}>
-      <Stack overflow={"scroll"}>
+    <Stack position={"relative"} height={window.innerHeight}>
+      <Stack overflow={"auto"}>
         <Flex
           bgColor={"white"}
           align={"center"}
@@ -83,29 +85,36 @@ function Result(props) {
           </Text>
           <Image
             src={require("../../image/Homebutton.png")}
-            onClick={() => navigate(`/home/${order.shop_id}`)}
+            onClick={() => navigate(`/home/${order?.shop_id}`)}
           />
         </Flex>
         <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"white"} gap={"4vh"}>
           <Stack gap={"0"}>
             <Text fontSize={"md"} fontWeight={"bold"} color={"#e53e3e"}>
-              {data.resultCode === "0000" ? "결제가 완료되었습니다." : ""}
+              {data?.resultCode === "0000" ? "결제가 완료되었습니다." : ""}
             </Text>
 
             {order?.pay_product?.length > 0 && (
               <Text fontSize={"x-large"} fontWeight={"bold"}>
-                {order.pay_product[0].product_name} 외{" "}
-                {order.pay_product.length}건
+                {order?.pay_product[0].product_name} 외{" "}
+                {order?.pay_product.length}건
               </Text>
             )}
           </Stack>
           <Stack fontSize={"md"} gap={"0"}>
-            <Text>주문일시 : {data.ediDate.split("T")[0]}</Text>
-            <Text>주문번호 : {data.orderId}</Text>
-            <Text>배송지 : {order.order_address}</Text>
-            <Text>주문코드 : {order.order_code}</Text>
-            <Text>배송메세지 : {order.order_message}</Text>
-            <Text>연락처 : {order.user_phone}</Text>
+            <Text>
+              주문일시 :{" "}
+              {data?.ediDate
+                ? data?.ediDate.split("T")[0]
+                : data?.pay_date.split("T")[0]}
+            </Text>
+            <Text>
+              주문번호 : {data?.orderId ? data?.orderId : data?.order_id}
+            </Text>
+            <Text>배송지 : {order?.order_address}</Text>
+            <Text>주문코드 : {order?.order_code}</Text>
+            <Text>배송메세지 : {order?.order_message}</Text>
+            <Text>연락처 : {order?.user_phone}</Text>
           </Stack>
           <Box>
             <Button
@@ -130,7 +139,7 @@ function Result(props) {
           bgColor={"white"}
         >
           {order?.pay_product?.length > 0 &&
-            order.pay_product.map((value, index) => (
+            order?.pay_product.map((value, index) => (
               <Box key={index}>
                 <HStack gap={"1vh"}>
                   <Text>{value.product_name}</Text>
@@ -150,7 +159,9 @@ function Result(props) {
             fontSize={"md"}
           >
             <Text>총 주문금액</Text>
-            <Text>{formatCurrency(data.amount)}원</Text>
+            <Text>
+              {formatCurrency(data?.amount ? data?.amount : data?.pay_price)}원
+            </Text>
           </HStack>
           <Box borderBottom={"1px solid gray"} />
           <HStack
@@ -160,21 +171,24 @@ function Result(props) {
             width={"100%"}
           >
             <Text>총 결제금액</Text>
-            <Text>{formatCurrency(data.amount)}원</Text>
+            <Text>
+              {formatCurrency(data?.amount ? data?.amount : data?.pay_price)}원
+            </Text>
           </HStack>
           <HStack justify={"space-between"}>
             <Text fontSize={"md"}>결제방법</Text>
             <Stack textAlign={"right"}>
-              {data.payMethod === "card" ? (
+              {data?.payMethod === "card" || data?.pay_method === "card" ? (
                 <Stack>
                   <Text fontSize={"large"}>카드</Text>
                   {/* <div>{data.vbank.vbankName}</div> */}
                 </Stack>
-              ) : data.payMethod === "vbank" ? (
+              ) : data?.payMethod === "vbank" ||
+                data?.pay_method === "vbank" ? (
                 <Stack gap={"0"}>
                   <Text fontSize={"md"}>무통장입금</Text>
                   <Text fontSize={"sm"} color={"gray"}>
-                    {data.vbank.vbankName}
+                    {data?.vbank?.vbankName ? data?.vbank?.vbankName : ""}
                   </Text>
                 </Stack>
               ) : (

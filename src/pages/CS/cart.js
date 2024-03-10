@@ -85,8 +85,8 @@ function Cart(props) {
   };
 
   return (
-    <Stack gap={"1vh"} position={"relative"} height={"100vh"}>
-      <Stack overflow={"scroll"}>
+    <Stack gap={"1vh"} position={"relative"} height={window.innerHeight}>
+      <Stack overflow={"auto"}>
         <Flex
           bgColor={"white"}
           align={"center"}
@@ -197,7 +197,6 @@ function Cart(props) {
               <Text color={"#8c8c8c"}>장바구니에 담긴 상품이 없습니다.</Text>
             </Center>
           )}
-          <Stack></Stack>
         </Stack>
         <Stack width={"100%"} gap={"2vh"} p={"2vh"} bgColor={"white"}>
           <HStack justifyContent={"space-between"} width={"100%"}>
@@ -229,11 +228,10 @@ function Cart(props) {
         align={"center"}
         justify={"center"}
         w={"100%"}
-        h={"10vh"}
         bgColor={"white"}
         position={"absolute"}
         bottom={"0"}
-        p={"2vh"}
+        p={"20px"}
       >
         <Button
           isDisabled={cartList?.length === 0 || totalCost === 0}

@@ -667,6 +667,7 @@ function Account(props) {
                           <Th px={0} fontSize={"sm"}>
                             ID / 관리 지점
                           </Th>
+                          <Th></Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -683,33 +684,39 @@ function Account(props) {
                                   : searchShopName(item.shop_id)}
                               </Text>
                             </Td>
-                            <Stack>
+                            <Td w={"40px"} px={0}>
                               <Stack>
-                                <PopupBase
-                                  colorScheme={"gray"}
-                                  visibleButton={true}
-                                  action={"수정"}
-                                  title={<EditIcon />}
-                                  onClose={(e) => window.location.reload()}
-                                >
-                                  <AccountInfo
-                                    permission={admin?.permission}
-                                    admin={item}
-                                    shopList={props.shopList}
-                                    visibleAdminInfo={true}
-                                    checkConfirmPassword={checkConfirmPassword}
-                                    checkValidPassword={checkValidPassword}
-                                    checkCurrentPassword={checkCurrentPassword}
+                                <Flex w={"40px"}>
+                                  <PopupBase
+                                    colorScheme={"gray"}
+                                    visibleButton={true}
+                                    action={"수정"}
+                                    title={<EditIcon />}
+                                    onClose={(e) => window.location.reload()}
+                                  >
+                                    <AccountInfo
+                                      permission={admin?.permission}
+                                      admin={item}
+                                      shopList={props.shopList}
+                                      visibleAdminInfo={true}
+                                      checkConfirmPassword={
+                                        checkConfirmPassword
+                                      }
+                                      checkValidPassword={checkValidPassword}
+                                      checkCurrentPassword={
+                                        checkCurrentPassword
+                                      }
+                                    />
+                                  </PopupBase>
+                                </Flex>
+                                <Flex>
+                                  <IconButton
+                                    onClick={() => deleteAdmin(item.doc_id)}
+                                    icon={<DeleteIcon />}
                                   />
-                                </PopupBase>
+                                </Flex>
                               </Stack>
-                              <Stack>
-                                <IconButton
-                                  onClick={() => deleteAdmin(item.doc_id)}
-                                  icon={<DeleteIcon />}
-                                />
-                              </Stack>
-                            </Stack>
+                            </Td>
                           </Tr>
                         ))}
                       </Tbody>
