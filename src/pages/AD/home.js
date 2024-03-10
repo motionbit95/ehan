@@ -1,5 +1,6 @@
 import React, { PureComponent, useEffect, useState } from "react";
 import {
+  Box,
   Center,
   Flex,
   HStack,
@@ -117,19 +118,30 @@ function Home(props) {
           h={"calc(100% - 48px)"}
           top={"48px"}
           left={"200px"}
+          overflow={"auto"}
           // p={"2vh"}
         >
-          <RFilter
-            useSearch={false}
-            shopList={props.shopList}
-            admin={admin}
-            onChangeCategory={(value) => getFilteredCategory(value, dateRange)}
-            onChangeDateRange={(value) =>
-              getFilteredCategory(shopFilter, value)
-            }
-          />
+          <Box position={"sticky"} top={0} left={0} bgColor={"red"}>
+            <RFilter
+              useSearch={false}
+              shopList={props.shopList}
+              admin={admin}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
+            />
+          </Box>
           {/* desktop 에서의 레이아웃 */}
-          <Stack p={"20px"} w={"100%"} h={"100%"}>
+          <Stack
+            p={"20px"}
+            w={"100%"}
+            h={"100%"}
+            overflow={"auto"}
+            minW={"910px"}
+          >
             <HStack w={"100%"} h={"20%"}>
               <Flex
                 borderRadius={"10px"}
@@ -138,7 +150,7 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Stack w={"100%"} justify={"center"}>
+                <Stack justify={"center"}>
                   <Text>총 매출</Text>
                   <Skeleton minW={"400px"} w={"100%"} isLoaded={totalCost}>
                     <HStack>
@@ -206,6 +218,7 @@ function Home(props) {
                 bgColor={"white"}
                 w={"100%"}
                 h={"100%"}
+                minW={"890px"}
               ></Flex>
             </HStack>
           </Stack>
