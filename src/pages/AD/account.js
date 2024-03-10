@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Card,
@@ -656,65 +657,64 @@ function Account(props) {
                     </PopupBase>
                   </ButtonGroup>
 
-                  <Card p={"10px 0px"}>
-                    {adminList.map((item, index) => (
-                      <CardBody key={index} p={"10px 20px"}>
-                        <Stack
-                          border={"1px solid #d9d9d9"}
-                          borderRadius={"10px"}
-                          p={"10px"}
-                          w={"100%"}
-                        >
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>이름</Text>
-                              <Text>ID</Text>
-                              <Text>관리 지점</Text>
-                            </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <Text>{item.admin_name}</Text>
+                  <Box bgColor={"white"} borderRadius={"10px"} p={"20px"}>
+                    <Table>
+                      <Thead>
+                        <Tr>
+                          <Th px={0} fontSize={"sm"}>
+                            이름
+                          </Th>
+                          <Th px={0} fontSize={"sm"}>
+                            ID / 관리 지점
+                          </Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {adminList.map((item, index) => (
+                          <Tr key={index}>
+                            <Td px={0} fontSize={"sm"}>
+                              {item.admin_name}
+                            </Td>
+                            <Td px={0} fontSize={"sm"}>
                               <Text>{item.admin_email}</Text>
                               <Text>
                                 {item.permission === "supervisor"
                                   ? "전지점"
                                   : searchShopName(item.shop_id)}
                               </Text>
-                            </Flex>
-                          </HStack>
-
-                          <HStack justifyContent={"space-between"}>
-                            <Stack w={"100%"}>
-                              <PopupBase
-                                colorScheme={"gray"}
-                                visibleButton={true}
-                                action={"수정"}
-                                title={<EditIcon />}
-                                onClose={(e) => window.location.reload()}
-                              >
-                                <AccountInfo
-                                  permission={admin?.permission}
-                                  admin={item}
-                                  shopList={props.shopList}
-                                  visibleAdminInfo={true}
-                                  checkConfirmPassword={checkConfirmPassword}
-                                  checkValidPassword={checkValidPassword}
-                                  checkCurrentPassword={checkCurrentPassword}
+                            </Td>
+                            <Stack>
+                              <Stack>
+                                <PopupBase
+                                  colorScheme={"gray"}
+                                  visibleButton={true}
+                                  action={"수정"}
+                                  title={<EditIcon />}
+                                  onClose={(e) => window.location.reload()}
+                                >
+                                  <AccountInfo
+                                    permission={admin?.permission}
+                                    admin={item}
+                                    shopList={props.shopList}
+                                    visibleAdminInfo={true}
+                                    checkConfirmPassword={checkConfirmPassword}
+                                    checkValidPassword={checkValidPassword}
+                                    checkCurrentPassword={checkCurrentPassword}
+                                  />
+                                </PopupBase>
+                              </Stack>
+                              <Stack>
+                                <IconButton
+                                  onClick={() => deleteAdmin(item.doc_id)}
+                                  icon={<DeleteIcon />}
                                 />
-                              </PopupBase>
+                              </Stack>
                             </Stack>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                onClick={() => deleteAdmin(item.doc_id)}
-                                icon={<DeleteIcon />}
-                              />
-                            </Stack>
-                          </HStack>
-                        </Stack>
-                      </CardBody>
-                    ))}
-                  </Card>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
                 </Stack>
               )}
               <Flex p={"20px"}>

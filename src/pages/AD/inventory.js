@@ -330,7 +330,7 @@ function Inventory({ ...props }) {
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter />
-            <Stack>
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
               {admin?.permission === "supervisor" && (
                 <Stack>
                   <ButtonGroup

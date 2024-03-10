@@ -138,14 +138,14 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Stack w={"100%"}>
+                <Stack w={"100%"} justify={"center"}>
                   <Text>총 매출</Text>
                   <Skeleton w={"100%"} isLoaded={totalCost}>
                     <HStack>
-                      <Text fontSize={"3xl"} fontWeight={"bold"}>
+                      <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost)}
                       </Text>
-                      <Text>원</Text>
+                      <Text fontSize={"xl"}>원</Text>
                     </HStack>
                   </Skeleton>
                 </Stack>
@@ -157,14 +157,14 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Stack w={"100%"}>
+                <Stack w={"100%"} justify={"center"}>
                   <Text>실 매출</Text>
                   <Skeleton w={"100%"} isLoaded={totalOrigin}>
                     <HStack>
-                      <Text fontSize={"3xl"} fontWeight={"bold"}>
+                      <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost - totalOrigin)}
                       </Text>
-                      <Text>원</Text>
+                      <Text fontSize={"xl"}>원</Text>
                     </HStack>
                   </Skeleton>
                 </Stack>
@@ -232,16 +232,16 @@ function Home(props) {
                   bgColor={"white"}
                   w={"100%"}
                   h={"100%"}
-                  p={"20px"}
+                  p={"30px"}
                 >
                   <Stack w={"100%"}>
                     <Text>총 매출</Text>
-                    <Skeleton minW={400} w={"100%"} isLoaded={totalCost}>
+                    <Skeleton w={"100%"} isLoaded={totalCost}>
                       <HStack>
-                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                        <Text fontSize={"4xl"} fontWeight={"bold"}>
                           {formatCurrency(totalCost)}
                         </Text>
-                        <Text>원</Text>
+                        <Text fontSize={"xl"}>원</Text>
                       </HStack>
                     </Skeleton>
                   </Stack>
@@ -251,16 +251,16 @@ function Home(props) {
                   bgColor={"white"}
                   w={"100%"}
                   h={"100%"}
-                  p={"20px"}
+                  p={"30px"}
                 >
                   <Stack w={"100%"}>
                     <Text>실 매출</Text>
-                    <Skeleton minW={400} w={"100%"} isLoaded={totalOrigin}>
+                    <Skeleton w={"100%"} isLoaded={totalOrigin}>
                       <HStack>
-                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                        <Text fontSize={"4xl"} fontWeight={"bold"}>
                           {formatCurrency(totalCost - totalOrigin)}
                         </Text>
-                        <Text>원</Text>
+                        <Text fontSize={"xl"}>원</Text>
                       </HStack>
                     </Skeleton>
                   </Stack>
@@ -272,7 +272,7 @@ function Home(props) {
                   bgColor={"white"}
                   w={"100%"}
                   h={"100%"}
-                  p={"20px"}
+                  p={"30px"}
                 >
                   <Text position={"absolute"} mt={0} ml={0}>
                     결제 수단별 매출
@@ -286,7 +286,7 @@ function Home(props) {
                   bgColor={"white"}
                   w={"100%"}
                   h={"100%"}
-                  p={"20px"}
+                  p={"30px"}
                 >
                   <Text position={"absolute"} mt={0} ml={0}>
                     상품별 매출

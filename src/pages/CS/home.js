@@ -12,6 +12,7 @@ import {
   Button,
   Flex,
   HStack,
+  IconButton,
   Image,
   Skeleton,
   SkeletonCircle,
@@ -222,48 +223,40 @@ function Home(props) {
               }
             />
             <HStack gap={"40px"}>
-              <Button
+              <IconButton
+                isRounded={"full"}
                 bgColor={"white"}
                 w={"40px"}
                 h={"40px"}
                 borderRadius={"100%"}
-                p={"0"}
-              >
-                <Image
-                  w={"3vh"}
-                  h={"3vh"}
-                  icon={<SearchIcon />}
-                  onClick={() =>
-                    navigate(`/search`, {
-                      state: {
-                        uid: auth.currentUser.uid,
-                        shop_id: shop_id,
-                      },
-                    })
-                  }
-                />
-              </Button>
-              <Button
+                size={"sm"}
+                icon={<CopyIcon />}
+                onClick={() =>
+                  navigate(`/search`, {
+                    state: {
+                      uid: auth.currentUser.uid,
+                      shop_id: shop_id,
+                    },
+                  })
+                }
+              />
+              <IconButton
+                isRounded={"full"}
                 bgColor={"white"}
                 w={"40px"}
                 h={"40px"}
                 borderRadius={"100%"}
-                p={"0"}
-              >
-                <Image
-                  w={"3vh"}
-                  h={"3vh"}
-                  src={require("../../image/ShoppingCart.png")}
-                  onClick={() =>
-                    navigate(`/cart`, {
-                      state: {
-                        uid: auth.currentUser.uid,
-                        shop_id: shop_id,
-                      },
-                    })
-                  }
-                />
-              </Button>
+                size={"sm"}
+                icon={<Image src={require("../../image/ShoppingCart.png")} />}
+                onClick={() =>
+                  navigate(`/cart`, {
+                    state: {
+                      uid: auth.currentUser.uid,
+                      shop_id: shop_id,
+                    },
+                  })
+                }
+              />
             </HStack>
           </Flex>
           <Flex

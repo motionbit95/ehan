@@ -35,7 +35,13 @@ const DonutChart = ({ data }) => {
   }, [data]);
 
   return (
-    <Flex w={"100%"} h={"100%"} justifyContent={"center"} alignItems={"center"}>
+    <Flex
+      w={"100%"}
+      h={"100%"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      pt={"30px"}
+    >
       <PieChart width={400} height={220}>
         <Pie data={data} innerRadius={48} outerRadius={72} dataKey="value">
           {data?.map((entry, index) => (
@@ -53,7 +59,7 @@ const DonutChart = ({ data }) => {
             padding: "10px",
             lineHeight: "40px",
             display: "flex",
-            alignItems: data.length === 4 ? "center" : "flex-start",
+            alignItems: data.length > 7 ? "flex-start" : "center",
             overflowY: "auto",
             height: "100%",
             width: "50%",
