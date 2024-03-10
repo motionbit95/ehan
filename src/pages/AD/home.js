@@ -170,7 +170,7 @@ function Home(props) {
                 </Stack>
               </Flex>
             </HStack>
-            <HStack w={"100%"} h={"40%"}>
+            <HStack w={"100%"} h={"300px"}>
               <Flex
                 borderRadius={"10px"}
                 bgColor={"white"}
