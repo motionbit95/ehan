@@ -140,7 +140,7 @@ function Home(props) {
               >
                 <Stack w={"100%"}>
                   <Text>총 매출</Text>
-                  <Skeleton minW={300} w={"100%"} isLoaded={totalCost}>
+                  <Skeleton w={"100%"} isLoaded={totalCost}>
                     <HStack>
                       <Text fontSize={"3xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost)}
@@ -159,7 +159,7 @@ function Home(props) {
               >
                 <Stack w={"100%"}>
                   <Text>실 매출</Text>
-                  <Skeleton minW={300} w={"100%"} isLoaded={totalOrigin}>
+                  <Skeleton w={"100%"} isLoaded={totalOrigin}>
                     <HStack>
                       <Text fontSize={"3xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost - totalOrigin)}
@@ -181,7 +181,7 @@ function Home(props) {
                 <Text position={"absolute"} mt={0} ml={0}>
                   결제 수단별 매출
                 </Text>
-                <Center w={"100%"}>
+                <Center w={"100%"} h={"100%"}>
                   <DonutChart data={payMethod} />
                 </Center>
               </Flex>

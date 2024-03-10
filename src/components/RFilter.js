@@ -1,6 +1,5 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import {
-  Box,
   CloseButton,
   Flex,
   HStack,
@@ -8,7 +7,6 @@ import {
   Input,
   Select,
   Stack,
-  Text,
   useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -16,7 +14,6 @@ import Calendar from "./Calendar";
 import RDepth1 from "./RDepth1";
 import RDepth2 from "./RDepth2";
 import { queryShop } from "../firebase/firebase_func";
-import { debug } from "../firebase/api";
 
 function RFilter({ useSearch = true, ...props }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
