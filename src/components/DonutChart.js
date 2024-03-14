@@ -40,7 +40,7 @@ const DonutChart = ({ data }) => {
       h={"100%"}
       justifyContent={"center"}
       alignItems={"center"}
-      pt={"30px"}
+      // pt={"30px"}
     >
       <PieChart width={400} height={220}>
         <Pie data={data} innerRadius={48} outerRadius={72} dataKey="value">

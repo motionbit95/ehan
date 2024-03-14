@@ -31,7 +31,7 @@ import Order from "./order";
 import Income from "./income";
 import Product from "./product";
 import Inventory from "./inventory";
-import { auth, db, messaging } from "../../firebase/firebase_conf";
+import { auth, db } from "../../firebase/firebase_conf";
 import { useNavigate } from "react-router-dom";
 import { debug } from "../../firebase/api";
 import { collection, onSnapshot } from "firebase/firestore";

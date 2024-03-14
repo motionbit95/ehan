@@ -1,7 +1,11 @@
 import React, { PureComponent, useEffect, useState } from "react";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Box,
   Center,
+  CloseButton,
   Flex,
   HStack,
   Skeleton,
@@ -13,6 +17,7 @@ import {
 import RFilter from "../../components/RFilter";
 import { useGlobalState } from "../../GlobalState";
 import {
+  getAlarmList,
   getFilteredShop,
   getPayment,
   getTotalOrder,
@@ -20,6 +25,8 @@ import {
 import { debug } from "../../firebase/api";
 import { formatCurrency } from "../CS/home";
 import DonutChart from "../../components/DonutChart";
+import { collection, limit, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/firebase_conf";
 
 function Home(props) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -40,6 +47,17 @@ function Home(props) {
 
   const [payMethod, setPayMethod] = useState([]);
   const [payProduct, setPayProduct] = useState([]);
+
+  // 알람 리스트
+  const [alramList, setAlarmList] = useState([]);
+
+  useEffect(() => {
+    updateAlarmList();
+  }, []);
+
+  async function updateAlarmList() {
+    getAlarmList().then((list) => setAlarmList(list));
+  }
 
   async function getFilteredCategory(value, range) {
     // 상태변수에 파라미터를 저장합니다.
@@ -108,6 +126,32 @@ function Home(props) {
     setTotalCost(totalCost);
     setTotalOrigin(totalOrigin);
   }
+
+  useEffect(() => {
+    let list = [];
+    const unsubscribe = onSnapshot(
+      collection(db, "ALARM"),
+      limit(3),
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            // 알람 데이터 추가 시
+            // console.log("Added city: ", change.doc.data());
+            list.push(change.doc.data());
+          }
+          if (change.type === "modified") {
+            // 알람 데이터 변경 시
+          }
+          if (change.type === "removed") {
+            // 알람 데이터 삭제 시
+          }
+        });
+      }
+    );
+
+    setAlarmList(list);
+    console.log(list);
+  }, []);
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -190,12 +234,12 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Text position={"absolute"} mt={0} ml={0}>
-                  결제 수단별 매출
-                </Text>
-                <Center w={"100%"} h={"100%"}>
-                  <DonutChart data={payMethod} />
-                </Center>
+                <Stack>
+                  <Text>결제 수단별 매출</Text>
+                  <Center w={"100%"} h={"100%"}>
+                    <DonutChart data={payMethod} />
+                  </Center>
+                </Stack>
               </Flex>
               <Flex
                 borderRadius={"10px"}
@@ -204,12 +248,12 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Text position={"absolute"} mt={0} ml={0}>
-                  상품별 매출
-                </Text>
-                <Center w={"100%"}>
-                  <DonutChart data={payProduct} />
-                </Center>
+                <Stack>
+                  <Text>상품별 매출</Text>
+                  <Center w={"100%"} h={"100%"}>
+                    <DonutChart data={payProduct} />
+                  </Center>
+                </Stack>
               </Flex>
             </HStack>
             <HStack w={"100%"} h={"40%"}>
@@ -218,8 +262,24 @@ function Home(props) {
                 bgColor={"white"}
                 w={"100%"}
                 h={"100%"}
+                overflow={"auto"}
                 minW={"890px"}
-              ></Flex>
+              >
+                <Stack w={"100%"} p={"20px"}>
+                  {alramList.map((item, index) => (
+                    <Alert key={index} borderRadius={"10px"} status="error">
+                      <HStack w={"100%"} justifyContent={"space-between"}>
+                        <HStack>
+                          <AlertIcon />
+                          <AlertTitle>{item.alarm_title}</AlertTitle>
+                          <Text>{item.alarm_msg}</Text>
+                        </HStack>
+                        <CloseButton />
+                      </HStack>
+                    </Alert>
+                  ))}{" "}
+                </Stack>
+              </Flex>
             </HStack>
           </Stack>
         </Stack>

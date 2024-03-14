@@ -16,8 +16,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { auth, db, messaging, vapidKey } from "./firebase_conf";
-import { getToken, onMessage } from "firebase/messaging";
+import { auth, db } from "./firebase_conf";
 import {
   EmailAuthCredential,
   EmailAuthProvider,
@@ -289,34 +288,6 @@ export function handleMessage(event) {
   }
 }
 
-export const getMessageToken = async (uid) => {
-  // Get registration token. Initially this makes a network call, once retrieved
-  // subsequent calls to getToken will return from cache.
-
-  getToken(messaging, {
-    vapidKey: vapidKey,
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        console.log(currentToken);
-        // Send the token to your server and update the UI if necessary
-        // ...
-      } else {
-        // Show permission request UI
-        console.log(
-          "No registration token available. Request permission to generate one."
-        );
-        // ...
-        requestPermission();
-      }
-    })
-    .catch((err) => {
-      console.log("An error occurred while retrieving token. ", err);
-      // ...
-      return;
-    });
-};
-
 // 관리자 계정 생성 함수
 export const adminSignUp = async (email, password, admin) => {
   console.log(email, password);
@@ -580,24 +551,6 @@ export const updateProduct = async (data) => {
   }
 };
 
-// 푸시 알림 권한 요청 함수
-function requestPermission() {
-  messaging
-    .requestPermission()
-    .then(() => {
-      console.log("Notification permission granted.");
-      // 권한이 부여되면 FCM 토큰을 가져옵니다.
-      return messaging.getToken();
-    })
-    .then((token) => {
-      console.log("FCM Token:", token);
-      // FCM 토큰을 서버로 전송하거나 저장합니다.
-    })
-    .catch((err) => {
-      console.log("Unable to get permission to notify.", err);
-    });
-}
-
 //# 다시 체크해봐야함
 export async function createInventoryData(data) {
   try {
@@ -643,6 +596,8 @@ export const updateInventoryData = async (product_id, product_name, count) => {
         type: "inventory",
         createAt: new Date(),
         product_id: product_id,
+        alarm_code: "E004",
+        alarm_title: "상품 재고가 부족합니다.",
         alarm_msg:
           product_name +
           `의 재고가 ${doc.data().inventory_count - count}개 입니다.`,
@@ -771,4 +726,19 @@ export const getFilteredIncome = async (dateRange, shop_id) => {
   });
 
   return incomes;
+};
+
+export const getAlarmList = async (shop_id) => {
+  // 콜렉션 레퍼런스
+  var q = query(collection(db, "ALARM"));
+  const querySnapshot = await getDocs(q);
+
+  const alarms = [];
+  querySnapshot.forEach((doc) => {
+    if (doc.data().shop_id === shop_id) {
+      alarms.push({ ...doc.data(), doc_id: doc.id });
+    }
+  });
+
+  return alarms;
 };

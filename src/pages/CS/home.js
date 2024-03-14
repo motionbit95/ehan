@@ -2,12 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { auth, db } from "../../firebase/firebase_conf";
 import { doc, getDoc } from "firebase/firestore";
-import {
-  fetchProducts,
-  getMessageToken,
-  handleMessage,
-  readInventoryData,
-} from "../../firebase/firebase_func";
+import { fetchProducts, readInventoryData } from "../../firebase/firebase_func";
 import {
   Box,
   Button,
@@ -440,7 +435,7 @@ function Home(props) {
                             <Text color="#9B2C2C" fontWeight={"bold"}>
                               {formatCurrency(item.product_price)}원
                             </Text>
-                            <Text>{getInventoryCount(item.doc_id)}</Text>
+                            {/* <Text>{getInventoryCount(item.doc_id)}</Text> */}
                           </Stack>
                         </HStack>
                       </Flex>
