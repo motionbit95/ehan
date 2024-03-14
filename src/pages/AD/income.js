@@ -27,13 +27,19 @@ import PopupBase from "../../modals/PopupBase";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import Calendar from "../../components/Calendar";
 import {
+  getFilteredIncome,
   getIncomeList,
   getPayment,
   getTotalOrder,
   postIncome,
 } from "../../firebase/firebase_func";
 import { formatCurrency } from "../CS/home";
-import { addCommas, isNumber, timestampToDate } from "../../firebase/api";
+import {
+  addCommas,
+  debug,
+  isNumber,
+  timestampToDate,
+} from "../../firebase/api";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 
@@ -43,6 +49,9 @@ function Income({ ...props }) {
   const [shop_id, setShopId] = useState("");
   const [salesPrice, setSales] = useState("");
   const [originPrice, setOriginPrice] = useState("");
+
+  // filter
+  const [shopFilter, setShopFilter] = useState(null);
   const [dateRange, setDateRange] = useState([
     new Date(
       `${new Date().getFullYear()}-${new Date().getMonth()}-${
@@ -51,6 +60,16 @@ function Income({ ...props }) {
     ),
     new Date(),
   ]);
+
+  async function getFilteredCategory(value, range) {
+    console.log("dadf");
+    setDateRange(range);
+    setShopFilter(value);
+
+    const list = await getFilteredIncome(range, shop_id);
+    setIncomeList(list);
+  }
+
   const [incomeData, setIncomeData] = useState({
     date: "",
     dues: 0,
@@ -67,14 +86,8 @@ function Income({ ...props }) {
   const [incomeList, setIncomeList] = useState([]);
 
   useEffect(() => {
-    getIncome();
+    getFilteredCategory(shopFilter, dateRange);
   }, []);
-
-  const getIncome = async () => {
-    const list = await getIncomeList(shop_id);
-    console.log(list);
-    setIncomeList(list);
-  };
 
   const addIncome = async (e) => {
     let tempIncome = {};
@@ -112,13 +125,13 @@ function Income({ ...props }) {
     };
 
     await postIncome(tempIncome);
-    getIncome();
+    getFilteredCategory(shopFilter, dateRange);
   };
 
   const deleteIncome = async (doc_id) => {
     if (window.confirm("손익분석을 삭제하시겠습니까?")) {
       await deleteDoc(doc(db, "INCOME", doc_id));
-      getIncome();
+      getFilteredCategory(shopFilter, dateRange);
     }
   };
 
@@ -129,7 +142,6 @@ function Income({ ...props }) {
   };
 
   function searchShopName(id) {
-    console.log(props.shopList);
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
     for (let item of props.shopList) {
       // 타겟 값과 일치하는 항목을 찾았을 때 해당 정보 반환
@@ -157,7 +169,12 @@ function Income({ ...props }) {
             <RFilter
               shopList={props.shopList}
               admin={admin}
-              onChangeCategory={(value) => console.log(value)}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
             />
             <PopupBase
               icon={<AddIcon />}
@@ -409,7 +426,12 @@ function Income({ ...props }) {
             <RFilter
               shopList={props.shopList}
               admin={admin}
-              onChangeCategory={(value) => console.log(value)}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {/* <Text>관리자 설정</Text> */}

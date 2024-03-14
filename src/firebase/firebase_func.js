@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
@@ -725,4 +726,19 @@ export const getFilteredShop = async (value) => {
   });
 
   return filteredList;
+};
+
+export const getFilteredIncome = async (dateRange, shop_id) => {
+  console.log(dateRange, shop_id);
+  var q = query(collection(db, "INCOME"));
+  if (shop_id)
+    q = query(collection(db, "INCOME"), where("shop_id", "==", shop_id));
+  const querySnapshot = await getDocs(q);
+
+  const incomes = [];
+  querySnapshot.forEach((doc) => {
+    incomes.push({ ...doc.data(), doc_id: doc.id });
+  });
+
+  return incomes;
 };

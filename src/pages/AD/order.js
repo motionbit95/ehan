@@ -61,15 +61,16 @@ function Order(props) {
     new Date(),
   ]);
 
+  async function getFilteredCategory(value, range) {
+    setDateRange(range);
+    setShopFilter(value);
+  }
+
   useEffect(() => {
     if (admin.doc_id) {
       setMoreButtonVisible(getProductCount(admin?.shop_id) < 10 ? false : true);
     }
   }, [admin]);
-
-  const getFilteredCategory = (value, range) => {
-    setState(value, range);
-  };
 
   // shopList에서 shop의 이름을 가지고 오는 함수
   function searchShopName(id) {

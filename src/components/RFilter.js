@@ -52,14 +52,6 @@ function RFilter({ useSearch = true, ...props }) {
     setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
     let filterShop = await queryShop(depth1, depth2);
-    console.log(
-      "상점 정보를 가지고 옵니다. ",
-      depth1,
-      " ",
-      depth2,
-      "\n",
-      filterShop
-    );
     setFilteredShopList(filterShop);
   };
 
