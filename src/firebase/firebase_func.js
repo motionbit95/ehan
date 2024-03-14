@@ -609,18 +609,48 @@ export async function createInventoryData(data) {
 }
 
 export async function readInventoryData(shop_id) {
-  var q = query(collection(db, "INVENTORY"));
+  var q = query(collection(db, "INVENTORY"), orderBy("createAt"));
   if (shop_id)
-    q = query(collection(db, "INVENTORY"), where("shop_id", "==", shop_id));
+    q = query(
+      collection(db, "INVENTORY"),
+      orderBy("createAt")
+      // where("shop_id", "==", shop_id)
+    );
   const querySnapshot = await getDocs(q);
 
   const inventories = [];
   querySnapshot.forEach((doc) => {
-    inventories.push({ ...doc.data(), doc_id: doc.id });
+    if (doc.data().shop_id === shop_id) {
+      inventories.push({ ...doc.data(), doc_id: doc.id });
+    }
   });
 
   return inventories;
 }
+
+export const updateInventoryData = async (product_id, product_name, count) => {
+  console.log("상품아이디", product_id, count);
+  var q = query(
+    collection(db, "INVENTORY"),
+    where("product_id", "==", product_id)
+  );
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // count 가 3개 이하가 될 경우 알림을 생성합니다.
+    if (doc.data().inventory_count - count <= 3) {
+      debug("재고가 3개 이하입니다.");
+      addDoc(collection(db, "ALARM"), {
+        type: "inventory",
+        createAt: new Date(),
+        product_id: product_id,
+        alarm_msg:
+          product_name +
+          `의 재고가 ${doc.data().inventory_count - count}개 입니다.`,
+      });
+    }
+    updateDoc(doc.ref, { inventory_count: doc.data().inventory_count - count });
+  });
+};
 
 export const getTotalProducts = async (shop_id) => {
   // 콜렉션 레퍼런스

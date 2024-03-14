@@ -6,6 +6,7 @@ import {
   fetchProducts,
   getMessageToken,
   handleMessage,
+  readInventoryData,
 } from "../../firebase/firebase_func";
 import {
   Box,
@@ -42,6 +43,7 @@ function Home(props) {
   const [shopInfo, setShopInfo] = useState(null);
   const [productList, setProductList] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [inventoryList, setInventoryList] = useState([]);
   const shop_id = window.location.pathname.split("/")[2];
 
   const [visibleItemId, setVisibleItemId] = useState(0);
@@ -131,6 +133,9 @@ function Home(props) {
           setProductList(data);
           setCategories(Array.from(data.categories));
         });
+
+        // 재고 리스트 가지고 오기
+        readInventory();
       } catch (error) {
         console.error("shop id로 샵 정보가져오기 오류 발생:", error);
         // 샵을 못찾았으면 테스트샵으로 이동
@@ -177,6 +182,23 @@ function Home(props) {
         inline: "nearest",
       });
     }
+  };
+
+  const readInventory = async () => {
+    const inventoryList = await readInventoryData(shop_id);
+    setInventoryList(inventoryList);
+  };
+
+  const getInventoryCount = (id) => {
+    let count = 100; // default value
+    inventoryList.forEach((element) => {
+      if (element.inventory_use) {
+        if (element.product_id === id) {
+          count = element.inventory_count;
+        }
+      }
+    });
+    return count;
   };
 
   return (
@@ -366,23 +388,42 @@ function Home(props) {
                         >
                           {item.product_images &&
                           item.product_images.length > 0 ? (
-                            <Image
-                              objectFit={"cover"}
-                              bgColor={"#d9d9d9"}
-                              width={"100px"}
-                              height={"100px"}
-                              marginLeft={"1vh"}
-                              borderRadius={"10px"}
-                              alt=""
-                              src={
-                                item.product_images
-                                  ? item.product_images[0].replaceAll(
-                                      "http",
-                                      "https"
-                                    )
-                                  : ""
-                              }
-                            />
+                            <Box position={"relative"}>
+                              <Image
+                                objectFit={"cover"}
+                                bgColor={"#d9d9d9"}
+                                width={"100px"}
+                                height={"100px"}
+                                marginLeft={"1vh"}
+                                borderRadius={"10px"}
+                                alt=""
+                                src={
+                                  item.product_images
+                                    ? item.product_images[0].replaceAll(
+                                        "http",
+                                        "https"
+                                      )
+                                    : ""
+                                }
+                              />
+                              {getInventoryCount(item.doc_id) === 0 && (
+                                <Box
+                                  position={"absolute"}
+                                  width={"100px"}
+                                  height={"100px"}
+                                  top={"0"}
+                                  left={"0"}
+                                  bgColor={"rgba(0,0,0,0.5)"}
+                                  marginLeft={"1vh"}
+                                  borderRadius={"10px"}
+                                  display={"flex"}
+                                  justifyContent={"center"}
+                                  alignItems={"center"}
+                                >
+                                  <Text color={"white"}>품절</Text>
+                                </Box>
+                              )}
+                            </Box>
                           ) : (
                             <Box
                               borderRadius={"10px"}
@@ -399,6 +440,7 @@ function Home(props) {
                             <Text color="#9B2C2C" fontWeight={"bold"}>
                               {formatCurrency(item.product_price)}원
                             </Text>
+                            <Text>{getInventoryCount(item.doc_id)}</Text>
                           </Stack>
                         </HStack>
                       </Flex>

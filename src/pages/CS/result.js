@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getPayment, postPayment } from "../../firebase/firebase_func";
+import {
+  getPayment,
+  postPayment,
+  readInventoryData,
+  updateInventoryData,
+} from "../../firebase/firebase_func";
 import {
   Box,
   Button,
@@ -21,17 +26,40 @@ function Result(props) {
   const payresult = decodeURIComponent(location.search);
   const data = JSON.parse(payresult.substring(1).replace("data=", ""));
   const [order, setOrder] = useState({});
+  const [inventoryList, setInventoryList] = useState([]);
   useEffect(() => {
     console.log(data);
     // 주문번호로 문서를 찾은 다음 결제 정보 업데이트
     getOrder();
   }, []);
 
+  useEffect(() => {
+    const products = order.pay_product;
+    for (let i = 0; i < products?.length; i++) {
+      console.log(
+        "재고수량을 업데이트 합니다.",
+        products[i].product_id,
+        products[i].count
+      );
+      updateInventoryData(
+        products[i].product_id,
+        products[i].product_name,
+        products[i].count
+      );
+    }
+  }, [inventoryList]);
+
   const getOrder = async () => {
     let orderId = data.orderId ? data.orderId : data.order_id;
     const order = await getPayment(orderId);
     console.log(order.pay_product);
     setOrder(order);
+
+    // 이미 order 정보가 들어있는 경우 아래의 과정을 생략합니다. (새로고침등의 이벤트에서 Data가 저장되는 것을 방지)
+    if (order.pay_state) return;
+
+    const inventoryList = await readInventoryData(order.shop_id);
+    setInventoryList(inventoryList);
 
     // 받은 결제 정보 업데이트 하는 부분
     await postPayment({
