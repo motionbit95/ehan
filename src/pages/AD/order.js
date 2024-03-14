@@ -30,7 +30,13 @@ import {
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import { getOrder, getProductCount } from "../../firebase/firebase_func";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 import { formatCurrency } from "../CS/home";
 import { debug } from "../../firebase/api";
@@ -117,6 +123,18 @@ function Order(props) {
     });
 
     // 알림을 발생시킵니다.
+    addDoc(collection(db, "ALARM"), {
+      type: "order",
+      createAt: new Date(),
+      order_id: order.doc_id,
+      alarm_code: "I" + value.substring(1),
+      alarm_title: `상품 배송이 ${
+        value === "0001" ? "시작" : "완료"
+      }되었습니다.`,
+      alarm_msg: `주문번호 ${order.doc_id}의 상품 배송이 ${
+        value === "0001" ? "시작" : "완료"
+      }되었습니다.`,
+    });
 
     window.location.reload();
   };
@@ -279,13 +297,25 @@ function Order(props) {
                                 }}
                               >
                                 <Stack>
-                                  <Radio size={"lg"} value="0000">
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 0}
+                                    size={"lg"}
+                                    value="0000"
+                                  >
                                     배송전
                                   </Radio>
-                                  <Radio size={"lg"} value="0001">
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 1}
+                                    size={"lg"}
+                                    value="0001"
+                                  >
                                     배송시작
                                   </Radio>
-                                  <Radio size={"lg"} value="0002">
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 2}
+                                    size={"lg"}
+                                    value="0002"
+                                  >
                                     배송완료
                                   </Radio>
                                 </Stack>

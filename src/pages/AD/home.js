@@ -270,7 +270,11 @@ function Home(props) {
                 <Stack w={"100%"} p={"20px"}>
                   <Text>알림</Text>
                   {alramList.map((item, index) => (
-                    <Alert key={index} borderRadius={"10px"} status="error">
+                    <Alert
+                      key={index}
+                      borderRadius={"10px"}
+                      status={item.alarm_code[0] === "E" ? "error" : "info"}
+                    >
                       <HStack
                         w={"100%"}
                         justifyContent={"space-between"}

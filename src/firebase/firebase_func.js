@@ -738,7 +738,7 @@ export const getFilteredIncome = async (dateRange, shop_id) => {
 
 export const getAlarmList = async (shop_id) => {
   // 콜렉션 레퍼런스
-  var q = query(collection(db, "ALARM"), orderBy("createAt"), limit(3));
+  var q = query(collection(db, "ALARM"), orderBy("createAt", "desc"), limit(3));
   const querySnapshot = await getDocs(q);
 
   const alarms = [];
