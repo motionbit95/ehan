@@ -13,7 +13,7 @@ import { auth, db } from "../../firebase/firebase_conf";
 import { getCart, postCart, updateCart } from "../../firebase/firebase_func";
 import { formatCurrency } from "./home";
 import { debug } from "../../firebase/api";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 function Menu(props) {
   const navigate = useNavigate();
@@ -26,6 +26,12 @@ function Menu(props) {
   }, []);
 
   const addCart = async () => {
+    if (location.state.inventory_count < count) {
+      alert(
+        `해당 상품의 재고 수량이 ${location.state.inventory_count}개 입니다.\n${location.state.inventory_count}개 이하로 구매 가능합니다.`
+      );
+      return;
+    }
     // navigate(`/cart/${auth.currentUser.uid}`);
     if (window.confirm("장바구니에 추가하시겠습니까?")) {
       // 기존에 해당 id의 상품이 담겨있는 경우, 수량만 변경합니다.'

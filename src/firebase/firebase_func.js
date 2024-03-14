@@ -581,6 +581,12 @@ export async function readInventoryData(shop_id) {
   return inventories;
 }
 
+export const getShopName = async (shop_id) => {
+  const docRef = doc(db, "SHOP", shop_id);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data().shop_name;
+};
+
 export const updateInventoryData = async (product_id, product_name, count) => {
   console.log("상품아이디", product_id, count);
   var q = query(
@@ -588,7 +594,7 @@ export const updateInventoryData = async (product_id, product_name, count) => {
     where("product_id", "==", product_id)
   );
   const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
+  querySnapshot.forEach(async (doc) => {
     // count 가 3개 이하가 될 경우 알림을 생성합니다.
     if (doc.data().inventory_count - count <= 3) {
       debug("재고가 3개 이하입니다.");
@@ -599,8 +605,10 @@ export const updateInventoryData = async (product_id, product_name, count) => {
         alarm_code: "E004",
         alarm_title: "상품 재고가 부족합니다.",
         alarm_msg:
+          (await getShopName(doc.data().shop_id)) +
+          " - " +
           product_name +
-          `의 재고가 ${doc.data().inventory_count - count}개 입니다.`,
+          `의 재고가 ${doc.data().inventory_count - count}개 남았습니다.`,
       });
     }
     updateDoc(doc.ref, { inventory_count: doc.data().inventory_count - count });
@@ -730,7 +738,7 @@ export const getFilteredIncome = async (dateRange, shop_id) => {
 
 export const getAlarmList = async (shop_id) => {
   // 콜렉션 레퍼런스
-  var q = query(collection(db, "ALARM"));
+  var q = query(collection(db, "ALARM"), orderBy("createAt"), limit(3));
   const querySnapshot = await getDocs(q);
 
   const alarms = [];

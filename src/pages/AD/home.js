@@ -1,6 +1,7 @@
 import React, { PureComponent, useEffect, useState } from "react";
 import {
   Alert,
+  AlertDescription,
   AlertIcon,
   AlertTitle,
   Box,
@@ -22,10 +23,10 @@ import {
   getPayment,
   getTotalOrder,
 } from "../../firebase/firebase_func";
-import { debug } from "../../firebase/api";
+import { compareTimestampWithCurrentTime, debug } from "../../firebase/api";
 import { formatCurrency } from "../CS/home";
 import DonutChart from "../../components/DonutChart";
-import { collection, limit, onSnapshot } from "firebase/firestore";
+import { collection, limit, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 
 function Home(props) {
@@ -127,31 +128,32 @@ function Home(props) {
     setTotalOrigin(totalOrigin);
   }
 
-  useEffect(() => {
-    let list = [];
-    const unsubscribe = onSnapshot(
-      collection(db, "ALARM"),
-      limit(3),
-      (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            // 알람 데이터 추가 시
-            // console.log("Added city: ", change.doc.data());
-            list.push(change.doc.data());
-          }
-          if (change.type === "modified") {
-            // 알람 데이터 변경 시
-          }
-          if (change.type === "removed") {
-            // 알람 데이터 삭제 시
-          }
-        });
-      }
-    );
+  // useEffect(() => {
+  //   let list = [];
+  //   const unsubscribe = onSnapshot(
+  //     collection(db, "ALARM"),
+  //     orderBy("createAt"),
+  //     limit(3),
+  //     (snapshot) => {
+  //       snapshot.docChanges().forEach((change) => {
+  //         if (change.type === "added") {
+  //           // 알람 데이터 추가 시
+  //           // console.log("Added city: ", change.doc.data());
+  //           list.push(change.doc.data());
+  //         }
+  //         if (change.type === "modified") {
+  //           // 알람 데이터 변경 시
+  //         }
+  //         if (change.type === "removed") {
+  //           // 알람 데이터 삭제 시
+  //         }
+  //       });
+  //     }
+  //   );
 
-    setAlarmList(list);
-    console.log(list);
-  }, []);
+  //   setAlarmList(list);
+  //   console.log(list);
+  // }, []);
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -256,28 +258,41 @@ function Home(props) {
                 </Stack>
               </Flex>
             </HStack>
-            <HStack w={"100%"} h={"40%"}>
+            <HStack w={"100%"}>
               <Flex
                 borderRadius={"10px"}
                 bgColor={"white"}
                 w={"100%"}
-                h={"100%"}
                 overflow={"auto"}
                 minW={"890px"}
+                minH={"150px"}
               >
                 <Stack w={"100%"} p={"20px"}>
+                  <Text>알림</Text>
                   {alramList.map((item, index) => (
                     <Alert key={index} borderRadius={"10px"} status="error">
-                      <HStack w={"100%"} justifyContent={"space-between"}>
+                      <HStack
+                        w={"100%"}
+                        justifyContent={"space-between"}
+                        alignItems={"flex-start"}
+                      >
                         <HStack>
                           <AlertIcon />
-                          <AlertTitle>{item.alarm_title}</AlertTitle>
-                          <Text>{item.alarm_msg}</Text>
+                          <Stack spacing={"1px"}>
+                            <AlertTitle>
+                              [{item.alarm_code}] {item.alarm_title}
+                            </AlertTitle>
+                            <AlertDescription>
+                              {item.alarm_msg}
+                            </AlertDescription>
+                          </Stack>
                         </HStack>
-                        <CloseButton />
+                        <Text fontSize={"sm"}>
+                          {compareTimestampWithCurrentTime(item.createAt)}
+                        </Text>
                       </HStack>
                     </Alert>
-                  ))}{" "}
+                  ))}
                 </Stack>
               </Flex>
             </HStack>

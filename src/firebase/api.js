@@ -65,6 +65,38 @@ export const timestampToDate = (timestamp) => {
   return dateString;
 };
 
+export function getCurrentTime() {
+  return new Date();
+}
+
+export function convertFirestoreTimestampToDate(timestamp) {
+  if (!timestamp) return new Date();
+  const milliseconds =
+    timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1e6);
+  return new Date(milliseconds);
+}
+
+export function compareTimestampWithCurrentTime(firestoreTimestamp) {
+  const firestoreDate = convertFirestoreTimestampToDate(firestoreTimestamp);
+  const currentDate = getCurrentTime();
+
+  // 두 날짜의 차이 계산 (밀리초 단위)
+  const timeDifference = currentDate - firestoreDate;
+
+  // 차이를 표시하는 문자열 생성
+  if (timeDifference < 60 * 1000) {
+    return `${Math.round(timeDifference / 1000)}초 전`;
+  } else if (timeDifference < 60 * 60 * 1000) {
+    return `${Math.round(timeDifference / (60 * 1000))}분 전`;
+  } else if (timeDifference < 24 * 60 * 60 * 1000) {
+    return `${Math.round(timeDifference / (60 * 60 * 1000))}시간 전`;
+  } else {
+    // 다양한 형식으로 날짜 표시 가능
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return firestoreDate.toLocaleDateString("ko-Kr", options);
+  }
+}
+
 export function getRandomColor() {
   // 16진수 색상 코드 생성
   const letters = "0123456789ABCDEF";

@@ -372,11 +372,19 @@ function Home(props) {
                         borderRadius={"10px"}
                       >
                         <HStack
-                          onClick={() =>
+                          onClick={() => {
+                            if (getInventoryCount(item.doc_id) <= 0) {
+                              alert("해당 상품은 품절입니다.");
+                              return;
+                            }
                             navigate(`/menu`, {
-                              state: { data: item, shop_id: shopInfo?.doc_id },
-                            })
-                          }
+                              state: {
+                                data: item,
+                                shop_id: shopInfo?.doc_id,
+                                inventory_count: getInventoryCount(item.doc_id),
+                              },
+                            });
+                          }}
                           width={"100%"}
                           spacing={"20px"}
                           cursor={"pointer"}
@@ -401,7 +409,7 @@ function Home(props) {
                                     : ""
                                 }
                               />
-                              {getInventoryCount(item.doc_id) === 0 && (
+                              {getInventoryCount(item.doc_id) <= 0 && (
                                 <Box
                                   position={"absolute"}
                                   width={"100px"}

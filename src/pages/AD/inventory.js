@@ -367,7 +367,13 @@ function Inventory({ ...props }) {
                                     }
                                   }}
                                 />
-                                <Text>{item.inventory_count}</Text>
+                                <Text
+                                  color={
+                                    item.inventory_count <= 3 ? "red" : "black"
+                                  }
+                                >
+                                  {item.inventory_count}
+                                </Text>
                                 <Image
                                   w={"16px"}
                                   h={"16px"}
