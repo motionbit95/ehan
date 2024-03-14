@@ -75,14 +75,7 @@ function RFilter({ useSearch = true, ...props }) {
   // }, [depth1, depth2, depth3]);
 
   return (
-    <Flex
-      w={"100%"}
-      p={"10px"}
-      bgColor={"white"}
-      position={"sticky"}
-      top={"0"}
-      zIndex={"20"}
-    >
+    <Flex w={"100%"} p={"10px"} bgColor={"white"} position={"sticky"} top={"0"}>
       {isDesktop ? (
         <HStack w={"100%"}>
           <IconButton
@@ -190,7 +183,7 @@ function RFilter({ useSearch = true, ...props }) {
               ))}
             </Select>
           </HStack>
-          <HStack w={"100%"}>
+          <HStack w={"100%"} zIndex={99999}>
             <Input
               w={"100%"}
               placeholder="dfasdfa"

@@ -28,6 +28,7 @@ import {
 } from "@chakra-ui/icons";
 import { auth } from "../firebase/firebase_conf";
 import { useGlobalState } from "../GlobalState";
+import Logo from "./Logo";
 
 const RHeader = (props) => {
   const [isDesktopView, setIsDesktopView] = useState(window.innerWidth > 768); // 기본적으로 데스크탑 뷰
@@ -66,9 +67,10 @@ const RHeader = (props) => {
       <Flex px={4} width={"100%"} justify="space-between" align="center">
         {/* 로고와 텍스트 */}
         <Flex align="center" width={"100%"} justify="space-between">
-          <Text fontSize="xl" fontWeight="bold" mr={4}>
+          {/* <Text fontSize="xl" fontWeight="bold" mr={4}>
             LOGO
-          </Text>
+          </Text> */}
+          <Logo />
           <Text display={{ base: "none", md: "block" }} mr={4}>
             {admin?.admin_name}
           </Text>

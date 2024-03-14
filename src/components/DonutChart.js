@@ -51,7 +51,7 @@ const DonutChart = ({ data }) => {
         <Tooltip
           content={<CustomTooltip />}
           cursor={{ stroke: "gray", strokeWidth: 2 }}
-          wrapperStyle={{ zIndex: 1000 }}
+          wrapperStyle={{ zIndex: 10 }}
           isAnimationActive={false}
         />
         <Legend

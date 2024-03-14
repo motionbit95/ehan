@@ -167,7 +167,7 @@ function Home(props) {
           overflow={"auto"}
           // p={"2vh"}
         >
-          <Box position={"sticky"} top={0} left={0} bgColor={"red"}>
+          <Box zIndex={2} position={"sticky"} top={0} left={0} bgColor={"red"}>
             <RFilter
               useSearch={false}
               shopList={props.shopList}
@@ -182,6 +182,7 @@ function Home(props) {
           </Box>
           {/* desktop 에서의 레이아웃 */}
           <Stack
+            zIndex={1}
             p={"20px"}
             w={"100%"}
             h={"100%"}
