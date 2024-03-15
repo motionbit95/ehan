@@ -29,7 +29,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
-import { getOrder, getProductCount } from "../../firebase/firebase_func";
+import {
+  getFilteredOrder,
+  getOrder,
+  getProductCount,
+} from "../../firebase/firebase_func";
 import {
   addDoc,
   collection,
@@ -91,24 +95,6 @@ function Order(props) {
     return null;
   }
 
-  // R - read order
-  const getOrderList = async () => {
-    // 상품 목록을 조회합니다.
-    await getOrder(lastDocumentSnapshot, admin?.shop_id).then((data) => {
-      if (data.products && data.products.length > 0) {
-        setOrderList([...orderList, ...data.products]);
-        setLastDocumentSnapshot(data.lastDocumentSnapshot);
-        if (data.products.length < 10) {
-          setMoreButtonVisible(false);
-        }
-      } else {
-        // alert("불러올 상품 목록이 없습니다.");
-        return;
-      }
-    });
-    debug("주문 목록을 조회합니다.");
-  };
-
   // U - update order
   const handleChangeState = async (value, order) => {
     console.log(value);
@@ -149,9 +135,12 @@ function Order(props) {
     debug("[ORDER] 주문이 삭제되었습니다.", id);
   };
 
-  if (orderList.length === 0) {
-    getOrderList();
-  }
+  // R - read order
+  const getFilteredData = async (value) => {
+    console.log(value);
+    let newList = await getFilteredOrder(value);
+    setOrderList(newList);
+  };
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -166,12 +155,15 @@ function Order(props) {
         >
           {/* desktop 에서의 레이아웃 */}
           <RFilter
+            orderFilter={
+              <>
+                <option value="pay_price">금액순</option>
+                <option value="pay_state">상태순</option>
+              </>
+            }
             shopList={props.shopList}
             admin={admin}
-            onChangeCategory={(value) => getFilteredCategory(value, dateRange)}
-            onChangeDateRange={(value) =>
-              getFilteredCategory(shopFilter, value)
-            }
+            onChangeFilter={(value) => getFilteredData(value)}
           />
           <Stack p={"20px"} pt={"0px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
@@ -192,7 +184,6 @@ function Order(props) {
                         <Th>결제내역</Th>
                         <Th>결제(환불)금액</Th>
                         <Th>결제영수증</Th>
-                        {/* <Th>지점</Th> */}
                         <Th>배송지</Th>
                         <Th>배송상태</Th>
                         <Th>삭제</Th>
@@ -206,22 +197,30 @@ function Order(props) {
                         >
                           <Td fontSize={"sm"}>{index + 1}</Td>
                           <Td fontSize={"sm"}>
-                            <Text whiteSpace={"pre-line"} textAlign={"center"}>
+                            <Text whiteSpace={"pre-line"}>
                               {item?.pay_date?.split("T")[0]}
-                              {/* {"\n"}
-                              {item?.pay_date?.split("T")[1].substring(0, 8)} */}
                             </Text>
                           </Td>
                           <Td fontSize={"sm"}>
-                            {" "}
                             {item?.pay_product[0]?.product_name} 외{" "}
                             {item?.pay_product?.length}건
                           </Td>
                           <Td fontSize={"sm"}>
-                            {item?.pay_price
-                              ? formatCurrency(item?.pay_price)
-                              : "0"}
-                            원
+                            <HStack w={"100%"} justifyContent={"space-between"}>
+                              <Text>
+                                {item?.pay_price
+                                  ? formatCurrency(item?.pay_price)
+                                  : "0"}
+                                원
+                              </Text>
+                              <Text>
+                                {item?.pay_method === "vbank"
+                                  ? "계좌이체"
+                                  : item?.pay_method === "card"
+                                  ? "카드"
+                                  : "기타"}
+                              </Text>
+                            </HStack>
                           </Td>
                           <Td>
                             <IconButton
@@ -303,17 +302,6 @@ function Order(props) {
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Center>
-                  <Button
-                    colorScheme="red"
-                    mb={"20px"}
-                    w={"80px"}
-                    display={moreButtonVisible ? "box" : "none"}
-                    onClick={() => getOrderList()}
-                  >
-                    더보기
-                  </Button>
-                </Center>
               </Stack>
             )}
           </Stack>
@@ -323,14 +311,14 @@ function Order(props) {
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
+              orderFilter={
+                <>
+                  <option value="전체"></option>
+                </>
+              }
               shopList={props.shopList}
               admin={admin}
-              onChangeCategory={(value) =>
-                getFilteredCategory(value, dateRange)
-              }
-              onChangeDateRange={(value) =>
-                getFilteredCategory(shopFilter, value)
-              }
+              onChangeFilter={(value) => getFilteredData(value)}
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {/* <Text>관리자 설정</Text> */}
@@ -436,17 +424,6 @@ function Order(props) {
                       </CardBody>
                     ))}
                   </Card>
-                  <Center>
-                    <Button
-                      colorScheme="red"
-                      mb={"20px"}
-                      w={"80px"}
-                      display={moreButtonVisible ? "box" : "none"}
-                      onClick={() => getOrderList()}
-                    >
-                      더보기
-                    </Button>
-                  </Center>
                 </Stack>
               )}
             </Stack>

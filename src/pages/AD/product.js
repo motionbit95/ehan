@@ -40,7 +40,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db, storage } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
-import { debug } from "../../firebase/api";
+import { debug, timestampToDate } from "../../firebase/api";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import RFilter from "../../components/RFilter";
 
@@ -314,28 +314,6 @@ function Product(props) {
     }
   };
 
-  // R - read product
-  const getProductList = async () => {
-    // 상품 목록을 조회합니다.
-    await getProduct(lastDocumentSnapshot, admin?.shop_id).then((data) => {
-      if (data.products && data.products.length > 0) {
-        setProductList([...productList, ...data.products]);
-        setLastDocumentSnapshot(data.lastDocumentSnapshot);
-        if (data.products.length < 10) {
-          setMoreButtonVisible(false);
-        }
-      } else {
-        // alert("불러올 상품 목록이 없습니다.");
-        return;
-      }
-    });
-    debug("상품 목록을 조회합니다.");
-  };
-
-  if (productList.length === 0) {
-    getProductList();
-  }
-
   // U - update product
   const updateProductInfo = (productInfo) => {
     setProductInfo(productInfo);
@@ -352,7 +330,7 @@ function Product(props) {
     debug("[PRODUCT] 문서가 삭제되었습니다.", id);
   };
 
-  // filter
+  // R - read product
   const getFilteredData = async (value) => {
     let newList = await getFilteredProduct(value);
     setProductList(newList);
@@ -413,8 +391,9 @@ function Product(props) {
                     <Thead h={"40px"}>
                       <Tr>
                         <Th>No</Th>
-                        <Th>상품명</Th>
+                        <Th>등록날짜</Th>
                         <Th>카테고리</Th>
+                        <Th>상품명</Th>
                         <Th>상품가격</Th>
                         <Th>관리지점</Th>
                         <Th textAlign={"center"} w={"30px"}>
@@ -432,8 +411,12 @@ function Product(props) {
                           _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
                         >
                           <Td fontSize={"sm"}>{index + 1}</Td>
-                          <Td fontSize={"sm"}>{item.product_name}</Td>
+                          <Td fontSize={"sm"}>
+                            {timestampToDate(item.createAt)}
+                          </Td>
                           <Td fontSize={"sm"}>{item.product_category}</Td>
+                          <Td fontSize={"sm"}>{item.product_name}</Td>
+
                           <Td fontSize={"sm"}>
                             {formatCurrency(item.product_price)}원
                           </Td>
@@ -477,17 +460,6 @@ function Product(props) {
                     </Tbody>
                   </Table>
                 </TableContainer>
-                {/* <Center>
-                  <Button
-                    colorScheme="red"
-                    mb={"20px"}
-                    w={"80px"}
-                    display={moreButtonVisible ? "box" : "none"}
-                    onClick={() => getProductList()}
-                  >
-                    더보기
-                  </Button>
-                </Center> */}
               </Stack>
             )}
           </Stack>
@@ -580,17 +552,6 @@ function Product(props) {
                       </CardBody>
                     ))}
                   </Card>
-                  {/* <Center>
-                    <Button
-                      colorScheme="red"
-                      mb={"20px"}
-                      w={"80px"}
-                      display={moreButtonVisible ? "box" : "none"}
-                      onClick={() => getProductList()}
-                    >
-                      더보기
-                    </Button>
-                  </Center> */}
                 </Stack>
               )}
             </Stack>

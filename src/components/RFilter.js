@@ -96,7 +96,7 @@ function RFilter({ useSearch = true, ...props }) {
         gap={2}
         w={"100%"}
         templateColumns={
-          isDesktop ? `repeat(${useSearch ? 4 : 2}, 1fr)` : `repeat(1, 1fr)`
+          isDesktop ? `repeat(${useSearch ? 3 : 2}, 1fr)` : `repeat(1, 1fr)`
         }
       >
         <Select onChange={(e) => setDepth3(e.target.value)}>
@@ -119,7 +119,7 @@ function RFilter({ useSearch = true, ...props }) {
           }}
           defaultRange={dateRange}
         />
-        {useSearch && (
+        {/* {useSearch && (
           <HStack>
             <Input
               ref={keywordRef}
@@ -133,7 +133,7 @@ function RFilter({ useSearch = true, ...props }) {
               조회
             </Button>
           </HStack>
-        )}
+        )} */}
       </Grid>
     </Flex>
   );
