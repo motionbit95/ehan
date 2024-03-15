@@ -46,6 +46,7 @@ const RHeader = (props) => {
     setCurrentMenu(menu);
     localStorage.setItem("menu", menu);
     props.onChangeMenu(menu);
+    onClose();
   };
 
   React.useEffect(() => {
@@ -67,9 +68,6 @@ const RHeader = (props) => {
       <Flex px={4} width={"100%"} justify="space-between" align="center">
         {/* 로고와 텍스트 */}
         <Flex align="center" width={"100%"} justify="space-between">
-          {/* <Text fontSize="xl" fontWeight="bold" mr={4}>
-            LOGO
-          </Text> */}
           <HStack>
             <Logo />
             <Text fontWeight="bold">Redswitch</Text>
@@ -171,7 +169,12 @@ const RHeader = (props) => {
           <DrawerOverlay>
             <DrawerContent>
               <DrawerCloseButton />
-              <DrawerHeader>LOGO</DrawerHeader>
+              <DrawerHeader>
+                <HStack>
+                  <Logo />
+                  <Text fontWeight="bold">Redswitch</Text>
+                </HStack>
+              </DrawerHeader>
               <DrawerBody>
                 <VStack w={"100%"} spacing={4} align="start">
                   {/* 네비게이션 아이템 추가 */}

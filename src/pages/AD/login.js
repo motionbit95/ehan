@@ -1,6 +1,15 @@
 import React from "react";
-import { Stack, Text, Input, Button, Center, Flex } from "@chakra-ui/react";
+import {
+  Stack,
+  Text,
+  Input,
+  Button,
+  Center,
+  Flex,
+  HStack,
+} from "@chakra-ui/react";
 import { adminSignIn } from "../../firebase/firebase_func";
+import Logo from "../../components/Logo";
 
 const Login = () => {
   return (
@@ -36,16 +45,12 @@ const Login = () => {
             width="300px"
             maxWidth="100%"
           >
-            <Text
-              fontFamily="Inter"
-              lineHeight="1.21"
-              fontWeight="bold"
-              fontSize="34px"
-              letterSpacing="0.37px"
-              color="Label Color.Light/Primary"
-            >
-              LOGO
-            </Text>
+            <HStack>
+              <Logo />
+              <Text fontSize={"2xl"} fontWeight="bold">
+                Redswitch
+              </Text>
+            </HStack>
             <form
               style={{
                 display: "flex",
