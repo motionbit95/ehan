@@ -348,34 +348,34 @@ function Product(props) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-          <HStack bgColor={"white"} boxShadow={"md"} px={"10px"}>
-            <ButtonGroup size={"sm"}>
-              <PopupBase
-                onClose={addProduct}
-                icon={<AddIcon />}
-                title={"상품"}
-                action={"추가"}
-              >
-                <ProductInfo
-                  shopList={props.shopList}
-                  permission={admin?.permission}
-                  onChangeProduct={updateProductInfo}
-                />
-              </PopupBase>
-            </ButtonGroup>
-            <RFilter
-              shopList={props.shopList}
-              admin={admin}
-              onChangeFilter={(value) => getFilteredData(value)}
-              orderFilter={
-                <>
-                  <option value={"product_category"}>카테고리순</option>
-                  <option value={"product_name"}>상품명순</option>
-                  <option value={"product_price"}>가격순</option>
-                </>
-              }
-            />
-          </HStack>
+          <RFilter
+            children={
+              <ButtonGroup size={"sm"}>
+                <PopupBase
+                  onClose={addProduct}
+                  icon={<AddIcon />}
+                  title={"상품"}
+                  action={"추가"}
+                >
+                  <ProductInfo
+                    shopList={props.shopList}
+                    permission={admin?.permission}
+                    onChangeProduct={updateProductInfo}
+                  />
+                </PopupBase>
+              </ButtonGroup>
+            }
+            shopList={props.shopList}
+            admin={admin}
+            onChangeFilter={(value) => getFilteredData(value)}
+            orderFilter={
+              <>
+                <option value={"product_category"}>카테고리순</option>
+                <option value={"product_name"}>상품명순</option>
+                <option value={"product_price"}>가격순</option>
+              </>
+            }
+          />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin?.permission === "supervisor" && (

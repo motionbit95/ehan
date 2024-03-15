@@ -91,12 +91,16 @@ function RFilter({ useSearch = true, ...props }) {
       position={"sticky"}
       top={"0"}
       zIndex={"99"}
+      boxShadow={"md"}
     >
+      <Flex mr={2}>{props.children}</Flex>
       <Grid
         gap={2}
         w={"100%"}
         templateColumns={
-          isDesktop ? `repeat(${useSearch ? 3 : 2}, 1fr)` : `repeat(1, 1fr)`
+          isDesktop
+            ? `repeat(${useSearch && props.useCalendar ? 3 : 2}, 1fr)`
+            : `repeat(1, 1fr)`
         }
       >
         <Select onChange={(e) => setDepth3(e.target.value)}>
@@ -113,12 +117,15 @@ function RFilter({ useSearch = true, ...props }) {
             {props.orderFilter}
           </Select>
         )}
-        <Calendar
-          onSelectDate={(dateRange) => {
-            setDateRange(dateRange);
-          }}
-          defaultRange={dateRange}
-        />
+        {props.useCalendar && (
+          <Calendar
+            onSelectDate={(dateRange) => {
+              setDateRange(dateRange);
+            }}
+            defaultRange={dateRange}
+          />
+        )}
+
         {/* {useSearch && (
           <HStack>
             <Input

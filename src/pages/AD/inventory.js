@@ -29,6 +29,7 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   createInventoryData,
+  getFilteredInventory,
   getTotalProducts,
   readInventoryData,
 } from "../../firebase/firebase_func";
@@ -203,8 +204,9 @@ function Inventory({ ...props }) {
     new Date(),
   ]);
 
-  async function getFilteredCategory(value, range) {
-    console.log("dadf");
+  async function getFilteredData(value) {
+    let newList = await getFilteredInventory(value);
+    setInventoryList(newList);
   }
 
   return (
@@ -218,74 +220,72 @@ function Inventory({ ...props }) {
           left={"200px"}
           overflow={"scroll"}
         >
-          {/* desktop 에서의 레이아웃 */}
+          {/* desktop 에서의 레이아웃 */}{" "}
           <RFilter
-            shopList={props.shopList}
-            admin={admin}
-            onChangeCategory={(value) => getFilteredCategory(value, dateRange)}
-            onChangeDateRange={(value) =>
-              getFilteredCategory(shopFilter, value)
+            useCalendar={false}
+            children={
+              <ButtonGroup
+                size={"md"}
+                w={"100%"}
+                justifyContent={"space-between"}
+              >
+                <PopupBase
+                  onClose={addInventory}
+                  icon={<AddIcon />}
+                  title={"재고"}
+                  action={"추가"}
+                >
+                  <Stack>
+                    <FormControl isRequired>
+                      <FormLabel>관리 지점</FormLabel>
+                      <Select
+                        name="shop_id"
+                        onChange={(e) => setSelectedShop(e.target.value)}
+                      >
+                        <option value="">선택</option>
+                        {props.shopList?.map((shop) => (
+                          <option key={shop.doc_id} value={shop.doc_id}>
+                            {shop.shop_name}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>상품 선택</FormLabel>
+                      <Select name="product_id">
+                        <option value="">선택</option>
+                        {totalProducts?.map((product) => (
+                          <option key={product.doc_id} value={product.doc_id}>
+                            {product.product_name}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                </PopupBase>
+                <Button
+                  onClick={updateInventory}
+                  colorScheme="red"
+                  variant={"outline"}
+                  leftIcon={<EditIcon />}
+                >
+                  저장
+                </Button>
+              </ButtonGroup>
             }
-            order_filter={
-              <Select>
-                <option value="category">카테고리순</option>
-                <option value="name">상품명순</option>
-                <option value="price">가격순</option>
-                <option value="price">재고수량순</option>
-              </Select>
+            admin={admin}
+            shopList={props.shopList}
+            onChangeFilter={(value) => getFilteredData(value)}
+            orderFilter={
+              <>
+                <option value="inventory_count">재고순</option>
+              </>
             }
           />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin?.permission === "supervisor" && (
               <Stack>
-                <ButtonGroup
-                  size={"md"}
-                  w={"100%"}
-                  justifyContent={"space-between"}
-                >
-                  <PopupBase
-                    onClose={addInventory}
-                    icon={<AddIcon />}
-                    title={"재고"}
-                    action={"추가"}
-                  >
-                    <Stack>
-                      <FormControl isRequired>
-                        <FormLabel>관리 지점</FormLabel>
-                        <Select
-                          name="shop_id"
-                          onChange={(e) => setSelectedShop(e.target.value)}
-                        >
-                          <option value="">선택</option>
-                          {props.shopList?.map((shop) => (
-                            <option key={shop.doc_id} value={shop.doc_id}>
-                              {shop.shop_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl isRequired>
-                        <FormLabel>상품 선택</FormLabel>
-                        <Select name="product_id">
-                          <option value="">선택</option>
-                          {totalProducts?.map((product) => (
-                            <option key={product.doc_id} value={product.doc_id}>
-                              {product.product_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </PopupBase>
-                  <Button
-                    onClick={updateInventory}
-                    colorScheme="red"
-                    leftIcon={<EditIcon />}
-                  >
-                    저장
-                  </Button>
-                </ButtonGroup>
                 <TableContainer
                   border={"1px solid #d9d9d9"}
                   bgColor={"white"}
@@ -393,15 +393,10 @@ function Inventory({ ...props }) {
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
+              useCalendar={false}
               shopList={props.shopList}
-              admin={admin}
-              onChangeCategory={(value) =>
-                getFilteredCategory(value, dateRange)
-              }
-              onChangeDateRange={(value) =>
-                getFilteredCategory(shopFilter, value)
-              }
-              order_filter={
+              onChangeFilter={(value) => getFilteredData(value)}
+              orderFilter={
                 <Select>
                   <option value="category">카테고리순</option>
                   <option value="name">상품명순</option>

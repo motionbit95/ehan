@@ -165,7 +165,8 @@ function Order(props) {
             admin={admin}
             onChangeFilter={(value) => getFilteredData(value)}
           />
-          <Stack p={"20px"} pt={"0px"} w={"100%"} h={"100%"}>
+
+          <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin?.permission === "supervisor" && (
               <Stack>

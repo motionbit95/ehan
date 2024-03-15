@@ -133,7 +133,6 @@ export const updateCart = async (data) => {
   //  setDoc -> 모든 데이터가 data로 치환됩니다.
   //  updateDoc -> data로 들어온 필드가 업데이트 됩니다.
   try {
-    console.log(data);
     const docRef = doc(db, "CART", data.doc_id);
 
     // db의 CART 컬렉션에서 해당 doc_id의 문서를 set
@@ -146,7 +145,6 @@ export const updateCart = async (data) => {
 
 export const postCart = async (data) => {
   try {
-    console.log(data);
     const docRef = await addDoc(collection(db, "CART"), data);
     console.log("Document written with ID: ", docRef.id);
   } catch (error) {
@@ -163,7 +161,6 @@ export const getCart = async (uid) => {
   querySnapshot.forEach((doc) => {
     totalCost += doc.data().product_price * doc.data().count;
     cart.push({ ...doc.data(), product_id: doc.data().doc_id, doc_id: doc.id });
-    console.log(totalCost);
   });
   return { cart, totalCost };
 };
@@ -282,7 +279,6 @@ export function handleMessage(event) {
   const message = event.data;
   if (message.type === "push") {
     const pushData = message.data;
-    console.log(pushData);
     // 여기서 모달 창을 띄우는 로직을 추가합니다.
     // 예: 모달 상태를 업데이트하고, 모달을 보여줍니다.
   }
@@ -290,8 +286,6 @@ export function handleMessage(event) {
 
 // 관리자 계정 생성 함수
 export const adminSignUp = async (email, password, admin) => {
-  console.log(email, password);
-
   createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredential) => {
       // Signed in
@@ -333,7 +327,6 @@ async function firstLogin(id, password) {
 
   const admin = [];
   querySnapshot.forEach(async (doc) => {
-    console.log(doc.data());
     admin.push({ ...doc.data(), doc_id: doc.id });
   });
 
@@ -347,8 +340,6 @@ async function firstLogin(id, password) {
 // 관리자 로그인 함수
 export const adminSignIn = (e) => {
   e.preventDefault();
-
-  console.log(e.target[0].value, e.target[1].value);
 
   signInWithEmailAndPassword(auth, e.target[0].value, e.target[1].value)
     .then((userCredential) => {
@@ -424,7 +415,6 @@ export const fetchAdminList = async () => {
   const admin = [];
   querySnapshot.forEach((doc) => {
     admin.push({ ...doc.data(), doc_id: doc.id });
-    console.log(doc.data());
   });
   return admin;
 };
@@ -470,8 +460,6 @@ export const postAdmin = async (e) => {
     createAt: new Date(),
   };
 
-  console.log(adminInfo);
-
   try {
     const docRef = await addDoc(collection(db, "ACCOUNT"), adminInfo);
     console.log("Document written with ID: ", docRef.id);
@@ -500,7 +488,6 @@ export const changeAdminPassword = (oldPassword, newPassword, doc_id) => {
     .then(async () => {
       // User re-authenticated.
       // 재인증 성공 시, 새 비밀번호로 업데이트
-      console.log(doc_id);
       const docRef = doc(db, "ACCOUNT", doc_id);
       await updateDoc(docRef, { admin_password: newPassword });
 
@@ -588,7 +575,6 @@ export const getShopName = async (shop_id) => {
 };
 
 export const updateInventoryData = async (product_id, product_name, count) => {
-  console.log("상품아이디", product_id, count);
   var q = query(
     collection(db, "INVENTORY"),
     where("product_id", "==", product_id)
@@ -721,21 +707,6 @@ export const getFilteredShop = async (value) => {
   return filteredList;
 };
 
-export const getFilteredIncome = async (dateRange, shop_id) => {
-  console.log(dateRange, shop_id);
-  var q = query(collection(db, "INCOME"));
-  if (shop_id)
-    q = query(collection(db, "INCOME"), where("shop_id", "==", shop_id));
-  const querySnapshot = await getDocs(q);
-
-  const incomes = [];
-  querySnapshot.forEach((doc) => {
-    incomes.push({ ...doc.data(), doc_id: doc.id });
-  });
-
-  return incomes;
-};
-
 export const getAlarmList = async (shop_id) => {
   // 콜렉션 레퍼런스
   var q = query(collection(db, "ALARM"), orderBy("createAt", "desc"), limit(3));
@@ -752,7 +723,6 @@ export const getAlarmList = async (shop_id) => {
 };
 
 export const getFilteredProduct = async (value) => {
-  console.log(value);
   var q = query(
     collection(db, "PRODUCT"),
     orderBy(value.order ? value.order : "createAt")
@@ -777,7 +747,6 @@ export const getFilteredProduct = async (value) => {
 };
 
 export const getFilteredOrder = async (value) => {
-  console.log(value);
   var q = query(
     collection(db, "PAYMENT"),
     orderBy(
@@ -802,4 +771,45 @@ export const getFilteredOrder = async (value) => {
   });
 
   return filteredProduct;
+};
+
+export const getFilteredInventory = async (value) => {
+  var q = query(
+    collection(db, "INVENTORY"),
+    orderBy(value.order ? value.order : "createAt")
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  const filteredProduct = [];
+  querySnapshot.forEach((doc) => {
+    const createAt = timestampToDate(doc.data().createAt);
+    if (
+      (!value.shop_id || value.shop_id === doc.data().shop_id) &&
+      new Date(createAt.replace(".", "-")) >= value.dateRange[0] &&
+      new Date(createAt.replace(".", "-")) <= value.dateRange[1]
+      // doc.data().product_name.includes(value.keyword)
+    ) {
+      filteredProduct.push({ ...doc.data(), doc_id: doc.id });
+    }
+  });
+
+  return filteredProduct;
+};
+
+export const getFilteredIncome = async (value) => {
+  var q = query(
+    collection(db, "INCOME"),
+    orderBy(value.order ? value.order : "createAt")
+  );
+  const querySnapshot = await getDocs(q);
+
+  const incomes = [];
+  querySnapshot.forEach((doc) => {
+    if (!value.shop_id || value.shop_id === doc.data().shop_id) {
+      incomes.push({ ...doc.data(), doc_id: doc.id });
+    }
+  });
+
+  return incomes;
 };
