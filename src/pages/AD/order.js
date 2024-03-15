@@ -172,37 +172,6 @@ function Order(props) {
             onChangeDateRange={(value) =>
               getFilteredCategory(shopFilter, value)
             }
-            render={
-              <>
-                <Stack spacing={"20px"}>
-                  <FormControl>
-                    <FormLabel>정렬</FormLabel>
-                    <RadioGroup>
-                      <HStack>
-                        <Radio>결제일순</Radio>
-                        <Radio>금액순</Radio>
-                        <Radio>배송상태순</Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>검색</FormLabel>
-                    <HStack>
-                      <Select>
-                        <option>상품명</option>
-                        <option>결제금액</option>
-                        <option>배송지</option>
-                        <option>배송상태</option>
-                      </Select>
-                      <Input />
-                    </HStack>
-                  </FormControl>
-                  <HStack justifyContent={"flex-end"}>
-                    <Button>적용</Button>
-                  </HStack>
-                </Stack>
-              </>
-            }
           />
           <Stack p={"20px"} pt={"0px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
@@ -361,37 +330,6 @@ function Order(props) {
               }
               onChangeDateRange={(value) =>
                 getFilteredCategory(shopFilter, value)
-              }
-              render={
-                <>
-                  <Stack spacing={"20px"}>
-                    <FormControl>
-                      <FormLabel>정렬</FormLabel>
-                      <RadioGroup>
-                        <HStack>
-                          <Radio>결제일순</Radio>
-                          <Radio>금액순</Radio>
-                          <Radio>배송상태순</Radio>
-                        </HStack>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>검색</FormLabel>
-                      <HStack>
-                        <Select>
-                          <option>상품명</option>
-                          <option>결제금액</option>
-                          <option>배송지</option>
-                          <option>배송상태</option>
-                        </Select>
-                        <Input />
-                      </HStack>
-                    </FormControl>
-                    <HStack justifyContent={"flex-end"}>
-                      <Button>적용</Button>
-                    </HStack>
-                  </Stack>
-                </>
               }
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>

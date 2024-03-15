@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../components/RFooter";
 import { CopyIcon, SearchIcon } from "@chakra-ui/icons";
+import Logo from "../../components/Logo";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -293,12 +294,13 @@ function Home(props) {
               borderRadius={"1vh"}
             >
               <Flex w={"48px"} h={"48px"} align={"center"} justify={"center"}>
-                <Image
+                {/* <Image
                   w={"24px"}
                   h={"24px"}
                   bgColor={"white"}
                   src={require("../../image/th_tag.png")}
-                />
+                /> */}
+                <Logo />
               </Flex>
               <Text color={"black"} fontSize={"medium"}>
                 {shopInfo?.shop_name}

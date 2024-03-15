@@ -1,7 +1,11 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import {
+  Button,
   CloseButton,
   Flex,
+  FormControl,
+  FormLabel,
+  Grid,
   HStack,
   IconButton,
   Input,
@@ -9,13 +13,14 @@ import {
   Stack,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Calendar from "./Calendar";
 import RDepth1 from "./RDepth1";
 import RDepth2 from "./RDepth2";
 import { queryShop } from "../firebase/firebase_func";
 
 function RFilter({ useSearch = true, ...props }) {
+  const keywordRef = useRef();
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [depth1, setDepth1] = useState("");
   const [depth2, setDepth2] = useState("");
@@ -35,6 +40,8 @@ function RFilter({ useSearch = true, ...props }) {
   const shopList = props.shopList;
   const admin = props.admin;
   const [selectedShop, setSelectedShop] = useState(null);
+  const [order, setOrder] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     // 관리자의 권한을 검색합니다.
@@ -66,164 +73,68 @@ function RFilter({ useSearch = true, ...props }) {
   };
 
   useEffect(() => {
-    if (props.onChangeCategory)
-      props.onChangeCategory([depth1, depth2, depth3]);
-  }, [depth1, depth2, depth3]);
-
-  // useEffect(() => {
-  //   props.onChangeCategory([depth1, depth2, depth3]);
-  // }, [depth1, depth2, depth3]);
+    console.log(depth3, dateRange, order, keyword);
+    if (props.onChangeFilter)
+      props.onChangeFilter({
+        shop_id: depth3,
+        dateRange: dateRange,
+        order: order,
+        keyword: keyword,
+      });
+  }, [depth3, dateRange, order, keyword]);
 
   return (
-    <Flex w={"100%"} p={"10px"} bgColor={"white"} position={"sticky"} top={"0"}>
-      {isDesktop ? (
-        <HStack w={"100%"}>
-          <IconButton
-            display={useSearch ? "block" : "none"}
-            onClick={() => setViewFilter(!viewFilter)}
-            icon={<Search2Icon />}
-          />
-          <RDepth1
-            defaultValue={depth1}
-            value={selectedShop?.shop_depth1}
-            isDisabled={admin?.permission !== "supervisor"}
-            w={"20%"}
-            onChangeDepth1={setDepth1}
-          ></RDepth1>
-          <RDepth2
-            defaultValue={depth2}
-            value={selectedShop?.shop_depth2}
-            isDisabled={!depth1 || admin?.permission !== "supervisor"}
-            w={"20%"}
-            depth1={depth1}
-            onChangeDepth2={(value) => getShopList(depth1, value)}
-          ></RDepth2>
-          <Select
-            _disabled={{
-              opacity: 1,
-              pointerEvents: "none",
-              bgColor: "#f5f5f5",
-            }}
-            isDisabled={!depth2 || admin?.permission !== "supervisor"}
-            defaultValue={selectedShop?.doc_id}
-            value={selectedShop?.doc_id}
-            w={"20%"}
-            onChange={(e) => {
-              setDepth3(e.target.value);
-            }}
-          >
-            <option value={""}>전체</option>
-            {filteredShopList?.map((shop) => (
-              <option key={shop.doc_id} value={shop.doc_id}>
-                {shop.shop_name}
-              </option>
-            ))}
+    <Flex
+      w={"100%"}
+      p={"10px"}
+      bgColor={"white"}
+      position={"sticky"}
+      top={"0"}
+      zIndex={"99"}
+    >
+      <Grid
+        gap={2}
+        w={"100%"}
+        templateColumns={
+          isDesktop ? `repeat(${useSearch ? 4 : 2}, 1fr)` : `repeat(1, 1fr)`
+        }
+      >
+        <Select onChange={(e) => setDepth3(e.target.value)}>
+          <option value="">전체</option>
+          {filteredShopList.map((shop, index) => (
+            <option key={index} value={shop.doc_id}>
+              {shop.shop_name}
+            </option>
+          ))}
+        </Select>
+        {useSearch && (
+          <Select onChange={(e) => setOrder(e.target.value)}>
+            <option value="createAt">최신순</option>
+            {props.orderFilter}
           </Select>
-
-          <HStack w={"40%"}>
+        )}
+        <Calendar
+          onSelectDate={(dateRange) => {
+            setDateRange(dateRange);
+          }}
+          defaultRange={dateRange}
+        />
+        {useSearch && (
+          <HStack>
             <Input
-              w={"100%"}
-              placeholder="dfasdfa"
-              value={
-                dateRange
-                  ? dateRange[0]?.toLocaleDateString() +
-                    " ~ " +
-                    dateRange[1]?.toLocaleDateString()
-                  : ""
-              }
+              ref={keywordRef}
+              // onChange={(e) => setKeyword(e.target.value)}
+              placeholder="검색어를 입력하세요."
             />
-            <Calendar
-              defaultRange={dateRange}
-              onSelectDate={(dateRange) => {
-                setDateRange(dateRange);
-                props.onChangeDateRange(dateRange);
-              }}
-            />
-          </HStack>
-        </HStack>
-      ) : (
-        <Stack w={"100%"}>
-          <HStack w={"100%"}>
-            <RDepth1
-              defaultValue={selectedShop?.shop_depth1}
-              value={selectedShop?.shop_depth1}
-              isDisabled={admin?.permission !== "supervisor"}
-              w={"100%"}
-              onChangeDepth1={setDepth1}
-            ></RDepth1>
-            <RDepth2
-              defaultValue={selectedShop?.shop_dept21}
-              value={selectedShop?.shop_depth2}
-              isDisabled={!depth1 || admin?.permission !== "supervisor"}
-              w={"100%"}
-              depth1={depth1}
-              onChangeDepth2={(value) => getShopList(depth1, value)}
-            ></RDepth2>
-          </HStack>
-          <HStack w={"100%"}>
-            <Select
-              _disabled={{
-                opacity: 1,
-                pointerEvents: "none",
-                bgColor: "#f5f5f5",
-              }}
-              defaultValue={selectedShop?.doc_id}
-              value={selectedShop?.doc_id}
-              isDisabled={!depth2 || admin?.permission !== "supervisor"}
-              w={"100%"}
-              onChange={(e) => {
-                setDepth3(e.target.value);
-              }}
+            <Button
+              onClick={() => setKeyword(keywordRef.current.value)}
+              rightIcon={<Search2Icon />}
             >
-              <option value={""}>전체</option>
-              {filteredShopList?.map((shop) => (
-                <option key={shop.doc_id} value={shop.doc_id}>
-                  {shop.shop_name}
-                </option>
-              ))}
-            </Select>
+              조회
+            </Button>
           </HStack>
-          <HStack w={"100%"} zIndex={99999}>
-            <Input
-              w={"100%"}
-              placeholder="dfasdfa"
-              value={
-                dateRange
-                  ? dateRange[0]?.toLocaleDateString() +
-                    " ~ " +
-                    dateRange[1]?.toLocaleDateString()
-                  : ""
-              }
-            />
-            <Calendar
-              defaultRange={dateRange}
-              onSelectDate={(dateRange) => {
-                setDateRange(dateRange);
-                props.onChangeDateRange(dateRange);
-              }}
-            />
-          </HStack>
-        </Stack>
-      )}
-      {viewFilter && (
-        <Flex
-          p={"20px"}
-          bgColor={"white"}
-          position={"absolute"}
-          top={"56px"}
-          boxShadow={"md"}
-          borderRadius={"10px"}
-        >
-          <CloseButton
-            onClick={() => setViewFilter(false)}
-            position={"absolute"}
-            zIndex={"10"}
-            right={"10px"}
-            top={"10px"}
-          />
-          {props.render}
-        </Flex>
-      )}
+        )}
+      </Grid>
     </Flex>
   );
 }

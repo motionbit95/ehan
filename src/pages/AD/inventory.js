@@ -64,10 +64,10 @@ function ProductColumn({ productList, product_id }) {
       {isDesktop ? (
         <>
           <Td>
-            <Text>{product?.product_name}</Text>
+            <Text>{product?.product_category}</Text>
           </Td>
           <Td>
-            <Text>{product?.product_category}</Text>
+            <Text>{product?.product_name}</Text>
           </Td>
           <Td>
             <Text>{formatCurrency(product?.product_price)}원</Text>
@@ -226,36 +226,13 @@ function Inventory({ ...props }) {
             onChangeDateRange={(value) =>
               getFilteredCategory(shopFilter, value)
             }
-            render={
-              <>
-                <Stack spacing={"20px"}>
-                  <FormControl>
-                    <FormLabel>정렬</FormLabel>
-                    <RadioGroup>
-                      <HStack>
-                        <Radio>카테고리순</Radio>
-                        <Radio>금액순</Radio>
-                        <Radio>관리지점순</Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>검색</FormLabel>
-                    <HStack>
-                      <Select>
-                        <option>상품명</option>
-                        <option>카테고리</option>
-                        <option>상품가격</option>
-                        <option>관리지점</option>
-                      </Select>
-                      <Input />
-                    </HStack>
-                  </FormControl>
-                  <HStack justifyContent={"flex-end"}>
-                    <Button>적용</Button>
-                  </HStack>
-                </Stack>
-              </>
+            order_filter={
+              <Select>
+                <option value="category">카테고리순</option>
+                <option value="name">상품명순</option>
+                <option value="price">가격순</option>
+                <option value="price">재고수량순</option>
+              </Select>
             }
           />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
@@ -320,8 +297,8 @@ function Inventory({ ...props }) {
                     <Thead h={"40px"}>
                       <Tr>
                         <Th>No</Th>
-                        <Th>상품명</Th>
                         <Th>카테고리</Th>
+                        <Th>상품명</Th>
                         <Th>상품가격</Th>
                         <Th>관리지점</Th>
                         <Th>재고수량</Th>
@@ -415,7 +392,24 @@ function Inventory({ ...props }) {
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
-            <RFilter />
+            <RFilter
+              shopList={props.shopList}
+              admin={admin}
+              onChangeCategory={(value) =>
+                getFilteredCategory(value, dateRange)
+              }
+              onChangeDateRange={(value) =>
+                getFilteredCategory(shopFilter, value)
+              }
+              order_filter={
+                <Select>
+                  <option value="category">카테고리순</option>
+                  <option value="name">상품명순</option>
+                  <option value="price">가격순</option>
+                  <option value="price">재고수량순</option>
+                </Select>
+              }
+            />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {admin?.permission === "supervisor" && (
                 <Stack>

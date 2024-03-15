@@ -61,6 +61,7 @@ function Home(props) {
   }
 
   async function getFilteredCategory(value, range) {
+    console.log(value, range);
     // 상태변수에 파라미터를 저장합니다.
     setShopFilter(value);
     setDateRange(range);
@@ -128,6 +129,66 @@ function Home(props) {
     setTotalOrigin(totalOrigin);
   }
 
+  async function getFilteredData(value) {
+    setDateRange(value.dateRange);
+
+    let payMethod = [
+      { label: "card", name: "카드", value: 0 },
+      { label: "vbank", name: "무통장입금", value: 0 },
+      { label: "kakaopay", name: "카카오페이", value: 0 },
+      { label: "naverpayCard", name: "네이버페이", value: 0 },
+    ];
+
+    let payProduct = [];
+
+    let totalCost = 0;
+    let totalOrigin = 0;
+    // 모든 거래내역 중에서 필터 된 상품의 거래내역만 가지고 옵니다.
+    const orders = await getTotalOrder(value.dateRange, value.shop_id);
+    totalCost += orders.totalPrice;
+    totalOrigin += orders.totalOriginPrice;
+
+    for (var j = 0; j < orders.order.length; j++) {
+      for (let k = 0; k < payMethod.length; k++) {
+        if (payMethod[k].label === orders.order[j].pay_method) {
+          // 해당 객체의 value 수정
+          payMethod[k].value += 1; // newValue에 새로운 값을 할당
+          break; // 값을 찾았으므로 루프 중단
+        }
+      }
+      orders.order[j].pay_product.forEach((product) => {
+        let found = payProduct.find(
+          (item) => item.name === product.product_name
+        );
+
+        // 만약 해당 상품이 이미 payProduct 배열에 존재하는 경우
+        if (found) {
+          // 카운트 증가
+          found.value += product.count;
+        } else {
+          // payProduct 배열에 새로운 객체 추가
+          payProduct.push({
+            name: product.product_name,
+            value: product.count,
+          });
+        }
+      });
+    }
+
+    if (totalCost === 0) {
+      alert("해당기간에는 매출이 존재하지 않습니다.");
+      return;
+    }
+
+    // 차트데이터를 입력합니다.
+    setPayProduct(payProduct);
+    setPayMethod(payMethod);
+
+    // 매출 매입 데이터를 입력합니다.
+    setTotalCost(totalCost);
+    setTotalOrigin(totalOrigin);
+  }
+
   // useEffect(() => {
   //   let list = [];
   //   const unsubscribe = onSnapshot(
@@ -172,12 +233,7 @@ function Home(props) {
               useSearch={false}
               shopList={props.shopList}
               admin={admin}
-              onChangeCategory={(value) =>
-                getFilteredCategory(value, dateRange)
-              }
-              onChangeDateRange={(value) =>
-                getFilteredCategory(shopFilter, value)
-              }
+              onChangeFilter={(value) => getFilteredData(value)}
             />
           </Box>
           {/* desktop 에서의 레이아웃 */}
@@ -308,6 +364,7 @@ function Home(props) {
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
+              useSearch={false}
               shopList={props.shopList}
               admin={admin}
               onChangeCategory={(value) =>

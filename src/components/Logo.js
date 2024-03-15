@@ -16,7 +16,6 @@ function Logo(props) {
           fill="#E53E3E"
         />
       </svg>
-      <Text fontWeight="bold">Redswitch</Text>
     </HStack>
   );
 }

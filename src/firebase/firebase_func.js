@@ -706,7 +706,7 @@ export const getFilteredShop = async (value) => {
       collection(db, "SHOP"),
       where("shop_depth1", "==", value[0]),
       where("shop_depth2", "==", value[1]),
-      where("shop_id", "==", value[2])
+      where("doc_id", "==", value[2])
     );
   } else {
     var q = query(collection(db, "SHOP"));
@@ -749,4 +749,30 @@ export const getAlarmList = async (shop_id) => {
   });
 
   return alarms;
+};
+
+export const getFilteredProduct = async (value) => {
+  console.log(value);
+  var q = query(
+    collection(db, "PRODUCT"),
+    orderBy(value.order ? value.order : "createAt")
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  const filteredProduct = [];
+  querySnapshot.forEach((doc) => {
+    const createAt = timestampToDate(doc.data().createAt);
+    if (
+      (!value.shop_id || value.shop_id === doc.data().shop_id) &&
+      new Date(createAt.replace(".", "-")) >= value.dateRange[0] &&
+      new Date(createAt.replace(".", "-")) <= value.dateRange[1] &&
+      doc.data().product_name.includes(value.keyword)
+    ) {
+      console.log(doc.data());
+      filteredProduct.push({ ...doc.data(), doc_id: doc.id });
+    }
+  });
+
+  return filteredProduct;
 };

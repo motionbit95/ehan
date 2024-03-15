@@ -70,7 +70,10 @@ const RHeader = (props) => {
           {/* <Text fontSize="xl" fontWeight="bold" mr={4}>
             LOGO
           </Text> */}
-          <Logo />
+          <HStack>
+            <Logo />
+            <Text fontWeight="bold">Redswitch</Text>
+          </HStack>
           <Text display={{ base: "none", md: "block" }} mr={4}>
             {admin?.admin_name}
           </Text>

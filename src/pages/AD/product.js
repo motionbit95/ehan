@@ -29,6 +29,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import {
+  getFilteredProduct,
   getProduct,
   getProductCount,
   postProduct,
@@ -351,6 +352,12 @@ function Product(props) {
     debug("[PRODUCT] 문서가 삭제되었습니다.", id);
   };
 
+  // filter
+  const getFilteredData = async (value) => {
+    let newList = await getFilteredProduct(value);
+    setProductList(newList);
+  };
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -363,57 +370,38 @@ function Product(props) {
           overflow={"scroll"}
         >
           {/* desktop 에서의 레이아웃 */}
-          <RFilter
-            render={
-              <>
-                <Stack spacing={"20px"}>
-                  <FormControl>
-                    <FormLabel>정렬</FormLabel>
-                    <RadioGroup>
-                      <HStack>
-                        <Radio>카테고리순</Radio>
-                        <Radio>금액순</Radio>
-                        <Radio>관리지점순</Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>검색</FormLabel>
-                    <HStack>
-                      <Select>
-                        <option>상품명</option>
-                        <option>카테고리</option>
-                        <option>상품가격</option>
-                        <option>관리지점</option>
-                      </Select>
-                      <Input />
-                    </HStack>
-                  </FormControl>
-                  <HStack justifyContent={"flex-end"}>
-                    <Button>적용</Button>
-                  </HStack>
-                </Stack>
-              </>
-            }
-          />
+          <HStack bgColor={"white"} boxShadow={"md"} px={"10px"}>
+            <ButtonGroup size={"sm"}>
+              <PopupBase
+                onClose={addProduct}
+                icon={<AddIcon />}
+                title={"상품"}
+                action={"추가"}
+              >
+                <ProductInfo
+                  shopList={props.shopList}
+                  permission={admin?.permission}
+                  onChangeProduct={updateProductInfo}
+                />
+              </PopupBase>
+            </ButtonGroup>
+            <RFilter
+              shopList={props.shopList}
+              admin={admin}
+              onChangeFilter={(value) => getFilteredData(value)}
+              orderFilter={
+                <>
+                  <option value={"product_category"}>카테고리순</option>
+                  <option value={"product_name"}>상품명순</option>
+                  <option value={"product_price"}>가격순</option>
+                </>
+              }
+            />
+          </HStack>
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
             {admin?.permission === "supervisor" && (
               <Stack>
-                <ButtonGroup size={"sm"}>
-                  <PopupBase
-                    onClose={addProduct}
-                    icon={<AddIcon />}
-                    title={"상품"}
-                    action={"추가"}
-                  >
-                    <ProductInfo
-                      shopList={props.shopList}
-                      permission={admin?.permission}
-                      onChangeProduct={updateProductInfo}
-                    />
-                  </PopupBase>
-                </ButtonGroup>
                 <TableContainer
                   border={"1px solid #d9d9d9"}
                   bgColor={"white"}
@@ -489,7 +477,7 @@ function Product(props) {
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Center>
+                {/* <Center>
                   <Button
                     colorScheme="red"
                     mb={"20px"}
@@ -499,7 +487,7 @@ function Product(props) {
                   >
                     더보기
                   </Button>
-                </Center>
+                </Center> */}
               </Stack>
             )}
           </Stack>
@@ -592,7 +580,7 @@ function Product(props) {
                       </CardBody>
                     ))}
                   </Card>
-                  <Center>
+                  {/* <Center>
                     <Button
                       colorScheme="red"
                       mb={"20px"}
@@ -602,7 +590,7 @@ function Product(props) {
                     >
                       더보기
                     </Button>
-                  </Center>
+                  </Center> */}
                 </Stack>
               )}
             </Stack>

@@ -24,11 +24,7 @@ function Calendar({ defaultRange, ...props }) {
             props.onSelectDate(dateRange);
           }}
           showPopperArrow={false}
-          customInput={
-            <Flex>
-              <IconButton icon={<CalendarIcon />} />
-            </Flex>
-          }
+          customInput={<Input />}
           renderCustomHeader={({
             date,
             decreaseMonth,
@@ -65,6 +61,10 @@ function Calendar({ defaultRange, ...props }) {
           startDate={startDate}
           endDate={endDate}
           onChange={(update) => {
+            if (update[0] > new Date() || update[1] > new Date()) {
+              alert("오늘 이후의 날짜는 선택할 수 없습니다.");
+              return;
+            }
             setDateRange(update);
           }}
           dayClassName={(d) => {
