@@ -553,6 +553,7 @@ function Account(props) {
                       onClose={saveAdmin}
                       title={"서브 관리자"}
                       action={"추가"}
+                      size={["sm", "md"]}
                     >
                       <FormControl isRequired>
                         <FormLabel>관리자 이름</FormLabel>
@@ -613,6 +614,7 @@ function Account(props) {
                       title={"지점"}
                       action={"추가"}
                       onClose={saveShop}
+                      size={["sm", "md"]}
                     >
                       <FormControl isRequired>
                         <FormLabel>가맹점 id</FormLabel>
@@ -657,7 +659,7 @@ function Account(props) {
                     </PopupBase>
                   </ButtonGroup>
 
-                  <Box bgColor={"white"} borderRadius={"10px"} p={"20px"}>
+                  <Box bgColor={"white"} borderRadius={"10px"} px={"20px"}>
                     <Table>
                       <Thead>
                         <Tr>
@@ -667,7 +669,6 @@ function Account(props) {
                           <Th px={0} fontSize={"sm"}>
                             ID / 관리 지점
                           </Th>
-                          <Th></Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -683,39 +684,6 @@ function Account(props) {
                                   ? "전지점"
                                   : searchShopName(item.shop_id)}
                               </Text>
-                            </Td>
-                            <Td w={"40px"} px={0}>
-                              <Stack>
-                                <Flex w={"40px"}>
-                                  <PopupBase
-                                    colorScheme={"gray"}
-                                    visibleButton={true}
-                                    action={"수정"}
-                                    title={<EditIcon />}
-                                    onClose={(e) => window.location.reload()}
-                                  >
-                                    <AccountInfo
-                                      permission={admin?.permission}
-                                      admin={item}
-                                      shopList={props.shopList}
-                                      visibleAdminInfo={true}
-                                      checkConfirmPassword={
-                                        checkConfirmPassword
-                                      }
-                                      checkValidPassword={checkValidPassword}
-                                      checkCurrentPassword={
-                                        checkCurrentPassword
-                                      }
-                                    />
-                                  </PopupBase>
-                                </Flex>
-                                <Flex>
-                                  <IconButton
-                                    onClick={() => deleteAdmin(item.doc_id)}
-                                    icon={<DeleteIcon />}
-                                  />
-                                </Flex>
-                              </Stack>
                             </Td>
                           </Tr>
                         ))}

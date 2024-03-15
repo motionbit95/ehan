@@ -314,7 +314,8 @@ function Order(props) {
             <RFilter
               orderFilter={
                 <>
-                  <option value="전체"></option>
+                  <option value="pay_price">금액순</option>
+                  <option value="pay_state">상태순</option>
                 </>
               }
               shopList={props.shopList}
@@ -325,17 +326,29 @@ function Order(props) {
               {/* <Text>관리자 설정</Text> */}
               {admin?.permission === "supervisor" && (
                 <Stack>
-                  <Card p={"10px 0px"}>
-                    {orderList?.map((item, index) => (
-                      <CardBody key={index} p={"10px 20px"}>
-                        <Stack
-                          border={"1px solid #d9d9d9"}
-                          borderRadius={"10px"}
-                          p={"10px"}
-                          w={"100%"}
-                        >
-                          <Flex>
-                            <Stack>
+                  <TableContainer
+                    border={"1px solid #d9d9d9"}
+                    bgColor={"white"}
+                    borderRadius={"10px"}
+                    p={"10px"}
+                    mb={"20px"}
+                  >
+                    <Table variant="simple" size={"sm"}>
+                      <Thead h={"40px"}>
+                        <Tr>
+                          <Th>배송상태</Th>
+                          <Th>결제내역/배송지</Th>
+                          <Th textAlign={"center"}>결제영수증</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {orderList?.map((item, index) => (
+                          <Tr
+                            key={index}
+                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                          >
+                            <Td>
+                              {" "}
                               <PopupBase
                                 size={"xs"}
                                 colorScheme={
@@ -367,64 +380,81 @@ function Order(props) {
                                   }}
                                 >
                                   <Stack>
-                                    <Radio size={"lg"} value="0000">
+                                    <Radio
+                                      isDisabled={
+                                        parseInt(item?.pay_state) >= 0
+                                      }
+                                      size={"lg"}
+                                      value="0000"
+                                    >
                                       배송전
                                     </Radio>
-                                    <Radio size={"lg"} value="0001">
+                                    <Radio
+                                      isDisabled={
+                                        parseInt(item?.pay_state) >= 1
+                                      }
+                                      size={"lg"}
+                                      value="0001"
+                                    >
                                       배송시작
                                     </Radio>
-                                    <Radio size={"lg"} value="0002">
+                                    <Radio
+                                      isDisabled={
+                                        parseInt(item?.pay_state) >= 2
+                                      }
+                                      size={"lg"}
+                                      value="0002"
+                                    >
                                       배송완료
                                     </Radio>
                                   </Stack>
                                 </RadioGroup>
                               </PopupBase>
-                            </Stack>
-                          </Flex>
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>결제(환불)일</Text>
-                              <Text>결제내역</Text>
-                              <Text>결제(환불)금액</Text>
-                              <Text>배송지</Text>
-                            </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <Text>{item?.pay_date?.split("T")[0]}</Text>
-                              <Text>
-                                {item?.pay_product[0]?.product_name} 외{" "}
-                                {item?.pay_product?.length}건
-                              </Text>
-                              <Text>
-                                {item?.pay_price
-                                  ? formatCurrency(item?.pay_price)
-                                  : "0"}
-                              </Text>
-                              <Text>{item?.order_address}</Text>
-                            </Flex>
-                          </HStack>
-
-                          <HStack justifyContent={"space-between"}>
-                            <Stack w={"100%"}>
+                            </Td>
+                            <Td fontSize={"sm"}>
+                              <Stack>
+                                <Text whiteSpace={"pre-line"}>
+                                  {item?.pay_date?.split("T")[0]}
+                                </Text>
+                                <Text>
+                                  {item?.pay_product[0]?.product_name} 외{" "}
+                                  {item?.pay_product?.length}건
+                                </Text>
+                                <HStack>
+                                  <Text fontSize={"md"} fontWeight={"bold"}>
+                                    {item?.pay_price
+                                      ? formatCurrency(item?.pay_price)
+                                      : "0"}
+                                    원
+                                  </Text>
+                                  <Text>
+                                    {item?.pay_method === "vbank"
+                                      ? "계좌이체"
+                                      : item?.pay_method === "card"
+                                      ? "카드"
+                                      : "기타"}
+                                  </Text>
+                                </HStack>
+                                <Text>
+                                  {item?.order_address}{" "}
+                                  {item?.user_phone
+                                    ? " / " + item?.user_phone
+                                    : null}
+                                </Text>
+                              </Stack>
+                            </Td>
+                            <Td textAlign={"center"}>
                               <IconButton
                                 size={"sm"}
                                 icon={<CopyIcon />}
                                 onClick={() => window.open(item?.receipt_url)}
                               />
-                            </Stack>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                size={"sm"}
-                                icon={<DeleteIcon />}
-                                onClick={() => deleteOrder(item?.doc_id)}
-                              />
-                            </Stack>
-                          </HStack>
-                        </Stack>
-                      </CardBody>
-                    ))}
-                  </Card>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
                 </Stack>
               )}
             </Stack>

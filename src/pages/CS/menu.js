@@ -79,7 +79,7 @@ function Menu(props) {
         <Stack id="banner">
           <Center pt={"64px"}>
             <Image
-              objectFit={"center"}
+              objectFit={"cover"}
               height={"100%"}
               src={menu?.product_images?.[0].replace("http", "https")}
             ></Image>

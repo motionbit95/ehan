@@ -231,6 +231,7 @@ function Home(props) {
           <Box zIndex={2} position={"sticky"} top={0} left={0} bgColor={"red"}>
             <RFilter
               useSearch={false}
+              useCalendar={true}
               shopList={props.shopList}
               admin={admin}
               onChangeFilter={(value) => getFilteredData(value)}
@@ -363,17 +364,21 @@ function Home(props) {
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
-            <RFilter
-              useSearch={false}
-              shopList={props.shopList}
-              admin={admin}
-              onChangeCategory={(value) =>
-                getFilteredCategory(value, dateRange)
-              }
-              onChangeDateRange={(value) =>
-                getFilteredCategory(shopFilter, value)
-              }
-            />
+            <Box
+              zIndex={2}
+              position={"sticky"}
+              top={0}
+              left={0}
+              bgColor={"red"}
+            >
+              <RFilter
+                useSearch={false}
+                useCalendar={true}
+                shopList={props.shopList}
+                admin={admin}
+                onChangeFilter={(value) => getFilteredData(value)}
+              />
+            </Box>
 
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               <Stack>

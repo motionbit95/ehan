@@ -76,11 +76,17 @@ function ProductColumn({ productList, product_id }) {
         </>
       ) : (
         <>
-          <Stack gap={"0"}>
-            <Text>{product?.product_name}</Text>
-            <Text>{product?.product_category}</Text>
-            <Text>{formatCurrency(product?.product_price)}원</Text>
-          </Stack>
+          <Td>
+            <Stack>
+              <HStack>
+                <Text>[{product?.product_category}]</Text>
+                <Text>{product?.product_name}</Text>
+              </HStack>
+              <Text fontSize={"md"} fontWeight={"bold"}>
+                {formatCurrency(product?.product_price)}원
+              </Text>
+            </Stack>
+          </Td>
         </>
       )}
     </>
@@ -394,25 +400,14 @@ function Inventory({ ...props }) {
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
             <RFilter
               useCalendar={false}
-              shopList={props.shopList}
-              onChangeFilter={(value) => getFilteredData(value)}
-              orderFilter={
-                <Select>
-                  <option value="category">카테고리순</option>
-                  <option value="name">상품명순</option>
-                  <option value="price">가격순</option>
-                  <option value="price">재고수량순</option>
-                </Select>
-              }
-            />
-            <Stack p={"20px"} w={"100%"} h={"100%"}>
-              {admin?.permission === "supervisor" && (
-                <Stack>
-                  <ButtonGroup
-                    size={"md"}
-                    w={"100%"}
-                    justifyContent={"space-between"}
-                  >
+              children={
+                <ButtonGroup
+                  alignItems={"center"}
+                  size={"md"}
+                  w={"100%"}
+                  justifyContent={"space-between"}
+                >
+                  <Stack>
                     <PopupBase
                       onClose={addInventory}
                       icon={<AddIcon />}
@@ -420,9 +415,13 @@ function Inventory({ ...props }) {
                       action={"추가"}
                     >
                       <Stack>
-                        <FormControl>
+                        <FormControl isRequired>
                           <FormLabel>관리 지점</FormLabel>
-                          <Select name="shop_id">
+                          <Select
+                            name="shop_id"
+                            onChange={(e) => setSelectedShop(e.target.value)}
+                          >
+                            <option value="">선택</option>
                             {props.shopList?.map((shop) => (
                               <option key={shop.doc_id} value={shop.doc_id}>
                                 {shop.shop_name}
@@ -430,9 +429,10 @@ function Inventory({ ...props }) {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl>
+                        <FormControl isRequired>
                           <FormLabel>상품 선택</FormLabel>
                           <Select name="product_id">
+                            <option value="">선택</option>
                             {totalProducts?.map((product) => (
                               <option
                                 key={product.doc_id}
@@ -445,89 +445,118 @@ function Inventory({ ...props }) {
                         </FormControl>
                       </Stack>
                     </PopupBase>
-                    <Button colorScheme="red" leftIcon={<EditIcon />}>
+
+                    <Button
+                      onClick={updateInventory}
+                      colorScheme="red"
+                      variant={"outline"}
+                      leftIcon={<EditIcon />}
+                    >
                       저장
                     </Button>
-                  </ButtonGroup>
-                  <Card p={"10px 0px"}>
-                    {totalProducts &&
-                      inventoryList?.map((item, index) => (
-                        <CardBody key={index} p={"10px 20px"}>
-                          <Stack
-                            border={"1px solid #d9d9d9"}
-                            borderRadius={"10px"}
-                            p={"10px"}
-                            w={"100%"}
-                          >
-                            <HStack>
-                              <Flex direction={"column"}>
-                                <Text>No.</Text>
-                                <Text>상품명</Text>
-                                <Text>카테고리</Text>
-                                <Text>상품가격</Text>
-                                <Text>관리 지점</Text>
-                                <Text>재고사용여부</Text>
-                              </Flex>
-                              <Flex direction={"column"}>
-                                <Text>{index + 1}</Text>
-                                <ProductColumn
-                                  productList={totalProducts}
-                                  product_id={item.product_id}
-                                />
-                                <Text>{searchShopName(item.shop_id)}</Text>
-                                <Flex textAlign={"center"}>
-                                  <Switch defaultChecked={item.inventory_use} />
-                                </Flex>
-                              </Flex>
-                            </HStack>
-                            <Stack>
-                              <HStack
-                                spacing={"10px"}
-                                border={"1px solid #d9d9d9"}
-                                p={"10px 7px"}
-                                borderRadius={"10px"}
-                                justifyContent={"space-between"}
-                              >
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiMinus.png")}
-                                  onClick={() => {
-                                    if (item.inventory_count > 1) {
-                                      changeInventoryCount(
+                  </Stack>
+                </ButtonGroup>
+              }
+              admin={admin}
+              shopList={props.shopList}
+              onChangeFilter={(value) => getFilteredData(value)}
+              orderFilter={
+                <>
+                  <option value="inventory_count">재고순</option>
+                </>
+              }
+            />
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {admin?.permission === "supervisor" && (
+                <Stack>
+                  <TableContainer
+                    border={"1px solid #d9d9d9"}
+                    bgColor={"white"}
+                    borderRadius={"10px"}
+                    p={"10px"}
+                    mb={"20px"}
+                  >
+                    <Table variant="simple" size={"sm"}>
+                      <Thead h={"40px"}>
+                        <Tr>
+                          <Th>[카테고리]상품명/상품가격</Th>
+                          <Th>재고수량/사용여부</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {totalProducts &&
+                          inventoryList?.map((item, index) => (
+                            <Tr
+                              key={index}
+                              _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                            >
+                              <ProductColumn
+                                productList={totalProducts}
+                                product_id={item.product_id}
+                              />
+                              <Td>
+                                <Stack alignItems={"flex-end"}>
+                                  <Switch
+                                    onChange={() =>
+                                      changeInventoryUse(
                                         index,
-                                        item.inventory_count - 1
-                                      );
+                                        !item.inventory_use
+                                      )
                                     }
-                                  }}
-                                />
-                                <Text>{item.inventory_count}</Text>
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiPlus.png")}
-                                  onClick={() => {
-                                    changeInventoryCount(
-                                      index,
-                                      item.inventory_count + 1
-                                    );
-                                  }}
-                                />
-                              </HStack>
-                            </Stack>
-                            <HStack justifyContent={"space-between"}>
-                              <Stack w={"100%"}>
-                                <IconButton
-                                  size={"sm"}
-                                  onClick={() => deleteInventory(item.doc_id)}
-                                  icon={<DeleteIcon />}
-                                />
-                              </Stack>
-                            </HStack>
-                          </Stack>
-                        </CardBody>
-                      ))}
-                  </Card>
+                                    defaultChecked={item.inventory_use}
+                                  />
+                                  <HStack
+                                    visibility={
+                                      item.inventory_use ? "visible" : "hidden"
+                                    }
+                                    w={"100px"}
+                                    spacing={"10px"}
+                                    border={"1px solid #d9d9d9"}
+                                    p={"10px 7px"}
+                                    borderRadius={"10px"}
+                                    justifyContent={"space-between"}
+                                  >
+                                    <Image
+                                      w={"16px"}
+                                      h={"16px"}
+                                      src={require("../../image/HiMinus.png")}
+                                      onClick={() => {
+                                        if (item.inventory_count > 1) {
+                                          changeInventoryCount(
+                                            index,
+                                            item.inventory_count - 1
+                                          );
+                                        }
+                                      }}
+                                    />
+                                    <Text
+                                      color={
+                                        item.inventory_count <= 3
+                                          ? "red"
+                                          : "black"
+                                      }
+                                    >
+                                      {item.inventory_count}
+                                    </Text>
+                                    <Image
+                                      w={"16px"}
+                                      h={"16px"}
+                                      src={require("../../image/HiPlus.png")}
+                                      onClick={() => {
+                                        changeInventoryCount(
+                                          index,
+                                          item.inventory_count + 1
+                                        );
+                                      }}
+                                    />
+                                  </HStack>
+                                </Stack>
+                              </Td>
+                            </Tr>
+                          ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
                 </Stack>
               )}
             </Stack>

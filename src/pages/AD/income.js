@@ -184,7 +184,7 @@ function Income({ ...props }) {
                 icon={<AddIcon />}
                 title="분석"
                 action="추가"
-                text="분석 추가"
+                text="분석"
                 onClose={addIncome}
               >
                 <Text fontSize={"lg"} fontWeight={"bold"}>
@@ -428,16 +428,21 @@ function Income({ ...props }) {
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
-            <RFilter shopList={props.shopList} admin={admin} />
-            <Stack p={"20px"} w={"100%"} h={"100%"}>
-              {/* <Text>관리자 설정</Text> */}
-
-              <ButtonGroup size={"sm"}>
+            <RFilter
+              admin={admin}
+              shopList={props.shopList}
+              onChangeFilter={(value) => getFilteredData(value)}
+              orderFilter={
+                <>
+                  <option value="ratio">손익순</option>
+                </>
+              }
+              children={
                 <PopupBase
                   icon={<AddIcon />}
                   title="분석"
                   action="추가"
-                  text="분석 추가"
+                  text="분석"
                   onClose={addIncome}
                 >
                   <Text fontSize={"lg"} fontWeight={"bold"}>
@@ -592,74 +597,84 @@ function Income({ ...props }) {
                     />
                   </FormControl>
                 </PopupBase>
-              </ButtonGroup>
-              <Card p={"10px 0px"}>
-                {incomeList?.map((item, index) => (
-                  <CardBody p={"10px 20px"}>
-                    <Stack
-                      border={"1px solid #d9d9d9"}
-                      borderRadius={"10px"}
-                      p={"10px"}
-                      w={"100%"}
-                    >
-                      <HStack>
-                        <Flex direction={"column"}>
-                          <Text>No.</Text>
-                          <Text>분석날짜</Text>
-                          <Text>지점명</Text>
-                          <Text>조회기간</Text>
-                          <Text>예상손익</Text>
-                          <Text>예상손익률</Text>
-                        </Flex>
-                        <Flex direction={"column"}>
-                          <Text>{index + 1}</Text>
-                          <Text>{`${timestampToDate(item.createAt)}`}</Text>
-                          <Text>{searchShopName(item.shop_id)}</Text>
-                          <Text>{item.date}</Text>
-                          <Text>
-                            {item.sales -
-                              item.purchase -
-                              item.etc -
-                              item.dues -
-                              item.hire -
-                              item.personnel <
-                            0
-                              ? "-"
-                              : "+"}
-                            {formatCurrency(
-                              item.sales -
+              }
+            />
+            <Stack p={"20px"} w={"100%"} h={"100%"}>
+              {/* <Text>관리자 설정</Text> */}
+
+              <Stack w={"100%"} h={"100%"}>
+                {/*표*/}
+                <TableContainer
+                  border={"1px solid #d9d9d9"}
+                  bgColor={"white"}
+                  borderRadius={"10px"}
+                  p={"10px"}
+                  mb={"20px"}
+                >
+                  <Table variant="simple" size={"sm"}>
+                    <Thead h={"40px"}>
+                      <Tr>
+                        <Th>분석날짜/지점명</Th>
+                        <Th>조회기간</Th>
+                        <Th>예상손익률</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {incomeList?.map((item, index) => (
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
+                          <Td>
+                            <Stack>
+                              <Text>{`${timestampToDate(item.createAt)}`}</Text>
+                              <Text>{searchShopName(item.shop_id)}</Text>
+                            </Stack>
+                          </Td>
+                          <Td>
+                            <Text whiteSpace={"pre-line"}>
+                              {item.date.split("~")[0]}
+                              {`\n~`}
+                              {item.date.split("~")[1]}
+                            </Text>
+                          </Td>
+                          <Td>
+                            <Text>
+                              {item.sales -
                                 item.purchase -
                                 item.etc -
                                 item.dues -
                                 item.hire -
-                                item.personnel
-                            )}
-                          </Text>
-                          <Text
-                            color={
-                              Math.round(item.ratio * 100) < 0
-                                ? "#E53E3E"
-                                : "#34C759"
-                            }
-                          >
-                            {Math.round(item.ratio * 100) < 0 ? "" : "+"}
-                            {Math.round(item.ratio * 100)}%
-                          </Text>
-                        </Flex>
-                      </HStack>
-
-                      <HStack justifyContent={"space-between"}>
-                        <Stack w={"100%"}>
-                          <IconButton
-                            onClick={() => deleteIncome(item.doc_id)}
-                            icon={<DeleteIcon />}
-                          />
-                        </Stack>
-                      </HStack>
-                    </Stack>
-                  </CardBody>
-                ))}
-              </Card>
+                                item.personnel <
+                              0
+                                ? "-"
+                                : "+"}
+                              {formatCurrency(
+                                item.sales -
+                                  item.purchase -
+                                  item.etc -
+                                  item.dues -
+                                  item.hire -
+                                  item.personnel
+                              )}
+                            </Text>
+                            <Text
+                              color={
+                                Math.round(item.ratio * 100) < 0
+                                  ? "#E53E3E"
+                                  : "#34C759"
+                              }
+                            >
+                              ({Math.round(item.ratio * 100) < 0 ? "" : "+"}
+                              {Math.round(item.ratio * 100)}%)
+                            </Text>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Stack>
             </Stack>
           </Stack>
         </Flex>

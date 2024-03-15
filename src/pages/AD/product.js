@@ -468,90 +468,79 @@ function Product(props) {
         <Flex w={"100%"} h={"100%"} minW={"350px"}>
           {/* mobile 에서의 레이아웃 */}
           <Stack w={"100%"} h={"100%"} minW={"350px"}>
-            <RFilter />
+            <RFilter
+              children={
+                <ButtonGroup size={"sm"}>
+                  <PopupBase
+                    onClose={addProduct}
+                    icon={<AddIcon />}
+                    title={"상품"}
+                    action={"추가"}
+                  >
+                    <ProductInfo
+                      shopList={props.shopList}
+                      permission={admin?.permission}
+                      onChangeProduct={updateProductInfo}
+                    />
+                  </PopupBase>
+                </ButtonGroup>
+              }
+              shopList={props.shopList}
+              admin={admin}
+              onChangeFilter={(value) => getFilteredData(value)}
+              orderFilter={
+                <>
+                  <option value={"product_category"}>카테고리순</option>
+                  <option value={"product_name"}>상품명순</option>
+                  <option value={"product_price"}>가격순</option>
+                </>
+              }
+            />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
               {admin?.permission === "supervisor" && (
                 <Stack>
-                  <ButtonGroup size={"sm"}>
-                    <PopupBase
-                      onClose={addProduct}
-                      icon={<AddIcon />}
-                      title={"상품"}
-                      action={"추가"}
-                    >
-                      <ProductInfo
-                        shopList={props.shopList}
-                        permission={admin?.permission}
-                        onChangeProduct={updateProductInfo}
-                      />
-                    </PopupBase>
-                  </ButtonGroup>
-                  <Card p={"10px 0px"}>
-                    {productList?.map((item, index) => (
-                      <CardBody key={index} p={"10px 20px"}>
-                        <Stack
-                          border={"1px solid #d9d9d9"}
-                          borderRadius={"10px"}
-                          p={"10px"}
-                          w={"100%"}
-                        >
-                          <HStack>
-                            <Flex direction={"column"}>
-                              <Text>No.</Text>
-                              <Text>상품명</Text>
-                              <Text>카테고리</Text>
-                              <Text>상품가격</Text>
-                              <Text>관리 지점</Text>
-                            </Flex>
-                            <Flex direction={"column"}>
-                              <Text>{index + 1}</Text>
-                              <Text>{item.product_name}</Text>
-                              <Text>{item.product_category}</Text>
-                              <Text>
-                                {formatCurrency(item.product_price)}원
-                              </Text>
-                              <Text>{searchShopName(item.shop_id)}</Text>
-                            </Flex>
-                          </HStack>
-
-                          <HStack justifyContent={"space-between"}>
-                            <Stack w={"100%"}>
-                              <PopupBase
-                                colorScheme={"gray"}
-                                visibleButton={true}
-                                action={"수정"}
-                                title={<EditIcon />}
-                                onClose={async () => {
-                                  if (await updateProduct(productInfo)) {
-                                    setProductList(
-                                      productList.map((product) =>
-                                        product.doc_id === productInfo.doc_id
-                                          ? productInfo
-                                          : product
-                                      )
-                                    );
-                                  }
-                                }}
-                              >
-                                <ProductInfo
-                                  product={item}
-                                  shopList={props.shopList}
-                                  permission={admin.permission}
-                                  onChangeProduct={updateProductInfo}
-                                />
-                              </PopupBase>
-                            </Stack>
-                            <Stack w={"100%"}>
-                              <IconButton
-                                onClick={() => deleteProduct(item.doc_id)}
-                                icon={<DeleteIcon />}
+                  <TableContainer
+                    border={"1px solid #d9d9d9"}
+                    bgColor={"white"}
+                    borderRadius={"10px"}
+                    p={"10px"}
+                    mb={"20px"}
+                  >
+                    <Table variant="simple" size={"sm"}>
+                      <Tbody>
+                        {productList?.map((item, index) => (
+                          <Tr
+                            key={index}
+                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                          >
+                            {/* <Td fontSize={"sm"}>{index + 1}</Td> */}
+                            <Td fontSize={"sm"}>
+                              <Image
+                                src={item.product_images?.[0]}
+                                w={"100px"}
+                                h={"100px"}
+                                objectFit={"contain"}
                               />
-                            </Stack>
-                          </HStack>
-                        </Stack>
-                      </CardBody>
-                    ))}
-                  </Card>
+                            </Td>
+                            <Td fontSize={"sm"}></Td>
+                            <Td fontSize={"sm"}>
+                              <Stack>
+                                <Text>{timestampToDate(item.createAt)}</Text>
+                                <Text>{searchShopName(item.shop_id)}</Text>
+                                <Text>
+                                  [{item.product_category}] {item.product_name}
+                                </Text>
+                                <Text>
+                                  {" "}
+                                  {formatCurrency(item.product_price)}원
+                                </Text>
+                              </Stack>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
                 </Stack>
               )}
             </Stack>
