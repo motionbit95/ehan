@@ -136,7 +136,10 @@ function Cart(props) {
                       alt=""
                       src={
                         item.product_images
-                          ? item.product_images[0].replace("http", "https")
+                          ? item.product_images[0].replace(
+                              "http://",
+                              "https://"
+                            )
                           : ""
                       }
                     />
