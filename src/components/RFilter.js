@@ -21,6 +21,8 @@ import { queryShop } from "../firebase/firebase_func";
 
 function RFilter({ useSearch = true, ...props }) {
   const keywordRef = useRef();
+  const shopList = props.shopList;
+  const admin = props.admin;
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [depth1, setDepth1] = useState("");
   const [depth2, setDepth2] = useState("");
@@ -36,22 +38,29 @@ function RFilter({ useSearch = true, ...props }) {
     ),
     new Date(),
   ]);
-
-  const shopList = props.shopList;
-  const admin = props.admin;
   const [selectedShop, setSelectedShop] = useState(null);
   const [order, setOrder] = useState("");
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
-    // 관리자의 권한을 검색합니다.
-    if (admin?.permission === "supervisor") {
-      // 필터링 된 데이터들을 가지고 옵니다.
-      getShopList(depth1 ? depth1 : "", depth2 ? depth2 : "");
-    } else {
-      let shop = getShopInfo(admin?.shop_id);
-      setSelectedShop(shop);
-      getShopList(shop?.shop_depth1, shop?.shop_depth2);
+    if (admin) {
+      // 관리자의 권한을 검색합니다.
+      if (admin?.permission === "supervisor") {
+        // 필터링 된 데이터들을 가지고 옵니다.
+        getShopList(depth1 ? depth1 : "", depth2 ? depth2 : "");
+      } else {
+        let shop = getShopInfo(admin?.shop_id);
+        setSelectedShop(shop);
+        getShopList(shop?.shop_depth1, shop?.shop_depth2);
+      }
+
+      if (props.onChangeFilter)
+        props.onChangeFilter({
+          shop_id: depth3 ? depth3 : admin?.shop_id,
+          dateRange: dateRange,
+          order: order,
+          keyword: keyword,
+        });
     }
   }, [admin]);
 
@@ -73,10 +82,9 @@ function RFilter({ useSearch = true, ...props }) {
   };
 
   useEffect(() => {
-    console.log(depth3, dateRange, order, keyword);
     if (props.onChangeFilter)
       props.onChangeFilter({
-        shop_id: depth3,
+        shop_id: depth3 ? depth3 : admin?.shop_id,
         dateRange: dateRange,
         order: order,
         keyword: keyword,
@@ -103,8 +111,11 @@ function RFilter({ useSearch = true, ...props }) {
             : `repeat(1, 1fr)`
         }
       >
-        <Select onChange={(e) => setDepth3(e.target.value)}>
-          <option value="">전체</option>
+        <Select
+          defaultValue={admin?.shop_id}
+          onChange={(e) => setDepth3(e.target.value)}
+        >
+          {admin?.permission === "supervisor" && <option value="">전체</option>}
           {filteredShopList.map((shop, index) => (
             <option key={index} value={shop.doc_id}>
               {shop.shop_name}

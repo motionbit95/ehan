@@ -732,13 +732,7 @@ export const getFilteredProduct = async (value) => {
 
   const filteredProduct = [];
   querySnapshot.forEach((doc) => {
-    const createAt = timestampToDate(doc.data().createAt);
-    if (
-      (!value.shop_id || value.shop_id === doc.data().shop_id) &&
-      new Date(createAt.replace(".", "-")) >= value.dateRange[0] &&
-      new Date(createAt.replace(".", "-")) <= value.dateRange[1] &&
-      doc.data().product_name.includes(value.keyword)
-    ) {
+    if (!value.shop_id || value.shop_id === doc.data().shop_id) {
       filteredProduct.push({ ...doc.data(), doc_id: doc.id });
     }
   });

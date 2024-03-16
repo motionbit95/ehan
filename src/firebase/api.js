@@ -49,20 +49,22 @@ export function addCommas(number) {
 }
 
 export const timestampToDate = (timestamp) => {
-  // Convert Firestore timestamp to milliseconds
+  try {
+    // Convert Firestore timestamp to milliseconds
+    const milliseconds =
+      timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
-  const milliseconds =
-    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+    // Convert milliseconds to a Date object
+    const date = milliseconds ? new Date(milliseconds) : new Date();
 
-  // Convert milliseconds to a Date object
-  const date = new Date(milliseconds);
+    // Format the date as a string (adjust format as needed)
+    const dateString = date.toLocaleDateString(); // Example format, adjust as needed
+    return dateString;
 
-  // Format the date as a string (adjust format as needed)
-  const dateString = date.toLocaleDateString(); // Example format, adjust as needed
-
-  // console.log(dateString); // Output the formatted date string
-
-  return dateString;
+    // console.log(dateString); // Output the formatted date string
+  } catch (error) {
+    return null;
+  }
 };
 
 export function getCurrentTime() {

@@ -229,7 +229,7 @@ function Home(props) {
               visibility={shopInfo?.logo_img ? "visible" : "hidden"}
               src={shopInfo?.logo_img}
               alt="logo_img"
-              h={"48px"}
+              h={"40px"}
               objectFit={"cover"}
               onClick={() =>
                 navigate(`/home/${shopInfo.doc_id}`, {
@@ -395,21 +395,17 @@ function Home(props) {
                           item.product_images.length > 0 ? (
                             <Box position={"relative"}>
                               <Image
-                                objectFit={"cover"}
-                                bgColor={"#d9d9d9"}
+                                objectFit={"contain"}
+                                // bgColor={"#d9d9d9"}
                                 width={"100px"}
                                 height={"100px"}
                                 marginLeft={"1vh"}
                                 borderRadius={"10px"}
                                 alt=""
-                                src={
-                                  item.product_images
-                                    ? item.product_images[0].replaceAll(
-                                        "http",
-                                        "https"
-                                      )
-                                    : ""
-                                }
+                                src={item.product_images?.[0].replaceAll(
+                                  "http://",
+                                  "https://"
+                                )}
                               />
                               {getInventoryCount(item.doc_id) <= 0 && (
                                 <Box
@@ -438,7 +434,12 @@ function Home(props) {
                               height={"100px"}
                             />
                           )}
-                          <Stack gap={"10px"} height={"100%"} p={"10px"}>
+                          <Stack
+                            gap={"10px"}
+                            w={"70%"}
+                            height={"100%"}
+                            p={"10px"}
+                          >
                             <Text fontSize={"large"} fontWeight={"bold"}>
                               {item.product_name}
                             </Text>

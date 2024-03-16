@@ -81,7 +81,7 @@ function Menu(props) {
             <Image
               objectFit={"cover"}
               height={"100%"}
-              src={menu?.product_images?.[0].replace("http", "https")}
+              src={menu?.product_images?.[0].replace("http://", "https://")}
             ></Image>
           </Center>
         </Stack>

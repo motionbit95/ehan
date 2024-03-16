@@ -117,7 +117,7 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
                 name="shop_id"
                 defaultValue={admin?.shop_id}
               >
-                <option value="">관리 지점를 선택하세요.</option>
+                <option value="">관리 지점을 선택하세요.</option>
                 {shopList?.map((shop) => (
                   <option key={shop.doc_id} value={shop.doc_id}>
                     {shop.shop_name}
@@ -388,8 +388,8 @@ function Account(props) {
                     </FormControl>
                     <FormControl isRequired>
                       <FormLabel>관리 지점</FormLabel>
-                      <Select name="shop_id">
-                        <option value="">관리 지점를 선택하세요.</option>
+                      <Select name="shop_id" defaultValue={admin.shop_id}>
+                        <option value="">관리 지점을 선택하세요.</option>
                         {props.shopList?.map((shop) => (
                           <option key={shop.doc_id} value={shop.doc_id}>
                             {shop.shop_name}

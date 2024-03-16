@@ -36,7 +36,7 @@ import {
   updateProduct,
 } from "../../firebase/firebase_func";
 import PopupBase from "../../modals/PopupBase";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db, storage } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
@@ -54,7 +54,7 @@ function ProductInfo({ shopList, permission, ...props }) {
           product_origin_price: 0,
           product_price: 0,
           product_category: "",
-          shop_id: "",
+          shop_id: props.shop_id,
         }
   );
 
@@ -139,11 +139,13 @@ function ProductInfo({ shopList, permission, ...props }) {
             onChange={handleChange}
             isDisabled={permission !== "supervisor"}
             name="shop_id"
-            defaultValue={props.product?.shop_id}
+            defaultValue={props.shop_id ? props.shop_id : "total"}
           >
-            <option key={"total"} value={"total"}>
-              {"전체"}
-            </option>
+            {permission === "supervisor" && (
+              <option key={"total"} value={"total"}>
+                {"전체"}
+              </option>
+            )}
             {shopList?.map((shop) => (
               <option key={shop.doc_id} value={shop.doc_id}>
                 {shop.shop_name}
@@ -305,12 +307,15 @@ function Product(props) {
       productInfo.product_images.forEach(async (image) => {
         const url = await uploadFile(image);
         productInfo.product_images = [url];
-
-        //링크로 변환해서 리스트에 담는다
-        if (await postProduct(productInfo)) {
-          setProductList([...productList, productInfo]);
-        }
       });
+    }
+
+    //링크로 변환해서 리스트에 담는다
+    if (await postProduct(productInfo)) {
+      setProductList([
+        ...productList,
+        { ...productInfo, createAt: new Date() },
+      ]);
     }
   };
 
@@ -332,8 +337,10 @@ function Product(props) {
 
   // R - read product
   const getFilteredData = async (value) => {
-    let newList = await getFilteredProduct(value);
-    setProductList(newList);
+    if (value.shop_id) {
+      let newList = await getFilteredProduct(value);
+      setProductList(newList);
+    }
   };
 
   return (
@@ -358,6 +365,7 @@ function Product(props) {
                   action={"추가"}
                 >
                   <ProductInfo
+                    shop_id={admin?.shop_id}
                     shopList={props.shopList}
                     permission={admin?.permission}
                     onChangeProduct={updateProductInfo}
@@ -377,91 +385,89 @@ function Product(props) {
             }
           />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {/* <Text>관리자 설정</Text> */}
-            {admin?.permission === "supervisor" && (
-              <Stack>
-                <TableContainer
-                  border={"1px solid #d9d9d9"}
-                  bgColor={"white"}
-                  borderRadius={"10px"}
-                  p={"10px"}
-                  mb={"20px"}
-                >
-                  <Table variant="simple" size={"sm"}>
-                    <Thead h={"40px"}>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>등록날짜</Th>
-                        <Th>카테고리</Th>
-                        <Th>상품명</Th>
-                        <Th>상품가격</Th>
-                        <Th>관리지점</Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          수정
-                        </Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          삭제
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {productList?.map((item, index) => (
-                        <Tr
-                          key={index}
-                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                        >
-                          <Td fontSize={"sm"}>{index + 1}</Td>
-                          <Td fontSize={"sm"}>
-                            {timestampToDate(item.createAt)}
-                          </Td>
-                          <Td fontSize={"sm"}>{item.product_category}</Td>
-                          <Td fontSize={"sm"}>{item.product_name}</Td>
+            <Stack>
+              <TableContainer
+                border={"1px solid #d9d9d9"}
+                bgColor={"white"}
+                borderRadius={"10px"}
+                p={"10px"}
+                mb={"20px"}
+              >
+                <Table variant="simple" size={"sm"}>
+                  <Thead h={"40px"}>
+                    <Tr>
+                      <Th>No</Th>
+                      <Th>등록날짜</Th>
+                      <Th>카테고리</Th>
+                      <Th>상품명</Th>
+                      <Th>상품가격</Th>
+                      <Th>관리지점</Th>
+                      <Th textAlign={"center"} w={"30px"}>
+                        수정
+                      </Th>
+                      <Th textAlign={"center"} w={"30px"}>
+                        삭제
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {productList?.map((item, index) => (
+                      <Tr
+                        key={index}
+                        _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                      >
+                        <Td fontSize={"sm"}>{index + 1}</Td>
+                        <Td fontSize={"sm"}>
+                          {timestampToDate(item.createAt)}
+                        </Td>
+                        <Td fontSize={"sm"}>{item.product_category}</Td>
+                        <Td fontSize={"sm"}>{item.product_name}</Td>
 
-                          <Td fontSize={"sm"}>
-                            {formatCurrency(item.product_price)}원
-                          </Td>
-                          <Td>{searchShopName(item.shop_id)}</Td>
-                          <Td>
-                            <PopupBase
-                              colorScheme={"gray"}
-                              visibleButton={true}
-                              action={"수정"}
-                              size={"sm"}
-                              title={<EditIcon />}
-                              onClose={async () => {
-                                if (await updateProduct(productInfo)) {
-                                  setProductList(
-                                    productList.map((product) =>
-                                      product.doc_id === productInfo.doc_id
-                                        ? productInfo
-                                        : product
-                                    )
-                                  );
-                                }
-                              }}
-                            >
-                              <ProductInfo
-                                product={item}
-                                shopList={props.shopList}
-                                permission={admin?.permission}
-                                onChangeProduct={updateProductInfo}
-                              />
-                            </PopupBase>
-                          </Td>
-                          <Td>
-                            <IconButton
-                              size={"sm"}
-                              onClick={() => deleteProduct(item.doc_id)}
-                              icon={<DeleteIcon />}
+                        <Td fontSize={"sm"}>
+                          {formatCurrency(item.product_price)}원
+                        </Td>
+                        <Td>{searchShopName(item.shop_id)}</Td>
+                        <Td>
+                          <PopupBase
+                            colorScheme={"gray"}
+                            visibleButton={true}
+                            action={"수정"}
+                            size={"sm"}
+                            title={<EditIcon />}
+                            onClose={async () => {
+                              if (await updateProduct(productInfo)) {
+                                setProductList(
+                                  productList.map((product) =>
+                                    product.doc_id === productInfo.doc_id
+                                      ? productInfo
+                                      : product
+                                  )
+                                );
+                              }
+                            }}
+                          >
+                            <ProductInfo
+                              product={item}
+                              shop_id={admin?.shop_id}
+                              shopList={props.shopList}
+                              permission={admin?.permission}
+                              onChangeProduct={updateProductInfo}
                             />
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </Stack>
-            )}
+                          </PopupBase>
+                        </Td>
+                        <Td>
+                          <IconButton
+                            size={"sm"}
+                            onClick={() => deleteProduct(item.doc_id)}
+                            icon={<DeleteIcon />}
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Stack>
           </Stack>
         </Stack>
       ) : (
@@ -478,6 +484,7 @@ function Product(props) {
                     action={"추가"}
                   >
                     <ProductInfo
+                      shop_id={admin?.shop_id}
                       shopList={props.shopList}
                       permission={admin?.permission}
                       onChangeProduct={updateProductInfo}
@@ -497,52 +504,50 @@ function Product(props) {
               }
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
-              {admin?.permission === "supervisor" && (
-                <Stack>
-                  <TableContainer
-                    border={"1px solid #d9d9d9"}
-                    bgColor={"white"}
-                    borderRadius={"10px"}
-                    p={"10px"}
-                    mb={"20px"}
-                  >
-                    <Table variant="simple" size={"sm"}>
-                      <Tbody>
-                        {productList?.map((item, index) => (
-                          <Tr
-                            key={index}
-                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                          >
-                            {/* <Td fontSize={"sm"}>{index + 1}</Td> */}
-                            <Td fontSize={"sm"}>
-                              <Image
-                                src={item.product_images?.[0]}
-                                w={"100px"}
-                                h={"100px"}
-                                objectFit={"contain"}
-                              />
-                            </Td>
-                            <Td fontSize={"sm"}></Td>
-                            <Td fontSize={"sm"}>
-                              <Stack>
-                                <Text>{timestampToDate(item.createAt)}</Text>
-                                <Text>{searchShopName(item.shop_id)}</Text>
-                                <Text>
-                                  [{item.product_category}] {item.product_name}
-                                </Text>
-                                <Text>
-                                  {" "}
-                                  {formatCurrency(item.product_price)}원
-                                </Text>
-                              </Stack>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Stack>
-              )}
+              <Stack>
+                <TableContainer
+                  border={"1px solid #d9d9d9"}
+                  bgColor={"white"}
+                  borderRadius={"10px"}
+                  p={"10px"}
+                  mb={"20px"}
+                >
+                  <Table variant="simple" size={"sm"}>
+                    <Tbody>
+                      {productList?.map((item, index) => (
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
+                          {/* <Td fontSize={"sm"}>{index + 1}</Td> */}
+                          <Td fontSize={"sm"}>
+                            <Image
+                              src={item.product_images?.[0]}
+                              w={"100px"}
+                              h={"100px"}
+                              objectFit={"contain"}
+                            />
+                          </Td>
+                          <Td fontSize={"sm"}></Td>
+                          <Td fontSize={"sm"}>
+                            <Stack>
+                              <Text>{timestampToDate(item.createAt)}</Text>
+                              <Text>{searchShopName(item.shop_id)}</Text>
+                              <Text>
+                                [{item.product_category}] {item.product_name}
+                              </Text>
+                              <Text>
+                                {" "}
+                                {formatCurrency(item.product_price)}원
+                              </Text>
+                            </Stack>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Stack>
             </Stack>
           </Stack>
         </Flex>
