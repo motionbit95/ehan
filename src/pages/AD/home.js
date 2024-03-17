@@ -1,4 +1,4 @@
-import React, { PureComponent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   AlertDescription,
@@ -6,45 +6,26 @@ import {
   AlertTitle,
   Box,
   Center,
-  CloseButton,
   Flex,
   HStack,
   Skeleton,
-  SkeletonText,
   Stack,
   Text,
   useMediaQuery,
 } from "@chakra-ui/react";
 import RFilter from "../../components/RFilter";
 import { useGlobalState } from "../../GlobalState";
-import {
-  getAlarmList,
-  getFilteredShop,
-  getPayment,
-  getTotalOrder,
-} from "../../firebase/firebase_func";
+import { getAlarmList, getTotalOrder } from "../../firebase/firebase_func";
 import { compareTimestampWithCurrentTime, debug } from "../../firebase/api";
 import { formatCurrency } from "../CS/home";
 import DonutChart from "../../components/DonutChart";
-import { collection, limit, onSnapshot, orderBy } from "firebase/firestore";
-import { db } from "../../firebase/firebase_conf";
 
 function Home(props) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { admin } = useGlobalState();
 
-  const [shopFilter, setShopFilter] = useState(null);
-  const [dateRange, setDateRange] = useState([
-    new Date(
-      `${new Date().getFullYear()}-${new Date().getMonth()}-${
-        new Date().getDate() + 1
-      }`
-    ),
-    new Date(),
-  ]);
-  const [shopList, setShopList] = useState([]);
-  const [totalCost, setTotalCost] = useState(0);
-  const [totalOrigin, setTotalOrigin] = useState(0);
+  const [totalCost, setTotalCost] = useState(null);
+  const [totalOrigin, setTotalOrigin] = useState(null);
 
   const [payMethod, setPayMethod] = useState([]);
   const [payProduct, setPayProduct] = useState([]);
@@ -54,84 +35,13 @@ function Home(props) {
 
   useEffect(() => {
     updateAlarmList();
-  }, []);
+  }, [admin]);
 
   async function updateAlarmList() {
-    getAlarmList().then((list) => setAlarmList(list));
-  }
-
-  async function getFilteredCategory(value, range) {
-    console.log(value, range);
-    // 상태변수에 파라미터를 저장합니다.
-    setShopFilter(value);
-    setDateRange(range);
-
-    // 카테고리로 분류된 상점 리스트를 반환받습니다.
-    let filteredShop = await getFilteredShop(value);
-    setShopList(filteredShop);
-
-    let payMethod = [
-      { label: "card", name: "카드", value: 0 },
-      { label: "vbank", name: "무통장입금", value: 0 },
-      { label: "kakaopay", name: "카카오페이", value: 0 },
-      { label: "naverpayCard", name: "네이버페이", value: 0 },
-    ];
-
-    let payProduct = [];
-
-    let totalCost = 0;
-    let totalOrigin = 0;
-    // 모든 거래내역 중에서 필터 된 상품의 거래내역만 가지고 옵니다.
-    for (var i = 0; i < filteredShop.length; i++) {
-      const orders = await getTotalOrder(range, filteredShop[i].doc_id);
-      totalCost += orders.totalPrice;
-      totalOrigin += orders.totalOriginPrice;
-
-      for (var j = 0; j < orders.order.length; j++) {
-        for (let k = 0; k < payMethod.length; k++) {
-          if (payMethod[k].label === orders.order[j].pay_method) {
-            // 해당 객체의 value 수정
-            payMethod[k].value += 1; // newValue에 새로운 값을 할당
-            break; // 값을 찾았으므로 루프 중단
-          }
-        }
-        orders.order[j].pay_product.forEach((product) => {
-          let found = payProduct.find(
-            (item) => item.name === product.product_name
-          );
-
-          // 만약 해당 상품이 이미 payProduct 배열에 존재하는 경우
-          if (found) {
-            // 카운트 증가
-            found.value += product.count;
-          } else {
-            // payProduct 배열에 새로운 객체 추가
-            payProduct.push({
-              name: product.product_name,
-              value: product.count,
-            });
-          }
-        });
-      }
-    }
-
-    if (totalCost === 0) {
-      alert("해당기간에는 매출이 존재하지 않습니다.");
-      return;
-    }
-
-    // 차트데이터를 입력합니다.
-    setPayProduct(payProduct);
-    setPayMethod(payMethod);
-
-    // 매출 매입 데이터를 입력합니다.
-    setTotalCost(totalCost);
-    setTotalOrigin(totalOrigin);
+    getAlarmList(admin?.shop_id).then((list) => setAlarmList(list));
   }
 
   async function getFilteredData(value) {
-    setDateRange(value.dateRange);
-
     let payMethod = [
       { label: "card", name: "카드", value: 0 },
       { label: "vbank", name: "무통장입금", value: 0 },
@@ -175,10 +85,10 @@ function Home(props) {
       });
     }
 
-    if (totalCost === 0) {
-      alert("해당기간에는 매출이 존재하지 않습니다.");
-      return;
-    }
+    // if (totalCost === 0) {
+    //   alert("해당기간에는 매출이 존재하지 않습니다.");
+    //   return;
+    // }
 
     // 차트데이터를 입력합니다.
     setPayProduct(payProduct);
@@ -188,33 +98,6 @@ function Home(props) {
     setTotalCost(totalCost);
     setTotalOrigin(totalOrigin);
   }
-
-  // useEffect(() => {
-  //   let list = [];
-  //   const unsubscribe = onSnapshot(
-  //     collection(db, "ALARM"),
-  //     orderBy("createAt"),
-  //     limit(3),
-  //     (snapshot) => {
-  //       snapshot.docChanges().forEach((change) => {
-  //         if (change.type === "added") {
-  //           // 알람 데이터 추가 시
-  //           // console.log("Added city: ", change.doc.data());
-  //           list.push(change.doc.data());
-  //         }
-  //         if (change.type === "modified") {
-  //           // 알람 데이터 변경 시
-  //         }
-  //         if (change.type === "removed") {
-  //           // 알람 데이터 삭제 시
-  //         }
-  //       });
-  //     }
-  //   );
-
-  //   setAlarmList(list);
-  //   console.log(list);
-  // }, []);
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -256,7 +139,11 @@ function Home(props) {
               >
                 <Stack justify={"center"}>
                   <Text>총 매출</Text>
-                  <Skeleton minW={"400px"} w={"100%"} isLoaded={totalCost}>
+                  <Skeleton
+                    minW={"400px"}
+                    w={"100%"}
+                    isLoaded={totalCost !== null}
+                  >
                     <HStack>
                       <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost)}
@@ -275,7 +162,11 @@ function Home(props) {
               >
                 <Stack w={"100%"} justify={"center"}>
                   <Text>실 매출</Text>
-                  <Skeleton minW={"400px"} w={"100%"} isLoaded={totalOrigin}>
+                  <Skeleton
+                    minW={"400px"}
+                    w={"100%"}
+                    isLoaded={totalOrigin !== null}
+                  >
                     <HStack>
                       <Text fontSize={"4xl"} fontWeight={"bold"}>
                         {formatCurrency(totalCost - totalOrigin)}
@@ -286,7 +177,7 @@ function Home(props) {
                 </Stack>
               </Flex>
             </HStack>
-            <HStack w={"100%"} h={"300px"}>
+            <HStack w={"100%"} minH={"300px"}>
               <Flex
                 borderRadius={"10px"}
                 bgColor={"white"}
@@ -294,10 +185,14 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Stack>
+                <Stack w={"100%"}>
                   <Text>결제 수단별 매출</Text>
                   <Center w={"100%"} h={"100%"}>
-                    <DonutChart data={payMethod} />
+                    {!totalCost ? (
+                      <Text color={"gray.500"}>매출이 존재하지 않습니다.</Text>
+                    ) : (
+                      <DonutChart data={payMethod} />
+                    )}
                   </Center>
                 </Stack>
               </Flex>
@@ -308,22 +203,26 @@ function Home(props) {
                 h={"100%"}
                 p={"20px"}
               >
-                <Stack>
+                <Stack w={"100%"}>
                   <Text>상품별 매출</Text>
                   <Center w={"100%"} h={"100%"}>
-                    <DonutChart data={payProduct} />
+                    {!totalCost ? (
+                      <Text color={"gray.500"}>매출이 존재하지 않습니다.</Text>
+                    ) : (
+                      <DonutChart data={payProduct} />
+                    )}
                   </Center>
                 </Stack>
               </Flex>
             </HStack>
-            <HStack w={"100%"}>
+            <HStack w={"100%"} h={"100%"}>
               <Flex
                 borderRadius={"10px"}
                 bgColor={"white"}
                 w={"100%"}
                 overflow={"auto"}
                 minW={"890px"}
-                minH={"150px"}
+                h={"100%"}
               >
                 <Stack w={"100%"} p={"20px"}>
                   <Text>알림</Text>
@@ -391,7 +290,7 @@ function Home(props) {
                 >
                   <Stack w={"100%"}>
                     <Text>총 매출</Text>
-                    <Skeleton w={"100%"} isLoaded={totalCost}>
+                    <Skeleton w={"100%"} isLoaded={totalCost !== null}>
                       <HStack>
                         <Text fontSize={"4xl"} fontWeight={"bold"}>
                           {formatCurrency(totalCost)}
@@ -410,7 +309,7 @@ function Home(props) {
                 >
                   <Stack w={"100%"}>
                     <Text>실 매출</Text>
-                    <Skeleton w={"100%"} isLoaded={totalOrigin}>
+                    <Skeleton w={"100%"} isLoaded={totalOrigin !== null}>
                       <HStack>
                         <Text fontSize={"4xl"} fontWeight={"bold"}>
                           {formatCurrency(totalCost - totalOrigin)}
@@ -429,12 +328,18 @@ function Home(props) {
                   h={"100%"}
                   p={"30px"}
                 >
-                  <Text position={"absolute"} mt={0} ml={0}>
-                    결제 수단별 매출
-                  </Text>
-                  <Flex justify={"center"} w={"100%"} h={"100%"}>
-                    <DonutChart data={payMethod} />
-                  </Flex>
+                  <Stack w={"100%"}>
+                    <Text>결제 수단별 매출</Text>
+                    <Flex justify={"center"} w={"100%"} h={"100%"}>
+                      {!totalCost ? (
+                        <Text p={"20px"} color={"gray.500"}>
+                          매출이 존재하지 않습니다.
+                        </Text>
+                      ) : (
+                        <DonutChart data={payMethod} />
+                      )}
+                    </Flex>
+                  </Stack>
                 </Flex>
                 <Flex
                   borderRadius={"10px"}
@@ -443,12 +348,18 @@ function Home(props) {
                   h={"100%"}
                   p={"30px"}
                 >
-                  <Text position={"absolute"} mt={0} ml={0}>
-                    상품별 매출
-                  </Text>
-                  <Flex justify={"center"} w={"100%"} h={"100%"}>
-                    <DonutChart data={payProduct} />
-                  </Flex>
+                  <Stack w={"100%"}>
+                    <Text>상품별 매출</Text>
+                    <Flex justify={"center"} w={"100%"} h={"100%"}>
+                      {!totalCost ? (
+                        <Text p={"20px"} color={"gray.500"}>
+                          매출이 존재하지 않습니다.
+                        </Text>
+                      ) : (
+                        <DonutChart data={payProduct} />
+                      )}
+                    </Flex>
+                  </Stack>
                 </Flex>
               </Stack>
               <HStack w={"100%"} h={"40%"}>

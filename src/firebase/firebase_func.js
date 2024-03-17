@@ -574,7 +574,12 @@ export const getShopName = async (shop_id) => {
   return docSnap.data().shop_name;
 };
 
-export const updateInventoryData = async (product_id, product_name, count) => {
+export const updateInventoryData = async (
+  shop_id,
+  product_id,
+  product_name,
+  count
+) => {
   var q = query(
     collection(db, "INVENTORY"),
     where("product_id", "==", product_id)
@@ -586,6 +591,7 @@ export const updateInventoryData = async (product_id, product_name, count) => {
       debug("재고가 3개 이하입니다.");
       addDoc(collection(db, "ALARM"), {
         type: "inventory",
+        shop_id: shop_id,
         createAt: new Date(),
         product_id: product_id,
         alarm_code: "E004",
@@ -617,6 +623,7 @@ export const getTotalProducts = async (shop_id) => {
 };
 
 export const queryShop = async (shop_depth1, shop_depth2) => {
+  console.log(shop_depth1, shop_depth2);
   const shops = [];
   try {
     let q;
@@ -709,7 +716,11 @@ export const getFilteredShop = async (value) => {
 
 export const getAlarmList = async (shop_id) => {
   // 콜렉션 레퍼런스
-  var q = query(collection(db, "ALARM"), orderBy("createAt", "desc"), limit(3));
+  var q = query(
+    collection(db, "ALARM"),
+    orderBy("createAt", "desc"),
+    limit(10)
+  );
   const querySnapshot = await getDocs(q);
 
   const alarms = [];

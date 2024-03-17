@@ -30,6 +30,7 @@ function PopupBase({ visibleButton = true, ...props }) {
   return (
     <>
       <Button
+        {...props}
         size={props.size ? props.size : "md"}
         leftIcon={props.icon ? props.icon : null}
         colorScheme={props.colorScheme ? props.colorScheme : "red"}

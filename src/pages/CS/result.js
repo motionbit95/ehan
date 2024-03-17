@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { formatCurrency } from "./home";
 import { debug } from "../../firebase/api";
-import { deleteDoc, doc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 
 function Result(props) {
@@ -42,6 +42,7 @@ function Result(props) {
         products[i].count
       );
       updateInventoryData(
+        products[i].shop_id,
         products[i].product_id,
         products[i].product_name,
         products[i].count
@@ -73,6 +74,16 @@ function Result(props) {
       pay_result: data.resultMsg,
       receipt_url: data.receiptUrl,
       createAt: new Date(), // 현재 시간
+    });
+
+    // 알림을 발생시킵니다.
+    addDoc(collection(db, "ALARM"), {
+      type: "order",
+      shop_id: order.shop_id,
+      createAt: new Date(),
+      order_id: order.doc_id,
+      alarm_code: "I001",
+      alarm_title: `${order.doc_id} 주문이 접수되었습니다.`,
     });
 
     if (data.resultCode === "0000") {
@@ -119,7 +130,11 @@ function Result(props) {
         <Stack width={"100%"} padding={"1vh 2vh"} bgColor={"white"} gap={"4vh"}>
           <Stack gap={"0"}>
             <Text fontSize={"md"} fontWeight={"bold"} color={"#e53e3e"}>
-              {data?.resultCode === "0000" ? "결제가 완료되었습니다." : ""}
+              {data?.resultCode === "0000"
+                ? "결제가 완료되었습니다."
+                : data?.resultCode === "1000"
+                ? "주문이 환불 처리되었습니다."
+                : ""}
             </Text>
 
             {order?.pay_product?.length > 0 && (
