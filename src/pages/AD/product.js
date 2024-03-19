@@ -156,7 +156,7 @@ function ProductInfo({ shopList, permission, ...props }) {
             defaultValue={props.product?.product_name}
           ></Input>
         </FormControl>
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel>상품 이미지 등록</FormLabel>
           <Stack direction={"column-reverse"}>
             <InputGroup w={"100px"}>
@@ -299,15 +299,15 @@ function Product(props) {
       productInfo.product_images.forEach(async (image) => {
         const url = await uploadFile(image);
         productInfo.product_images = [url];
-      });
-    }
 
-    //링크로 변환해서 리스트에 담는다
-    if (await postProduct(productInfo)) {
-      setProductList([
-        ...productList,
-        { ...productInfo, createAt: new Date() },
-      ]);
+        //링크로 변환해서 리스트에 담는다
+        if (await postProduct(productInfo)) {
+          setProductList([
+            ...productList,
+            { ...productInfo, createAt: new Date() },
+          ]);
+        }
+      });
     }
   };
 
