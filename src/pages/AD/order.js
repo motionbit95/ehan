@@ -175,7 +175,7 @@ function Order(props) {
                       <Th>결제영수증</Th>
                       <Th>배송지</Th>
                       <Th>주문상태</Th>
-                      <Th>취소</Th>
+                      <Th>결제취소</Th>
                       <Th>삭제</Th>
                     </Tr>
                   </Thead>
