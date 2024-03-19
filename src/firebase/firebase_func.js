@@ -502,6 +502,7 @@ export const changeAdminPassword = (oldPassword, newPassword, doc_id) => {
     .catch((error) => {
       // An error ocurred
       // ...
+      alert("비밀번호를 다시 확인해주세요.");
     });
 };
 

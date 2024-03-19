@@ -77,7 +77,11 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
 
   const handleDeleteUser = async () => {
     if (window.confirm("탈퇴하시겠습니까?")) {
-      deleteUser(auth.currentUser);
+      // console.log(auth.currentUser);
+      deleteDoc(doc(db, "ACCOUNT", admin.doc_id));
+      await deleteUser(auth.currentUser);
+
+      window.location.replace("/admin/login");
     }
   };
 
@@ -111,19 +115,32 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
             </FormControl>
             <FormControl>
               <FormLabel>관리 지점</FormLabel>
-              <Select
-                onChange={handleChangeShop}
-                isDisabled={permission !== "supervisor"}
-                name="shop_id"
-                defaultValue={admin?.shop_id || ""}
-              >
-                <option value="">관리 지점을 선택하세요.</option>
-                {shopList?.map((shop) => (
-                  <option key={shop.doc_id} value={shop.doc_id}>
-                    {shop.shop_name}
-                  </option>
-                ))}
-              </Select>
+              {permission === "supervisor" ? (
+                <Select
+                  onChange={handleChangeShop}
+                  defaultValue={admin?.shop_id ? admin?.shop_id : ""}
+                  isDisabled={permission !== "supervisor"}
+                  name="shop_id"
+                >
+                  <option value="">관리 지점을 선택하세요.</option>
+                  {shopList?.map((shop) => (
+                    <option key={shop.doc_id} value={shop.doc_id}>
+                      {shop.shop_name}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <Input
+                  disabled
+                  defaultValue={
+                    shopList?.find((shop) => shop.doc_id === admin?.shop_id)
+                      ?.shop_name
+                  }
+                  name="shop_id"
+                  type="text"
+                  placeholder="관리 지점을 선택하세요."
+                ></Input>
+              )}
             </FormControl>
             {permission === "supervisor" && (
               <>
@@ -249,7 +266,8 @@ function Account(props) {
 
   function checkCurrentPassword(password) {
     if (password && password !== admin.admin_password) {
-      alert("현재 패스워드가 일치하지 않습니다.");
+      alert("현재 패스워드가 일치하지 않습니다. 다시 시도하세요.");
+      window.location.reload();
       return false;
     }
     return true;
@@ -388,7 +406,10 @@ function Account(props) {
                     </FormControl>
                     <FormControl>
                       <FormLabel>관리 지점</FormLabel>
-                      <Select name="shop_id" defaultValue={admin.shop_id}>
+                      <Select
+                        name="shop_id"
+                        defaultValue={admin.shop_id ? admin.shop_id : ""}
+                      >
                         <option value="">관리 지점을 선택하세요.</option>
                         {props.shopList?.map((shop) => (
                           <option key={shop.doc_id} value={shop.doc_id}>
@@ -590,7 +611,10 @@ function Account(props) {
                       </FormControl>
                       <FormControl isRequired>
                         <FormLabel>관리 지점</FormLabel>
-                        <Select name="shop_id">
+                        <Select
+                          name="shop_id"
+                          defaultValue={admin?.shop_id ? admin?.shop_id : ""}
+                        >
                           {props.shopList?.map((shop) => (
                             <option key={shop.doc_id} value={shop.doc_id}>
                               {shop.shop_name}

@@ -205,12 +205,13 @@ function Order(props) {
                             {" "}
                             [{item?.order_id}]{"\n"}
                           </Text>
-                          <HStack>
-                            <Text> {item?.pay_product[0]?.product_name}</Text>
-                            {item?.pay_product?.length > 1 && (
-                              <Text>외 {item?.pay_product?.length}건</Text>
-                            )}
-                          </HStack>
+
+                          <Text>
+                            {item?.pay_product[0]?.product_name}
+                            {item?.pay_product?.length > 1
+                              ? ` 외 ${item?.pay_product?.length}건`
+                              : ""}
+                          </Text>
                         </Td>
                         <Td fontSize={"sm"}>
                           <HStack w={"100%"} justifyContent={"flex-start"}>

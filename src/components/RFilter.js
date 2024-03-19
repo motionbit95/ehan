@@ -82,6 +82,7 @@ function RFilter({ useSearch = true, ...props }) {
   };
 
   useEffect(() => {
+    console.log("======>", admin);
     if (props.onChangeFilter)
       props.onChangeFilter({
         shop_id: depth3 ? depth3 : admin?.shop_id,
@@ -112,7 +113,9 @@ function RFilter({ useSearch = true, ...props }) {
         }
       >
         <Select
+          isDisabled={admin?.permission !== "supervisor"}
           defaultValue={admin?.shop_id}
+          value={depth3 ? depth3 : admin?.shop_id}
           onChange={(e) => setDepth3(e.target.value)}
         >
           {admin?.permission === "supervisor" && <option value="">전체</option>}
