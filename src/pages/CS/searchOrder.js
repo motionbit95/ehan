@@ -22,6 +22,7 @@ function SearchOrder(props) {
     event.preventDefault();
     // 주문번호를 확인하였을 때
     let orderResult = await getPayment(event.target[0].value);
+    console.log(orderResult);
 
     if (!orderResult) {
       // 주문 내역이 없을 때

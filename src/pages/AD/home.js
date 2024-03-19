@@ -125,7 +125,7 @@ function Home(props) {
             zIndex={1}
             p={"20px"}
             w={"100%"}
-            h={"100%"}
+            h={"auto"}
             overflow={"auto"}
             minW={"910px"}
           >

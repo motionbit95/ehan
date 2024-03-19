@@ -639,11 +639,9 @@ function Income({ ...props }) {
                             </Stack>
                           </Td>
                           <Td>
-                            <Text whiteSpace={"pre-line"}>
-                              {item.date.split("~")[0]}
-                              {`\n~`}
-                              {item.date.split("~")[1]}
-                            </Text>
+                            <Text>{`${timestampToDate(
+                              item.start_date
+                            )} ~ ${timestampToDate(item.end_date)}`}</Text>
                           </Td>
                           <Td>
                             <Text>
