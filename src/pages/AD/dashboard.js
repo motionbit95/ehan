@@ -94,13 +94,14 @@ function Dashboard(props) {
   // 아래 계정 정보의 state가 변경 될 때마다 사용자 uid를 로드하여 저장합니다.
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
+      console.log(user);
       if (user) {
         // 익명으로 로그인 된 사용자라면 로그인 페이지로 이동합니다.
-        if (!isCurrentUserAnonymous()) {
+        if (!user.isAnonymous) {
           setAdminInfo(user.uid);
+        } else {
+          navigate("/admin/login");
         }
-      } else {
-        navigate("/admin/login");
       }
     });
   }, [uid]);

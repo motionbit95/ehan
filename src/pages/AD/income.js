@@ -61,14 +61,6 @@ function Income({ ...props }) {
     new Date(),
   ]);
 
-  async function getFilteredCategory(value, range) {
-    setDateRange(range);
-    setShopFilter(value);
-
-    const list = await getFilteredIncome(range, shop_id);
-    setIncomeList(list);
-  }
-
   const [incomeData, setIncomeData] = useState({
     date: "",
     dues: 0,
@@ -85,7 +77,8 @@ function Income({ ...props }) {
   const [incomeList, setIncomeList] = useState([]);
 
   useEffect(() => {
-    // getFilteredCategory(shopFilter, dateRange);
+    setShopId(admin?.shop_id);
+    getSales(dateRange, admin?.shop_id);
   }, []);
 
   const addIncome = async (e) => {
@@ -125,12 +118,14 @@ function Income({ ...props }) {
 
     await postIncome(tempIncome);
     // getFilteredCategory(shopFilter, dateRange);
+    window.location.reload();
   };
 
   const deleteIncome = async (doc_id) => {
     if (window.confirm("손익분석을 삭제하시겠습니까?")) {
       await deleteDoc(doc(db, "INCOME", doc_id));
       // getFilteredCategory(shopFilter, dateRange);
+      window.location.reload();
     }
   };
 
@@ -153,8 +148,8 @@ function Income({ ...props }) {
   }
 
   async function getFilteredData(value) {
-    console.log(value);
     let newList = await getFilteredIncome(value);
+    console.log(newList);
     setIncomeList(newList);
   }
 
@@ -191,8 +186,10 @@ function Income({ ...props }) {
                   기본정보
                 </Text>
                 <FormControl isRequired>
-                  <FormLabel>매장명</FormLabel>
+                  <FormLabel>관리 지점</FormLabel>
                   <Select
+                    isDisabled={admin?.permission !== "supervisor"}
+                    defaultValue={admin?.shop_id}
                     name="shop_id"
                     onChange={(e) => {
                       setIncomeData({
@@ -214,7 +211,7 @@ function Income({ ...props }) {
                 <FormControl isRequired>
                   <FormLabel>분석기간</FormLabel>
                   <HStack w={"100%"}>
-                    <Input
+                    {/* <Input
                       name="date"
                       w={"100%"}
                       value={
@@ -231,11 +228,16 @@ function Income({ ...props }) {
                           end_date: dateRange[1] ? dateRange[1] : "",
                         });
                       }}
-                    />
+                    /> */}
                     <Calendar
                       defaultRange={dateRange}
                       onSelectDate={(dateRange) => {
                         setDateRange(dateRange);
+                        setIncomeData({
+                          ...incomeData,
+                          start_date: dateRange[0] ? dateRange[0] : "",
+                          end_date: dateRange[1] ? dateRange[1] : "",
+                        });
                         // 기간 내 매출 계산
                         getSales(dateRange, shop_id);
                       }}
@@ -378,7 +380,12 @@ function Income({ ...props }) {
                         <Text>{`${timestampToDate(item.createAt)}`}</Text>
                       </Td>
                       <Td>{searchShopName(item.shop_id)}</Td>
-                      <Td>{item.date}</Td>
+                      <Td>
+                        {" "}
+                        <Text>{`${timestampToDate(
+                          item.start_date
+                        )} ~ ${timestampToDate(item.end_date)}`}</Text>
+                      </Td>
                       <Td>
                         {item.sales -
                           item.purchase -
@@ -449,8 +456,10 @@ function Income({ ...props }) {
                     기본정보
                   </Text>
                   <FormControl isRequired>
-                    <FormLabel>매장명</FormLabel>
+                    <FormLabel>관리 지점</FormLabel>
                     <Select
+                      isDisabled={admin?.permission !== "supervisor"}
+                      defaultValue={admin?.shop_id}
                       name="shop_id"
                       onChange={(e) => {
                         setIncomeData({
@@ -472,7 +481,7 @@ function Income({ ...props }) {
                   <FormControl isRequired>
                     <FormLabel>분석기간</FormLabel>
                     <HStack w={"100%"}>
-                      <Input
+                      {/* <Input
                         name="date"
                         w={"100%"}
                         value={
@@ -489,11 +498,16 @@ function Income({ ...props }) {
                             end_date: dateRange[1] ? dateRange[1] : "",
                           });
                         }}
-                      />
+                      /> */}
                       <Calendar
                         defaultRange={dateRange}
                         onSelectDate={(dateRange) => {
                           setDateRange(dateRange);
+                          setIncomeData({
+                            ...incomeData,
+                            start_date: dateRange[0] ? dateRange[0] : "",
+                            end_date: dateRange[1] ? dateRange[1] : "",
+                          });
                           // 기간 내 매출 계산
                           getSales(dateRange, shop_id);
                         }}

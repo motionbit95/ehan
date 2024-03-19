@@ -1,7 +1,6 @@
 import {
   Button,
   ButtonGroup,
-  Center,
   Flex,
   FormControl,
   FormLabel,
@@ -17,14 +16,9 @@ import {
   Tbody,
   useMediaQuery,
   IconButton,
-  Card,
-  CardBody,
   HStack,
   Switch,
   Image,
-  RadioGroup,
-  Radio,
-  Input,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -97,7 +91,7 @@ function Inventory({ ...props }) {
   const { admin } = useGlobalState();
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   // 상품리스트
-  const [selectedShop, setSelectedShop] = useState("test-shop");
+  const [selectedShop, setSelectedShop] = useState(null);
   const [totalProducts, setTotalProducts] = useState(null);
 
   // 재고리스트
@@ -245,6 +239,8 @@ function Inventory({ ...props }) {
                     <FormControl isRequired>
                       <FormLabel>관리 지점</FormLabel>
                       <Select
+                        isDisabled={admin?.permission !== "supervisor"}
+                        defaultValue={admin?.shop_id}
                         name="shop_id"
                         onChange={(e) => setSelectedShop(e.target.value)}
                       >
@@ -290,108 +286,106 @@ function Inventory({ ...props }) {
           />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
-            {admin?.permission === "supervisor" && (
-              <Stack>
-                <TableContainer
-                  border={"1px solid #d9d9d9"}
-                  bgColor={"white"}
-                  borderRadius={"10px"}
-                  p={"10px"}
-                  mb={"20px"}
-                >
-                  <Table variant="simple" size={"sm"}>
-                    <Thead h={"40px"}>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>카테고리</Th>
-                        <Th>상품명</Th>
-                        <Th>상품가격</Th>
-                        <Th>관리지점</Th>
-                        <Th>재고수량</Th>
-                        <Th textAlign={"center"}>재고사용여부</Th>
-                        <Th w={"30px"}>삭제</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {totalProducts &&
-                        inventoryList?.map((item, index) => (
-                          <Tr
-                            key={index}
-                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                          >
-                            <Td fontSize={"sm"}>{index + 1}</Td>
-                            <ProductColumn
-                              productList={totalProducts}
-                              product_id={item.product_id}
-                            />
-                            <Td>{searchShopName(item.shop_id)}</Td>
-                            <Td>
-                              <HStack
-                                visibility={
-                                  item.inventory_use ? "visible" : "hidden"
-                                }
-                                w={"100px"}
-                                spacing={"10px"}
-                                border={"1px solid #d9d9d9"}
-                                p={"10px 7px"}
-                                borderRadius={"10px"}
-                                justifyContent={"space-between"}
-                              >
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiMinus.png")}
-                                  onClick={() => {
-                                    if (item.inventory_count > 1) {
-                                      changeInventoryCount(
-                                        index,
-                                        item.inventory_count - 1
-                                      );
-                                    }
-                                  }}
-                                />
-                                <Text
-                                  color={
-                                    item.inventory_count <= 3 ? "red" : "black"
-                                  }
-                                >
-                                  {item.inventory_count}
-                                </Text>
-                                <Image
-                                  w={"16px"}
-                                  h={"16px"}
-                                  src={require("../../image/HiPlus.png")}
-                                  onClick={() => {
+            <Stack>
+              <TableContainer
+                border={"1px solid #d9d9d9"}
+                bgColor={"white"}
+                borderRadius={"10px"}
+                p={"10px"}
+                mb={"20px"}
+              >
+                <Table variant="simple" size={"sm"}>
+                  <Thead h={"40px"}>
+                    <Tr>
+                      <Th>No</Th>
+                      <Th>카테고리</Th>
+                      <Th>상품명</Th>
+                      <Th>상품가격</Th>
+                      <Th>관리지점</Th>
+                      <Th>재고수량</Th>
+                      <Th textAlign={"center"}>재고사용여부</Th>
+                      <Th w={"30px"}>삭제</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {totalProducts &&
+                      inventoryList?.map((item, index) => (
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
+                          <Td fontSize={"sm"}>{index + 1}</Td>
+                          <ProductColumn
+                            productList={totalProducts}
+                            product_id={item.product_id}
+                          />
+                          <Td>{searchShopName(item.shop_id)}</Td>
+                          <Td>
+                            <HStack
+                              visibility={
+                                item.inventory_use ? "visible" : "hidden"
+                              }
+                              w={"100px"}
+                              spacing={"10px"}
+                              border={"1px solid #d9d9d9"}
+                              p={"10px 7px"}
+                              borderRadius={"10px"}
+                              justifyContent={"space-between"}
+                            >
+                              <Image
+                                w={"16px"}
+                                h={"16px"}
+                                src={require("../../image/HiMinus.png")}
+                                onClick={() => {
+                                  if (item.inventory_count > 1) {
                                     changeInventoryCount(
                                       index,
-                                      item.inventory_count + 1
+                                      item.inventory_count - 1
                                     );
-                                  }}
-                                />
-                              </HStack>
-                            </Td>
-                            <Td textAlign={"center"}>
-                              <Switch
-                                onChange={() =>
-                                  changeInventoryUse(index, !item.inventory_use)
+                                  }
+                                }}
+                              />
+                              <Text
+                                color={
+                                  item.inventory_count <= 3 ? "red" : "black"
                                 }
-                                defaultChecked={item.inventory_use}
+                              >
+                                {item.inventory_count}
+                              </Text>
+                              <Image
+                                w={"16px"}
+                                h={"16px"}
+                                src={require("../../image/HiPlus.png")}
+                                onClick={() => {
+                                  changeInventoryCount(
+                                    index,
+                                    item.inventory_count + 1
+                                  );
+                                }}
                               />
-                            </Td>
-                            <Td>
-                              <IconButton
-                                size={"sm"}
-                                onClick={() => deleteInventory(item.doc_id)}
-                                icon={<DeleteIcon />}
-                              />
-                            </Td>
-                          </Tr>
-                        ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </Stack>
-            )}
+                            </HStack>
+                          </Td>
+                          <Td textAlign={"center"}>
+                            <Switch
+                              onChange={() =>
+                                changeInventoryUse(index, !item.inventory_use)
+                              }
+                              defaultChecked={item.inventory_use}
+                            />
+                          </Td>
+                          <Td>
+                            <IconButton
+                              size={"sm"}
+                              onClick={() => deleteInventory(item.doc_id)}
+                              icon={<DeleteIcon />}
+                            />
+                          </Td>
+                        </Tr>
+                      ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Stack>
           </Stack>
         </Stack>
       ) : (
@@ -418,6 +412,8 @@ function Inventory({ ...props }) {
                         <FormControl isRequired>
                           <FormLabel>관리 지점</FormLabel>
                           <Select
+                            isDisabled={admin?.permission !== "supervisor"}
+                            defaultValue={admin?.shop_id}
                             name="shop_id"
                             onChange={(e) => setSelectedShop(e.target.value)}
                           >
@@ -467,98 +463,96 @@ function Inventory({ ...props }) {
               }
             />
             <Stack p={"20px"} w={"100%"} h={"100%"}>
-              {admin?.permission === "supervisor" && (
-                <Stack>
-                  <TableContainer
-                    border={"1px solid #d9d9d9"}
-                    bgColor={"white"}
-                    borderRadius={"10px"}
-                    p={"10px"}
-                    mb={"20px"}
-                  >
-                    <Table variant="simple" size={"sm"}>
-                      <Thead h={"40px"}>
-                        <Tr>
-                          <Th>[카테고리]상품명/상품가격</Th>
-                          <Th>재고수량/사용여부</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {totalProducts &&
-                          inventoryList?.map((item, index) => (
-                            <Tr
-                              key={index}
-                              _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                            >
-                              <ProductColumn
-                                productList={totalProducts}
-                                product_id={item.product_id}
-                              />
-                              <Td>
-                                <Stack alignItems={"flex-end"}>
-                                  <Switch
-                                    onChange={() =>
-                                      changeInventoryUse(
-                                        index,
-                                        !item.inventory_use
-                                      )
-                                    }
-                                    defaultChecked={item.inventory_use}
-                                  />
-                                  <HStack
-                                    visibility={
-                                      item.inventory_use ? "visible" : "hidden"
-                                    }
-                                    w={"100px"}
-                                    spacing={"10px"}
-                                    border={"1px solid #d9d9d9"}
-                                    p={"10px 7px"}
-                                    borderRadius={"10px"}
-                                    justifyContent={"space-between"}
-                                  >
-                                    <Image
-                                      w={"16px"}
-                                      h={"16px"}
-                                      src={require("../../image/HiMinus.png")}
-                                      onClick={() => {
-                                        if (item.inventory_count > 1) {
-                                          changeInventoryCount(
-                                            index,
-                                            item.inventory_count - 1
-                                          );
-                                        }
-                                      }}
-                                    />
-                                    <Text
-                                      color={
-                                        item.inventory_count <= 3
-                                          ? "red"
-                                          : "black"
-                                      }
-                                    >
-                                      {item.inventory_count}
-                                    </Text>
-                                    <Image
-                                      w={"16px"}
-                                      h={"16px"}
-                                      src={require("../../image/HiPlus.png")}
-                                      onClick={() => {
+              <Stack>
+                <TableContainer
+                  border={"1px solid #d9d9d9"}
+                  bgColor={"white"}
+                  borderRadius={"10px"}
+                  p={"10px"}
+                  mb={"20px"}
+                >
+                  <Table variant="simple" size={"sm"}>
+                    <Thead h={"40px"}>
+                      <Tr>
+                        <Th>[카테고리]상품명/상품가격</Th>
+                        <Th>재고수량/사용여부</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {totalProducts &&
+                        inventoryList?.map((item, index) => (
+                          <Tr
+                            key={index}
+                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                          >
+                            <ProductColumn
+                              productList={totalProducts}
+                              product_id={item.product_id}
+                            />
+                            <Td>
+                              <Stack alignItems={"flex-end"}>
+                                <Switch
+                                  onChange={() =>
+                                    changeInventoryUse(
+                                      index,
+                                      !item.inventory_use
+                                    )
+                                  }
+                                  defaultChecked={item.inventory_use}
+                                />
+                                <HStack
+                                  visibility={
+                                    item.inventory_use ? "visible" : "hidden"
+                                  }
+                                  w={"100px"}
+                                  spacing={"10px"}
+                                  border={"1px solid #d9d9d9"}
+                                  p={"10px 7px"}
+                                  borderRadius={"10px"}
+                                  justifyContent={"space-between"}
+                                >
+                                  <Image
+                                    w={"16px"}
+                                    h={"16px"}
+                                    src={require("../../image/HiMinus.png")}
+                                    onClick={() => {
+                                      if (item.inventory_count > 1) {
                                         changeInventoryCount(
                                           index,
-                                          item.inventory_count + 1
+                                          item.inventory_count - 1
                                         );
-                                      }}
-                                    />
-                                  </HStack>
-                                </Stack>
-                              </Td>
-                            </Tr>
-                          ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Stack>
-              )}
+                                      }
+                                    }}
+                                  />
+                                  <Text
+                                    color={
+                                      item.inventory_count <= 3
+                                        ? "red"
+                                        : "black"
+                                    }
+                                  >
+                                    {item.inventory_count}
+                                  </Text>
+                                  <Image
+                                    w={"16px"}
+                                    h={"16px"}
+                                    src={require("../../image/HiPlus.png")}
+                                    onClick={() => {
+                                      changeInventoryCount(
+                                        index,
+                                        item.inventory_count + 1
+                                      );
+                                    }}
+                                  />
+                                </HStack>
+                              </Stack>
+                            </Td>
+                          </Tr>
+                        ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Stack>
             </Stack>
           </Stack>
         </Flex>

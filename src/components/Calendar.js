@@ -16,7 +16,7 @@ function Calendar({ defaultRange, ...props }) {
   //   console.log(dateRange);
 
   return (
-    <Stack>
+    <Stack w={"100%"} {...props}>
       <Box>
         <DatePicker
           formatWeekDay={(day) => day.slice(0, 3).toUpperCase()}
