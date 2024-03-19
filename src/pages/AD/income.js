@@ -47,9 +47,12 @@ function Income({ ...props }) {
   const [shopFilter, setShopFilter] = useState(null);
   const [dateRange, setDateRange] = useState([
     new Date(
-      `${new Date().getFullYear()}-${new Date().getMonth()}-${
-        new Date().getDate() + 1
-      }`
+      `${new Date().getFullYear()}-${new Date()
+        .getMonth()
+        .toString()
+        .padStart(2, "0")}-${(new Date().getDate() + 1)
+        .toString()
+        .padStart(2, "0")}`
     ),
     new Date(),
   ]);

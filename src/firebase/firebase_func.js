@@ -192,14 +192,21 @@ export const getTotalOrder = async (dateRange, shop_id) => {
   const order = [];
   let totalPrice = 0;
   let totalOriginPrice = 0;
-  // const startDate = dateRange[0].toLocaleDateString();
-  // const endDate = dateRange[1].toLocaleDateString();
+
   querySnapshot.forEach((doc) => {
     if (doc.data().createAt) {
-      const createAt = timestampToDate(doc.data().createAt);
+      const strDate = timestampToDate(doc.data().createAt);
+      const createAt = new Date(
+        strDate.split(". ")[0] +
+          "-" +
+          strDate.split(". ")[1].padStart(2, "0") +
+          "-" +
+          strDate.split(".")[2].trim().padStart(2, "0")
+      );
+
       if (
-        new Date(createAt.replace(".", "-")) >= dateRange[0] &&
-        new Date(createAt.replace(".", "-")) <= dateRange[1]
+        createAt >= new Date(dateRange[0]) &&
+        createAt <= new Date(dateRange[1])
       ) {
         order.push({ ...doc.data(), doc_id: doc.id });
         totalPrice += parseFloat(doc.data().pay_price);
@@ -624,12 +631,13 @@ export const getTotalProducts = async (shop_id) => {
 };
 
 export const queryShop = async (shop_depth1, shop_depth2) => {
-  // console.log(shop_depth1, shop_depth2);
+  console.log("firebase ==> ", shop_depth1, shop_depth2);
   const shops = [];
   try {
     let q;
     if (shop_depth1 === "" && shop_depth2 === "") {
       // 전체
+      console.log("전체 샵에 대해서 조회");
       q = query(collection(db, "SHOP"));
     } else if (shop_depth2 === "") {
       q = query(
@@ -766,12 +774,18 @@ export const getFilteredOrder = async (value) => {
 
   const filteredProduct = [];
   querySnapshot.forEach((doc) => {
-    const createAt = timestampToDate(doc.data().createAt);
+    const strDate = timestampToDate(doc.data().createAt);
+    const createAt = new Date(
+      strDate.split(". ")[0] +
+        "-" +
+        strDate.split(". ")[1].padStart(2, "0") +
+        "-" +
+        strDate.split(".")[2].trim().padStart(2, "0")
+    );
+
     if (
-      (!value.shop_id || value.shop_id === doc.data().shop_id) &&
-      new Date(createAt.replace(".", "-")) >= value.dateRange[0] &&
-      new Date(createAt.replace(".", "-")) <= value.dateRange[1]
-      // doc.data().product_name.includes(value.keyword)
+      createAt >= new Date(value.dateRange[0]) &&
+      createAt <= new Date(value.dateRange[1])
     ) {
       filteredProduct.push({ ...doc.data(), doc_id: doc.id });
     }
@@ -790,12 +804,18 @@ export const getFilteredInventory = async (value) => {
 
   const filteredProduct = [];
   querySnapshot.forEach((doc) => {
-    const createAt = timestampToDate(doc.data().createAt);
+    const strDate = timestampToDate(doc.data().createAt);
+    const createAt = new Date(
+      strDate.split(". ")[0] +
+        "-" +
+        strDate.split(". ")[1].padStart(2, "0") +
+        "-" +
+        strDate.split(".")[2].trim().padStart(2, "0")
+    );
+
     if (
-      (!value.shop_id || value.shop_id === doc.data().shop_id) &&
-      new Date(createAt.replace(".", "-")) >= value.dateRange[0] &&
-      new Date(createAt.replace(".", "-")) <= value.dateRange[1]
-      // doc.data().product_name.includes(value.keyword)
+      createAt >= new Date(value.dateRange[0]) &&
+      createAt <= new Date(value.dateRange[1])
     ) {
       filteredProduct.push({ ...doc.data(), doc_id: doc.id });
     }

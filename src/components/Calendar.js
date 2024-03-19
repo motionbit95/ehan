@@ -8,12 +8,18 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 
 function Calendar({ defaultRange, ...props }) {
-  const [dateRange, setDateRange] = useState(
-    defaultRange ? defaultRange : [null, null]
-  );
+  const [dateRange, setDateRange] = useState([
+    new Date(
+      `${new Date().getFullYear()}-${new Date()
+        .getMonth()
+        .toString()
+        .padStart(2, "0")}-${(new Date().getDate() + 1)
+        .toString()
+        .padStart(2, "0")}`
+    ),
+    new Date(),
+  ]);
   const [startDate, endDate] = dateRange;
-
-  //   console.log(dateRange);
 
   return (
     <Stack w={"100%"} {...props}>

@@ -514,7 +514,10 @@ function Product(props) {
                           {/* <Td fontSize={"sm"}>{index + 1}</Td> */}
                           <Td fontSize={"sm"}>
                             <Image
-                              src={item.product_images?.[0]}
+                              src={item.product_images?.[0].replace(
+                                "http://",
+                                "https://"
+                              )}
                               w={"100px"}
                               h={"100px"}
                               objectFit={"contain"}

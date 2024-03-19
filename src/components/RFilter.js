@@ -32,12 +32,16 @@ function RFilter({ useSearch = true, ...props }) {
   const [viewFilter, setViewFilter] = useState(false);
   const [dateRange, setDateRange] = useState([
     new Date(
-      `${new Date().getFullYear()}-${new Date().getMonth()}-${
-        new Date().getDate() + 1
-      }`
+      `${new Date().getFullYear()}-${new Date()
+        .getMonth()
+        .toString()
+        .padStart(2, "0")}-${(new Date().getDate() + 1)
+        .toString()
+        .padStart(2, "0")}`
     ),
     new Date(),
   ]);
+
   const [selectedShop, setSelectedShop] = useState(null);
   const [order, setOrder] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -65,6 +69,7 @@ function RFilter({ useSearch = true, ...props }) {
   }, [admin]);
 
   const getShopList = async (depth1, depth2) => {
+    console.log("====> ", depth1, depth2);
     setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
     let filterShop = await queryShop(depth1, depth2);
