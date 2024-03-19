@@ -25,6 +25,14 @@ function SearchOrder(props) {
 
     let orderResult = await getPayment(event.target[0].value);
 
+    if (orderResult) {
+      // 주문 내역이 없을 때
+      alert(
+        "해당 주문번호의 내역이 존재하지 않습니다. 주문번호를 확인해주세요."
+      );
+      return;
+    }
+
     let jsonOrder = JSON.stringify(orderResult);
     var encodedData = encodeURIComponent(jsonOrder);
     console.log(encodedData);
@@ -34,7 +42,7 @@ function SearchOrder(props) {
 
     console.log(decodedData);
 
-    console.log("주문번호를 확인하였습니다!! 결제창으로 돌아가자");
+    // console.log("주문번호를 확인하였습니다!! 결제창으로 돌아가자");
     navigate(`/result?data=${decodedData}`);
   };
 

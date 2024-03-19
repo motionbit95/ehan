@@ -77,10 +77,12 @@ function Menu(props) {
     >
       <Stack overflow={"auto"}>
         <Stack id="banner">
-          <Center pt={"64px"}>
+          <Center>
             <Image
               objectFit={"cover"}
               height={"100%"}
+              maxH={"50vh"}
+              width={"100%"}
               src={menu?.product_images?.[0].replace("http://", "https://")}
             ></Image>
           </Center>
@@ -94,6 +96,7 @@ function Menu(props) {
           p={"20px"}
           align={"center"}
           justify={"space-between"}
+          // bgColor={"white"}
         >
           <Image
             w={"3vh"}
