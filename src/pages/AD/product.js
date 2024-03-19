@@ -1,19 +1,12 @@
 import {
-  Button,
   ButtonGroup,
-  Card,
-  CardBody,
-  Center,
   Flex,
   FormControl,
   FormLabel,
-  HStack,
   IconButton,
   Image,
   Input,
   InputGroup,
-  Radio,
-  RadioGroup,
   Select,
   Stack,
   Table,
@@ -30,13 +23,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
 import {
   getFilteredProduct,
-  getProduct,
   getProductCount,
   postProduct,
   updateProduct,
 } from "../../firebase/firebase_func";
 import PopupBase from "../../modals/PopupBase";
-import { deleteDoc, doc, serverTimestamp } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { db, storage } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
@@ -337,7 +329,6 @@ function Product(props) {
 
   // R - read product
   const getFilteredData = async (value) => {
-    console.log(value.shop_id);
     if (value.shop_id || admin?.permission === "supervisor") {
       let newList = await getFilteredProduct(value);
       setProductList(newList);

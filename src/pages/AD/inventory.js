@@ -335,7 +335,7 @@ function Inventory({ ...props }) {
                                 h={"16px"}
                                 src={require("../../image/HiMinus.png")}
                                 onClick={() => {
-                                  if (item.inventory_count > 1) {
+                                  if (item.inventory_count > 0) {
                                     changeInventoryCount(
                                       index,
                                       item.inventory_count - 1
@@ -514,7 +514,7 @@ function Inventory({ ...props }) {
                                     h={"16px"}
                                     src={require("../../image/HiMinus.png")}
                                     onClick={() => {
-                                      if (item.inventory_count > 1) {
+                                      if (item.inventory_count > 0) {
                                         changeInventoryCount(
                                           index,
                                           item.inventory_count - 1

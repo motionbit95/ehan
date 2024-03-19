@@ -21,11 +21,9 @@ function SearchOrder(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // 주문번호를 확인하였을 때
-    console.log(event.target[0].value);
-
     let orderResult = await getPayment(event.target[0].value);
 
-    if (orderResult) {
+    if (!orderResult) {
       // 주문 내역이 없을 때
       alert(
         "해당 주문번호의 내역이 존재하지 않습니다. 주문번호를 확인해주세요."

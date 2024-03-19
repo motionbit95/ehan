@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getCart, updateCart } from "../../firebase/firebase_func";
+import {
+  getCart,
+  readInventoryData,
+  updateCart,
+} from "../../firebase/firebase_func";
 import {
   Flex,
   Box,
@@ -26,23 +30,60 @@ function Cart(props) {
 
   const getCartList = async () => {
     if (location.state) {
-      console.log(location.state.uid);
       const cartlist = await getCart(location.state.uid);
-      console.log(cartlist);
+
       setCartList(cartlist.cart);
-      setTotalCost(cartlist.totalCost);
+
+      const selList = [];
+      let totCost = 0;
+      for (var i = 0; i < cartlist.cart.length; i++) {
+        if (getInventoryCount(cartlist.cart[i].product_id) > 0) {
+          selList.push(cartlist.cart[i]);
+          totCost += cartlist.cart[i].count * cartlist.cart[i].product_price;
+        }
+      }
+      setSelectList(selList);
+      setTotalCost(totCost);
     }
+  };
+
+  const [inventoryList, setInventoryList] = useState([]);
+
+  const readInventory = async () => {
+    const inventoryList = await readInventoryData(location.state.shop_id);
+    setInventoryList(inventoryList);
+  };
+
+  const getInventoryCount = (id) => {
+    let count = 100; // default value
+    inventoryList.forEach((element) => {
+      if (element.inventory_use) {
+        if (element.product_id === id) {
+          count = element.inventory_count;
+        }
+      }
+    });
+
+    return count;
   };
 
   useEffect(() => {
     // 현재 유저 세션에 담긴 장바구니 정보를 가지고 옵니다.
-    getCartList();
+    readInventory();
   }, []);
+
+  useEffect(() => {
+    getCartList();
+  }, [inventoryList]);
 
   const changeCartState = async (index, checked) => {
     console.log(index, checked);
 
     let modifiedArray = [];
+    for (var i = 0; i < cartList.cart?.length; i++) {
+      modifiedArray.push(cartList.cart[i]);
+    }
+
     if (checked) {
       modifiedArray = [...selectList, cartList[index]];
       setSelectList(modifiedArray);
@@ -53,7 +94,9 @@ function Cart(props) {
 
     let totalCost = 0;
     for (var i = 0; i < modifiedArray.length; i++) {
-      totalCost += modifiedArray[i].count * modifiedArray[i].product_price;
+      if (getInventoryCount(modifiedArray[i].product_id) > 0) {
+        totalCost += modifiedArray[i].count * modifiedArray[i].product_price;
+      }
     }
 
     setTotalCost(totalCost);
@@ -123,26 +166,45 @@ function Cart(props) {
                 <HStack w={"100%"} spacing={"20px"} align={"flex-start"}>
                   <Checkbox
                     onChange={(e) => changeCartState(index, e.target.checked)}
-                    defaultChecked={true}
+                    defaultChecked={getInventoryCount(item.product_id) > 0}
+                    disabled={getInventoryCount(item.product_id) <= 0}
                     size={"lg"}
                     colorScheme="red"
                   />
                   {item.product_images && item.product_images.length > 0 ? (
-                    <Image
-                      bgColor={"#d9d9d9"}
-                      width={"100px"}
-                      height={"100px"}
-                      borderRadius={"10px"}
-                      alt=""
-                      src={
-                        item.product_images
-                          ? item.product_images[0].replace(
-                              "http://",
-                              "https://"
-                            )
-                          : ""
-                      }
-                    />
+                    <Box position={"relative"}>
+                      <Image
+                        bgColor={"#d9d9d9"}
+                        width={"100px"}
+                        height={"100px"}
+                        borderRadius={"10px"}
+                        alt=""
+                        src={
+                          item.product_images
+                            ? item.product_images[0].replace(
+                                "http://",
+                                "https://"
+                              )
+                            : ""
+                        }
+                      />
+                      {!getInventoryCount(item.product_id) > 0 && (
+                        <Box
+                          position={"absolute"}
+                          width={"100px"}
+                          height={"100px"}
+                          top={"0"}
+                          left={"0"}
+                          bgColor={"rgba(0,0,0,0.5)"}
+                          borderRadius={"10px"}
+                          display={"flex"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                        >
+                          <Text color={"white"}>품절</Text>
+                        </Box>
+                      )}
+                    </Box>
                   ) : (
                     <Box
                       borderRadius={"10px"}
