@@ -215,7 +215,7 @@ function Home(props) {
                 </Stack>
               </Flex>
             </HStack>
-            <HStack w={"100%"} h={"100%"}>
+            <HStack w={"100%"} h={"40%"}>
               <Flex
                 borderRadius={"10px"}
                 bgColor={"white"}
@@ -224,36 +224,39 @@ function Home(props) {
                 minW={"890px"}
                 h={"100%"}
               >
-                <Stack w={"100%"} p={"20px"}>
+                <Stack w={"100%"} p={"20px"} overflow={"auto"}>
                   <Text>알림</Text>
-                  {alramList.map((item, index) => (
-                    <Alert
-                      key={index}
-                      borderRadius={"10px"}
-                      status={item.alarm_code[0] === "E" ? "error" : "info"}
-                    >
-                      <HStack
-                        w={"100%"}
-                        justifyContent={"space-between"}
-                        alignItems={"flex-start"}
-                      >
-                        <HStack>
-                          <AlertIcon />
-                          <Stack spacing={"1px"}>
-                            <AlertTitle>
-                              [{item.alarm_code}] {item.alarm_title}
-                            </AlertTitle>
-                            <AlertDescription>
-                              {item.alarm_msg}
-                            </AlertDescription>
-                          </Stack>
-                        </HStack>
-                        <Text fontSize={"sm"}>
-                          {compareTimestampWithCurrentTime(item.createAt)}
-                        </Text>
-                      </HStack>
-                    </Alert>
-                  ))}
+                  {alramList.map(
+                    (item, index) =>
+                      index < 3 && (
+                        <Alert
+                          key={index}
+                          borderRadius={"10px"}
+                          status={item.alarm_code[0] === "E" ? "error" : "info"}
+                        >
+                          <HStack
+                            w={"100%"}
+                            justifyContent={"space-between"}
+                            alignItems={"flex-start"}
+                          >
+                            <HStack>
+                              <AlertIcon />
+                              <Stack spacing={"1px"}>
+                                <AlertTitle>
+                                  [{item.alarm_code}] {item.alarm_title}
+                                </AlertTitle>
+                                <AlertDescription>
+                                  {item.alarm_msg}
+                                </AlertDescription>
+                              </Stack>
+                            </HStack>
+                            <Text fontSize={"sm"}>
+                              {compareTimestampWithCurrentTime(item.createAt)}
+                            </Text>
+                          </HStack>
+                        </Alert>
+                      )
+                  )}
                 </Stack>
               </Flex>
             </HStack>
@@ -374,42 +377,47 @@ function Home(props) {
                 <Flex borderRadius={"10px"} bgColor={"white"} w={"100%"}>
                   <Stack w={"100%"} p={"20px"}>
                     <Text>알림</Text>
-                    {alramList.map((item, index) => (
-                      <Alert
-                        key={index}
-                        borderRadius={"10px"}
-                        status={item.alarm_code[0] === "E" ? "error" : "info"}
-                      >
-                        <HStack
-                          w={"100%"}
-                          justifyContent={"space-between"}
-                          alignItems={"flex-start"}
-                        >
-                          <HStack>
-                            <AlertIcon />
-                            <Stack spacing={"1px"}>
-                              <HStack
-                                alignItems={"flex-start"}
-                                justifyContent={"space-between"}
-                              >
-                                <AlertTitle>
-                                  [{item.alarm_code}] {item.alarm_title}
-                                </AlertTitle>
-                                <Text fontSize={"sm"} whiteSpace={"nowrap"}>
-                                  {compareTimestampWithCurrentTime(
-                                    item.createAt
-                                  )}
-                                </Text>
-                              </HStack>
+                    {alramList.map(
+                      (item, index) =>
+                        index < 3 && (
+                          <Alert
+                            key={index}
+                            borderRadius={"10px"}
+                            status={
+                              item.alarm_code[0] === "E" ? "error" : "info"
+                            }
+                          >
+                            <HStack
+                              w={"100%"}
+                              justifyContent={"space-between"}
+                              alignItems={"flex-start"}
+                            >
+                              <HStack>
+                                <AlertIcon />
+                                <Stack spacing={"1px"}>
+                                  <HStack
+                                    alignItems={"flex-start"}
+                                    justifyContent={"space-between"}
+                                  >
+                                    <AlertTitle>
+                                      [{item.alarm_code}] {item.alarm_title}
+                                    </AlertTitle>
+                                    <Text fontSize={"sm"} whiteSpace={"nowrap"}>
+                                      {compareTimestampWithCurrentTime(
+                                        item.createAt
+                                      )}
+                                    </Text>
+                                  </HStack>
 
-                              <AlertDescription>
-                                {item.alarm_msg}
-                              </AlertDescription>
-                            </Stack>
-                          </HStack>
-                        </HStack>
-                      </Alert>
-                    ))}
+                                  <AlertDescription>
+                                    {item.alarm_msg}
+                                  </AlertDescription>
+                                </Stack>
+                              </HStack>
+                            </HStack>
+                          </Alert>
+                        )
+                    )}
                   </Stack>
                 </Flex>
               </HStack>

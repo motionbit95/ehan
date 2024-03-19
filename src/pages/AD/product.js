@@ -139,10 +139,10 @@ function ProductInfo({ shopList, permission, ...props }) {
             onChange={handleChange}
             isDisabled={permission !== "supervisor"}
             name="shop_id"
-            defaultValue={props.shop_id ? props.shop_id : "total"}
+            defaultValue={props.shop_id ? props.shop_id : ""}
           >
             {permission === "supervisor" && (
-              <option key={"total"} value={"total"}>
+              <option key={""} value={""}>
                 {"전체"}
               </option>
             )}
@@ -337,7 +337,8 @@ function Product(props) {
 
   // R - read product
   const getFilteredData = async (value) => {
-    if (value.shop_id) {
+    console.log(value.shop_id);
+    if (value.shop_id || admin?.permission === "supervisor") {
       let newList = await getFilteredProduct(value);
       setProductList(newList);
     }

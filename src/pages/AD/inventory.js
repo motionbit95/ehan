@@ -41,7 +41,7 @@ function ProductColumn({ productList, product_id }) {
 
   useEffect(() => {
     searchProduct();
-  }, []);
+  }, [product_id]);
   function searchProduct() {
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
     for (let item of productList) {
@@ -150,9 +150,7 @@ function Inventory({ ...props }) {
   };
 
   const readInventory = async () => {
-    const inventoryList = await readInventoryData(
-      admin?.shop_id ? admin?.shop_id : "test-shop"
-    );
+    const inventoryList = await readInventoryData(admin?.shop_id);
     setInventoryList(inventoryList);
   };
 

@@ -28,18 +28,11 @@ import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import Calendar from "../../components/Calendar";
 import {
   getFilteredIncome,
-  getIncomeList,
-  getPayment,
   getTotalOrder,
   postIncome,
 } from "../../firebase/firebase_func";
 import { formatCurrency } from "../CS/home";
-import {
-  addCommas,
-  debug,
-  isNumber,
-  timestampToDate,
-} from "../../firebase/api";
+import { isNumber, timestampToDate } from "../../firebase/api";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 

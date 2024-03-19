@@ -560,7 +560,7 @@ export async function readInventoryData(shop_id) {
 
   const inventories = [];
   querySnapshot.forEach((doc) => {
-    if (doc.data().shop_id === shop_id) {
+    if (doc.data().shop_id === shop_id || !shop_id) {
       inventories.push({ ...doc.data(), doc_id: doc.id });
     }
   });
@@ -623,7 +623,7 @@ export const getTotalProducts = async (shop_id) => {
 };
 
 export const queryShop = async (shop_depth1, shop_depth2) => {
-  console.log(shop_depth1, shop_depth2);
+  // console.log(shop_depth1, shop_depth2);
   const shops = [];
   try {
     let q;
@@ -725,7 +725,7 @@ export const getAlarmList = async (shop_id) => {
 
   const alarms = [];
   querySnapshot.forEach((doc) => {
-    if (doc.data().shop_id === shop_id) {
+    if (doc.data().shop_id === shop_id || !shop_id) {
       alarms.push({ ...doc.data(), doc_id: doc.id });
     }
   });
@@ -734,6 +734,7 @@ export const getAlarmList = async (shop_id) => {
 };
 
 export const getFilteredProduct = async (value) => {
+  console.log(value);
   var q = query(
     collection(db, "PRODUCT"),
     orderBy(value.order ? value.order : "createAt")

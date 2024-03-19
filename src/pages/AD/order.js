@@ -86,10 +86,11 @@ function Order(props) {
 
   // R - read order
   const getFilteredData = async (value) => {
-    console.log(value);
-    let newList = await getFilteredOrder(value);
-    console.log(newList);
-    setOrderList(newList);
+    if (value.shop_id || admin?.permission === "supervisor") {
+      let newList = await getFilteredOrder(value);
+      console.log(newList);
+      setOrderList(newList);
+    }
   };
 
   const cancelOrder = async (order) => {

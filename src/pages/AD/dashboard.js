@@ -102,6 +102,8 @@ function Dashboard(props) {
         } else {
           navigate("/admin/login");
         }
+      } else {
+        navigate("/admin/login");
       }
     });
   }, [uid]);

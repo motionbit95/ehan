@@ -47,7 +47,7 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
   const handleChangePermission = async (e) => {
     if (window.confirm("관리자 권한을 변경하시겠습니까?")) {
       const docRef = doc(db, "ACCOUNT", admin.doc_id);
-      await updateDoc(docRef, { permission: e.target.value });
+      await updateDoc(docRef, { permission: e.target.value, shop_id: "" });
     }
   };
 
@@ -109,13 +109,13 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
                 placeholder="관리자 이메일을 입력하세요."
               ></Input>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel>관리 지점</FormLabel>
               <Select
                 onChange={handleChangeShop}
                 isDisabled={permission !== "supervisor"}
                 name="shop_id"
-                defaultValue={admin?.shop_id}
+                defaultValue={admin?.shop_id || ""}
               >
                 <option value="">관리 지점을 선택하세요.</option>
                 {shopList?.map((shop) => (
@@ -386,7 +386,7 @@ function Account(props) {
                         placeholder="관리자 패스워드를 확인해주세요."
                       ></Input>
                     </FormControl>
-                    <FormControl isRequired>
+                    <FormControl>
                       <FormLabel>관리 지점</FormLabel>
                       <Select name="shop_id" defaultValue={admin.shop_id}>
                         <option value="">관리 지점을 선택하세요.</option>
