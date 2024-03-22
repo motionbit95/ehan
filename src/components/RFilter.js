@@ -87,7 +87,7 @@ function RFilter({ useSearch = true, ...props }) {
   };
 
   useEffect(() => {
-    console.log("======>", admin);
+    console.log("======>", admin, depth3);
     if (props.onChangeFilter)
       props.onChangeFilter({
         shop_id: depth3 ? depth3 : admin?.shop_id,
@@ -117,19 +117,39 @@ function RFilter({ useSearch = true, ...props }) {
             : `repeat(1, 1fr)`
         }
       >
-        <Select
-          isDisabled={admin?.permission !== "supervisor"}
-          defaultValue={admin?.shop_id}
-          value={depth3 ? depth3 : admin?.shop_id}
-          onChange={(e) => setDepth3(e.target.value)}
-        >
-          {admin?.permission === "supervisor" && <option value="">전체</option>}
-          {filteredShopList.map((shop, index) => (
-            <option key={index} value={shop.doc_id}>
-              {shop.shop_name}
-            </option>
-          ))}
-        </Select>
+        <HStack>
+          <RDepth1
+            defaultValue={depth1}
+            onChangeDepth1={(value) => {
+              setDepth1(value);
+            }}
+          />
+          <RDepth2
+            depth1={depth1}
+            defaultValue={depth2}
+            onChangeDepth2={(value) => {
+              setDepth2(value);
+              getShopList(depth1, value);
+            }}
+          />
+          <Select
+            isDisabled={admin?.permission !== "supervisor"}
+            defaultValue={admin?.shop_id}
+            value={depth3 ? depth3 : admin?.shop_id}
+            onChange={(e) => {
+              setDepth3(e.target.value);
+            }}
+          >
+            {admin?.permission === "supervisor" && (
+              <option value="">전체</option>
+            )}
+            {filteredShopList.map((shop, index) => (
+              <option key={index} value={shop.doc_id}>
+                {shop.shop_name}
+              </option>
+            ))}
+          </Select>
+        </HStack>
         {useSearch && (
           <Select onChange={(e) => setOrder(e.target.value)}>
             <option value="createAt">최신순</option>

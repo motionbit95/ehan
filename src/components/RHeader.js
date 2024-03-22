@@ -70,7 +70,7 @@ const RHeader = (props) => {
         <Flex align="center" width={"100%"} justify="space-between">
           <HStack>
             <Logo />
-            <Text fontWeight="bold">Redswitch</Text>
+            <Text fontWeight="bold">REDSWITCH</Text>
           </HStack>
           <Text display={{ base: "none", md: "block" }} mr={4}>
             {admin?.admin_name}
@@ -172,7 +172,7 @@ const RHeader = (props) => {
               <DrawerHeader>
                 <HStack>
                   <Logo />
-                  <Text fontWeight="bold">Redswitch</Text>
+                  <Text fontWeight="bold">REDSWITCH</Text>
                 </HStack>
               </DrawerHeader>
               <DrawerBody>

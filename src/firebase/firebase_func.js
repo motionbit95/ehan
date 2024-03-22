@@ -205,6 +205,7 @@ export const getTotalOrder = async (dateRange, shop_id) => {
       );
 
       if (
+        (shop_id === doc.data().shop_id || !shop_id) &&
         createAt >= new Date(dateRange[0]) &&
         createAt <= new Date(dateRange[1])
       ) {
@@ -784,6 +785,7 @@ export const getFilteredOrder = async (value) => {
     );
 
     if (
+      (value.shop_id === doc.data().shop_id || !value.shop_id) &&
       createAt >= new Date(value.dateRange[0]) &&
       createAt <= new Date(value.dateRange[1])
     ) {
@@ -814,6 +816,7 @@ export const getFilteredInventory = async (value) => {
     );
 
     if (
+      (value.shop_id === doc.data().shop_id || !value.shop_id) &&
       createAt >= new Date(value.dateRange[0]) &&
       createAt <= new Date(value.dateRange[1])
     ) {

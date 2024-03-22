@@ -48,7 +48,7 @@ const Login = () => {
             <HStack>
               <Logo />
               <Text fontSize={"2xl"} fontWeight="bold">
-                Redswitch
+                REDSWITCH
               </Text>
             </HStack>
             <form
