@@ -35,7 +35,7 @@ function Payment(props) {
     event.preventDefault();
     // 필수 정보가 입력되었을 때
     console.log("모든 정보가 입력되었습니다!!");
-    callNicePayPopup();
+    // callNicePayPopup();
   };
 
   const callNicePayPopup = async () => {

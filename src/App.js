@@ -29,7 +29,7 @@ function App() {
           <Container
             p={0}
             w={"100%"}
-            maxW={isAdmin ? "100%" : "700px"}
+            maxW={isAdmin ? "100%" : "400px"}
             bgColor={"#f1f1f1"}
             minH={window.innerHeight}
           >

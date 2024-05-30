@@ -6,6 +6,7 @@ import { fetchProducts, readInventoryData } from "../../firebase/firebase_func";
 import {
   Box,
   Button,
+  Circle,
   Flex,
   HStack,
   IconButton,
@@ -18,11 +19,13 @@ import {
   TabList,
   Tabs,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../components/RFooter";
 import { CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
+import Cert from "./cert";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -47,6 +50,9 @@ function Home(props) {
   const containerRef = useRef();
 
   const [scrolling, setScrolling] = useState(false);
+
+  const { onOpen, isOpen, onClose } = useDisclosure();
+  const [product, setProduct] = useState(null);
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -363,6 +369,17 @@ function Home(props) {
                 <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
                   {category}
                 </Text>
+                <Cert
+                  isOpen={isOpen}
+                  onOpen={onOpen}
+                  onClose={() => {
+                    navigate(`/menu`, {
+                      state: product,
+                    });
+                    localStorage.setItem("adult", "true");
+                    onClose();
+                  }}
+                />
                 {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
                 {productList?.products?.map(
                   (item, index) =>
@@ -379,13 +396,21 @@ function Home(props) {
                               alert("해당 상품은 품절입니다.");
                               return;
                             }
-                            navigate(`/menu`, {
-                              state: {
-                                data: item,
-                                shop_id: shopInfo?.doc_id,
-                                inventory_count: getInventoryCount(item.doc_id),
-                              },
+
+                            setProduct({
+                              data: item,
+                              shop_id: shopInfo?.doc_id,
+                              inventory_count: getInventoryCount(item.doc_id),
                             });
+
+                            onOpen();
+                            // navigate(`/menu`, {
+                            //   state: {
+                            //     data: item,
+                            //     shop_id: shopInfo?.doc_id,
+                            //     inventory_count: getInventoryCount(item.doc_id),
+                            //   },
+                            // });
                           }}
                           width={"100%"}
                           spacing={"20px"}
@@ -422,6 +447,34 @@ function Home(props) {
                                   alignItems={"center"}
                                 >
                                   <Text color={"white"}>품절</Text>
+                                </Box>
+                              )}
+
+                              {(!localStorage.getItem("adult") ||
+                                localStorage.getItem("adult") === "false") && (
+                                <Box
+                                  position={"absolute"}
+                                  width={"100px"}
+                                  height={"100px"}
+                                  top={"0"}
+                                  left={"0"}
+                                  bgColor={"rgba(0,0,0,0.5)"}
+                                  marginLeft={"1vh"}
+                                  borderRadius={"10px"}
+                                  display={"flex"}
+                                  justifyContent={"center"}
+                                  alignItems={"center"}
+                                >
+                                  <Circle
+                                    bgColor={"white"}
+                                    w="80%"
+                                    h="80%"
+                                    border={"8px solid red"}
+                                  >
+                                    <Text fontSize={"xl"} fontWeight={"bold"}>
+                                      19
+                                    </Text>
+                                  </Circle>
                                 </Box>
                               )}
                             </Box>

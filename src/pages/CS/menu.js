@@ -83,7 +83,7 @@ function Menu(props) {
               height={"100%"}
               maxH={"50vh"}
               width={"100%"}
-              src={menu?.product_images?.[0].replace("http://", "https://")}
+              src={menu?.product_images?.[0]?.replace("http://", "https://")}
             ></Image>
           </Center>
         </Stack>
