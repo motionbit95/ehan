@@ -18,6 +18,7 @@ import Login from "./pages/AD/login";
 import { Center, ChakraProvider, Container } from "@chakra-ui/react";
 import { GlobalStateProvider } from "./GlobalState";
 import SearchOrder from "./pages/CS/searchOrder";
+import BDSM from "./pages/CS/bdsm";
 
 function App() {
   // url 주소에 admin이 포함되어있으면 관리자 페이지입니다.
@@ -29,7 +30,11 @@ function App() {
           <Container
             p={0}
             w={"100%"}
-            maxW={isAdmin ? "100%" : "400px"}
+            maxW={
+              isAdmin || window.location.pathname.includes("bdsm")
+                ? "100%"
+                : "400px"
+            }
             bgColor={"#f1f1f1"}
             minH={window.innerHeight}
           >
@@ -49,6 +54,7 @@ function App() {
                 <Route path="/admin/order" element={<Order />} />
                 <Route path="/admin/income" element={<Income />} />
                 <Route path="/admin/product" element={<Product />} />
+                <Route path="/bdsm" element={<BDSM />} />
               </Routes>
             </BrowserRouter>
           </Container>
