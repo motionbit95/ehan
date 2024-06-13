@@ -26,6 +26,7 @@ import { Footer } from "../../components/RFooter";
 import { CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
 import Cert from "./cert";
+import MetaTag from "../../SEOMetaTag";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -210,6 +211,7 @@ function Home(props) {
       height={"auto"}
       bgColor={"white"}
     >
+      <MetaTag title={"레드스위치"} />
       <Skeleton isLoaded={shopInfo !== null}>
         <Stack
           id="banner"

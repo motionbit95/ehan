@@ -1,11 +1,19 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
+  Checkbox,
   Container,
   Flex,
   FormControl,
   FormLabel,
+  Grid,
   HStack,
+  Heading,
   IconButton,
   Image,
   Select,
@@ -14,15 +22,20 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../../components/Logo";
 import { ChevronRightIcon, LinkIcon } from "@chakra-ui/icons";
 import { BsShare } from "react-icons/bs";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import { data } from "../../bdms";
+import { doc, getDoc } from "firebase/firestore";
+import { fetchProducts } from "../../firebase/firebase_func";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 function BDSM(props) {
+  const navigate = useNavigate();
   const [score, setScore] = useState({
     마스터: 0,
     슬레이브: 0,
@@ -49,6 +62,10 @@ function BDSM(props) {
   });
   const [step, setStep] = useState(0);
   const [idx, setIndex] = useState(0);
+  const [yourBDSM, setYourBDSM] = useState("");
+  const [isAgree, setIsAgree] = useState(false);
+  const [products, setProducts] = useState([]);
+
   const submitInfo = (e) => {
     e.preventDefault();
     console.log({
@@ -72,7 +89,7 @@ function BDSM(props) {
   }
 
   function calculate(item, index) {
-    console.log("calculate", item, index);
+    // console.log("calculate", item, index);
     let temp = score;
     if (!(index < 0)) {
       if (item.score[index].마스터) {
@@ -185,14 +202,91 @@ function BDSM(props) {
         temp.바닐라 += item.score[index].바닐라;
       }
 
-      console.log(temp);
       setScore(temp);
+    } else {
+      if (idx === 12) {
+        // 12번 문항에만 예외 적용
+        temp.바닐라 += 50;
+        setScore(temp);
+      }
     }
     setIndex(idx + 1);
+
+    if (idx + 1 >= data.length) {
+      console.log("마지막 문항입니다.");
+      console.log(temp);
+
+      let maxKey = "";
+      let maxValue = -Infinity;
+
+      for (const [key, value] of Object.entries(temp)) {
+        if (value > maxValue) {
+          maxValue = value;
+          maxKey = key;
+        }
+      }
+
+      console.log(`가장 높은 항목의 이름은 ${maxKey}입니다.`);
+      setYourBDSM(maxKey);
+
+      setStep(2);
+    } else {
+      setIndex(idx + 1);
+    }
   }
+
+  useEffect(() => {
+    // shop id로 샵 정보를 가지고 오는 함수
+    const handleShopInfo = async () => {
+      try {
+        // 상품 리스트 업데이트
+        fetchProducts("PRODUCT", "product_category", "test-shop").then(
+          (data) => {
+            console.log("상품리스트", data);
+            setProducts(data.products);
+          }
+        );
+      } catch (error) {
+        console.error("shop id로 샵 정보가져오기 오류 발생:", error);
+        // 샵을 못찾았으면 테스트샵으로 이동
+        window.location.replace(`/home/test-shop`);
+      }
+    };
+
+    //컴포넌트가 마운트될 때 shop 정보 가지고오기
+    handleShopInfo();
+  }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
+
+  const [ogTitle, setOgTitle] = useState("나의 성적 취향은? BDSM 테스트");
+  const [ogDescription, setOgDescription] = useState("BDSM 테스트 바로가기");
+  const [ogImage, setOgImage] = useState(`%PUBLIC_URL%/type/bdsm.jpg`);
+
+  const handleShareClick = () => {
+    setOgTitle("나의 성적 취향은? BDSM 테스트");
+    setOgDescription(yourBDSM);
+    setOgImage(`%PUBLIC_URL%/type/${yourBDSM}.jpg`);
+
+    const urlToShare = window.location.href;
+    navigator.clipboard
+      .writeText(urlToShare)
+      .then(() => {
+        alert("URL has been copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy the URL: ", err);
+      });
+  };
 
   return (
     <Stack justifyContent={"space-between"} minH={window.innerHeight}>
+      <Helmet>
+        <title>{ogTitle}</title>
+        <meta name="description" content={ogDescription} />
+        <meta property="og:url" content="https://redswitch.kr/bdsm" />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImage} />
+      </Helmet>
       <HStack p={{ base: "1vh", md: "2vh" }} id="header">
         <Logo />
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
@@ -285,7 +379,39 @@ function BDSM(props) {
                     </Select>
                   </HStack>
                 </FormControl>
+                <Accordion w={"100%"} allowToggle>
+                  <AccordionItem w={"100%"} _focus={{ boxShadow: "none" }}>
+                    <h2>
+                      <AccordionButton>
+                        <HStack w={"100%"} justifyContent={"space-between"}>
+                          <Checkbox
+                            name="permission"
+                            colorScheme="red"
+                            onChange={(e) => setIsAgree(e.target.checked)}
+                          >
+                            [필수] 이용약관을 다 읽었습니다.
+                          </Checkbox>
+                          <AccordionIcon />
+                        </HStack>
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel>
+                      <Text whiteSpace={"pre-line"}>
+                        {`- 이 테스트는 성적 행위를 노골적으로 묘사하는문항을 포함하고 있습니다. 이러한 표현에 모멸감이나 혐오감을 느끼는 분들의 이용은 권장하지 않습니다.
+   
+- 이 테스트의 모든 질문은 당사자간의 완벽한 합의를 바탕으로, 절대적으로 안전하다는 가정 하에 작성 되었습니다.
+
+- 이 테스트의 결과는 개발자의 주관적인 의견이 반영되어 있습니다.
+
+- 테스트 결과에 대해서는 어떠한 의미 부여도 하지 마시고, 반드시 개인적인 참고 용도로만 사용하시기 바랍니다.
+   
+- 이 테스트를 참고하거나 활용하여 발생한 문제의 관한 책임은 모두 테스트를 이용한 당사자에게 있습니다.`}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
                 <Button
+                  isDisabled={!isAgree}
                   colorScheme="red"
                   w={"100%"}
                   size={"lg"}
@@ -384,6 +510,40 @@ function BDSM(props) {
               </Stack>
             ))}
           </Carousel>
+        </Container>
+      )}
+
+      {step === 2 && (
+        <Container>
+          <Stack spacing={{ base: "10px", md: "20px" }}>
+            <Stack>
+              <Text>[BDSM 진단] 당신의 BDSM을 진단해드립니다!</Text>
+              {/* <Heading>{yourBDSM}</Heading> */}
+              <Image src={require(`../../assets/type/${yourBDSM}.jpg`)} />
+              <HStack justifyContent={"flex-end"}>
+                <IconButton
+                  onClick={() => handleShareClick()}
+                  icon={<BsShare size={"24px"} />}
+                />
+              </HStack>
+              <Button colorScheme="gray" onClick={() => setStep(0)}>
+                다시하기
+              </Button>
+            </Stack>
+            <Stack spacing={{ base: "10px", md: "20px" }}>
+              <Heading size={"md"}>내 성향에 맞는 성인용품은?</Heading>
+              <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+                {products.map((item, index) => (
+                  <Image
+                    onClick={() => navigate(`/home/test-shop`)}
+                    cursor={"pointer"}
+                    src={item.product_images[0]}
+                    key={index}
+                  />
+                ))}
+              </Grid>
+            </Stack>
+          </Stack>
         </Container>
       )}
 

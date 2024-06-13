@@ -19,6 +19,7 @@ import { Center, ChakraProvider, Container } from "@chakra-ui/react";
 import { GlobalStateProvider } from "./GlobalState";
 import SearchOrder from "./pages/CS/searchOrder";
 import BDSM from "./pages/CS/bdsm";
+import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   // url 주소에 admin이 포함되어있으면 관리자 페이지입니다.
@@ -26,39 +27,41 @@ function App() {
   return (
     <GlobalStateProvider>
       <ChakraProvider>
-        <Center>
-          <Container
-            p={0}
-            w={"100%"}
-            maxW={
-              isAdmin || window.location.pathname.includes("bdsm")
-                ? "100%"
-                : "400px"
-            }
-            bgColor={"#f1f1f1"}
-            minH={window.innerHeight}
-          >
-            <BrowserRouter>
-              <Routes>
-                <Route path="*" element={<Home />} />
-                <Route path="/home/*" element={<Home />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/payment" element={<Payment />} />
-                <Route path="/menu" element={<Menu />} />
-                <Route path="/result" element={<Result />} />
-                <Route path="/search" element={<SearchOrder />} />
-                <Route path="/admin/*" element={<Dashboard />} />
-                <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/account" element={<Account />} />
-                <Route path="/admin/login" element={<Login />} />
-                <Route path="/admin/order" element={<Order />} />
-                <Route path="/admin/income" element={<Income />} />
-                <Route path="/admin/product" element={<Product />} />
-                <Route path="/bdsm" element={<BDSM />} />
-              </Routes>
-            </BrowserRouter>
-          </Container>
-        </Center>
+        <HelmetProvider>
+          <Center>
+            <Container
+              p={0}
+              w={"100%"}
+              maxW={
+                isAdmin || window.location.pathname.includes("bdsm")
+                  ? "100%"
+                  : "400px"
+              }
+              bgColor={"#f1f1f1"}
+              minH={window.innerHeight}
+            >
+              <BrowserRouter>
+                <Routes>
+                  <Route path="*" element={<Home />} />
+                  <Route path="/home/*" element={<Home />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/payment" element={<Payment />} />
+                  <Route path="/menu" element={<Menu />} />
+                  <Route path="/result" element={<Result />} />
+                  <Route path="/search" element={<SearchOrder />} />
+                  <Route path="/admin/*" element={<Dashboard />} />
+                  <Route path="/admin/dashboard" element={<Dashboard />} />
+                  <Route path="/admin/account" element={<Account />} />
+                  <Route path="/admin/login" element={<Login />} />
+                  <Route path="/admin/order" element={<Order />} />
+                  <Route path="/admin/income" element={<Income />} />
+                  <Route path="/admin/product" element={<Product />} />
+                  <Route path="/bdsm" title="BDSM" element={<BDSM />} />
+                </Routes>
+              </BrowserRouter>
+            </Container>
+          </Center>
+        </HelmetProvider>
       </ChakraProvider>
     </GlobalStateProvider>
   );
