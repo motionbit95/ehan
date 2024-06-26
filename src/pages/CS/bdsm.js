@@ -16,6 +16,8 @@ import {
   Heading,
   IconButton,
   Image,
+  Progress,
+  ProgressLabel,
   Select,
   Stack,
   Tag,
@@ -66,7 +68,38 @@ function BDSM(props) {
   const [isAgree, setIsAgree] = useState(false);
   const [products, setProducts] = useState([]);
 
+  const [answer, setAnswer] = useState([]);
+  const [sortedAnswer, setSortedAnswer] = useState([]);
+
   const submitInfo = (e) => {
+    // 데이터 초기화 - init
+    setIndex(0);
+    setScore({
+      마스터: 0,
+      슬레이브: 0,
+      헌터: 0,
+      프레이: 0,
+      브랫테이머: 0,
+      브랫: 0,
+      오너: 0,
+      펫: 0,
+      대디: 0,
+      리틀: 0,
+      사디스트: 0,
+      마조히스트: 0,
+      스팽커: 0,
+      스팽키: 0,
+      디그레이더: 0,
+      디그레이디: 0,
+      리거: 0,
+      로프버니: 0,
+      도미넌트: 0,
+      서브미시브: 0,
+      스위치: 0,
+      바닐라: 0,
+    });
+    setAnswer([]);
+
     e.preventDefault();
     console.log({
       [e.target[0].name]: e.target[0].value,
@@ -88,136 +121,169 @@ function BDSM(props) {
     alert("링크가 복사되었습니다.");
   }
 
-  function calculate(item, index) {
-    // console.log("calculate", item, index);
-    let temp = score;
-    if (!(index < 0)) {
-      if (item.score[index].마스터) {
-        console.log("마스터", item.score[index].마스터);
-        temp.마스터 += item.score[index].마스터;
-      }
-
-      if (item.score[index].슬레이브) {
-        console.log("슬레이브", item.score[index].슬레이브);
-        temp.슬레이브 += item.score[index].슬레이브;
-      }
-
-      if (item.score[index].헌터) {
-        console.log("헌터", item.score[index].헌터);
-        temp.헌터 += item.score[index].헌터;
-      }
-
-      if (item.score[index].프레이) {
-        console.log("프레이", item.score[index].프레이);
-        temp.프레이 += item.score[index].프레이;
-      }
-
-      if (item.score[index].브랫테이머) {
-        console.log("브랫테이머", item.score[index].브랫테이머);
-        temp.브랫테이머 += item.score[index].브랫테이머;
-      }
-
-      if (item.score[index].브랫) {
-        console.log("브랫", item.score[index].브랫);
-        temp.브랫 += item.score[index].브랫;
-      }
-
-      if (item.score[index].오너) {
-        console.log("오너", item.score[index].오너);
-        temp.오너 += item.score[index].오너;
-      }
-
-      if (item.score[index].펫) {
-        console.log("펫", item.score[index].펫);
-        temp.펫 += item.score[index].펫;
-      }
-
-      if (item.score[index].대디) {
-        console.log("대디", item.score[index].대디);
-        temp.대디 += item.score[index].대디;
-      }
-
-      if (item.score[index].리틀) {
-        console.log("리틀", item.score[index].리틀);
-        temp.리틀 += item.score[index].리틀;
-      }
-
-      if (item.score[index].사디스트) {
-        console.log("사디스트", item.score[index].사디스트);
-        temp.사디스트 += item.score[index].사디스트;
-      }
-
-      if (item.score[index].마조히스트) {
-        console.log("마조히스트", item.score[index].마조히스트);
-        temp.마조히스트 += item.score[index].마조히스트;
-      }
-
-      if (item.score[index].스팽커) {
-        console.log("스팽커", item.score[index].스팽커);
-        temp.스팽커 += item.score[index].스팽커;
-      }
-
-      if (item.score[index].스팽키) {
-        console.log("스팽키", item.score[index].스팽키);
-        temp.스팽키 += item.score[index].스팽키;
-      }
-
-      if (item.score[index].디그레이더) {
-        console.log("디그레이더", item.score[index].디그레이더);
-        temp.디그레이더 += item.score[index].디그레이더;
-      }
-
-      if (item.score[index].디그레이디) {
-        console.log("디그레이디", item.score[index].디그레이디);
-        temp.디그레이디 += item.score[index].디그레이디;
-      }
-
-      if (item.score[index].리거) {
-        console.log("리거", item.score[index].리거);
-        temp.리거 += item.score[index].리거;
-      }
-
-      if (item.score[index].로프버니) {
-        console.log("로프버니", item.score[index].로프버니);
-        temp.로프버니 += item.score[index].로프버니;
-      }
-
-      if (item.score[index].도미넌트) {
-        console.log("도미넌트", item.score[index].도미넌트);
-        temp.도미넌트 += item.score[index].도미넌트;
-      }
-
-      if (item.score[index].서브미시브) {
-        console.log("서브미시브", item.score[index].서브미시브);
-        temp.서브미시브 += item.score[index].서브미시브;
-      }
-
-      if (item.score[index].스위치) {
-        console.log("스위치", item.score[index].스위치);
-        temp.스위치 += item.score[index].스위치;
-      }
-
-      if (item.score[index].바닐라) {
-        console.log("바닐라", item.score[index].바닐라);
-        temp.바닐라 += item.score[index].바닐라;
-      }
-
-      setScore(temp);
+  function selectAnswer(item, index) {
+    let tempAnswer = answer;
+    console.log(item, index, item.score[index]);
+    if (index > 0) {
+      tempAnswer[item.index] = item.score[index];
     } else {
       if (idx === 12) {
-        // 12번 문항에만 예외 적용
-        temp.바닐라 += 50;
-        setScore(temp);
+        tempAnswer[item.index] = {
+          answer: "모르겠음",
+          바닐라: 50,
+        };
+      }
+      tempAnswer[item.index] = {
+        answer: "모르겠음",
+      };
+    }
+    console.log(tempAnswer);
+    setAnswer(tempAnswer);
+
+    if (tempAnswer) {
+      setIndex(idx + 1);
+    }
+  }
+
+  function findEmptyIndices(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === undefined) {
+        return i;
       }
     }
-    setIndex(idx + 1);
 
-    if (idx + 1 >= data.length) {
-      console.log("마지막 문항입니다.");
+    return -1;
+  }
+
+  function calculateBDSM() {
+    let emptyIndex = findEmptyIndices(answer);
+    let temp = score;
+    if (emptyIndex < 0) {
+      answer.forEach((item, index) => {
+        if (item.마스터) {
+          console.log("마스터", item.마스터);
+          temp.마스터 += item.마스터;
+        }
+
+        if (item.슬레이브) {
+          console.log("슬레이브", item.슬레이브);
+          temp.슬레이브 += item.슬레이브;
+        }
+
+        if (item.헌터) {
+          console.log("헌터", item.헌터);
+          temp.헌터 += item.헌터;
+        }
+
+        if (item.프레이) {
+          console.log("프레이", item.프레이);
+          temp.프레이 += item.프레이;
+        }
+
+        if (item.브랫테이머) {
+          console.log("브랫테이머", item.브랫테이머);
+          temp.브랫테이머 += item.브랫테이머;
+        }
+
+        if (item.브랫) {
+          console.log("브랫", item.브랫);
+          temp.브랫 += item.브랫;
+        }
+
+        if (item.오너) {
+          console.log("오너", item.오너);
+          temp.오너 += item.오너;
+        }
+
+        if (item.펫) {
+          console.log("펫", item.펫);
+          temp.펫 += item.펫;
+        }
+
+        if (item.대디) {
+          console.log("대디", item.대디);
+          temp.대디 += item.대디;
+        }
+
+        if (item.리틀) {
+          console.log("리틀", item.리틀);
+          temp.리틀 += item.리틀;
+        }
+
+        if (item.사디스트) {
+          console.log("사디스트", item.사디스트);
+          temp.사디스트 += item.사디스트;
+        }
+
+        if (item.마조히스트) {
+          console.log("마조히스트", item.마조히스트);
+          temp.마조히스트 += item.마조히스트;
+        }
+
+        if (item.스팽커) {
+          console.log("스팽커", item.스팽커);
+          temp.스팽커 += item.스팽커;
+        }
+
+        if (item.스팽키) {
+          console.log("스팽키", item.스팽키);
+          temp.스팽키 += item.스팽키;
+        }
+
+        if (item.디그레이더) {
+          console.log("디그레이더", item.디그레이더);
+          temp.디그레이더 += item.디그레이더;
+        }
+
+        if (item.디그레이디) {
+          console.log("디그레이디", item.디그레이디);
+          temp.디그레이디 += item.디그레이디;
+        }
+
+        if (item.리거) {
+          console.log("리거", item.리거);
+          temp.리거 += item.리거;
+        }
+
+        if (item.로프버니) {
+          console.log("로프버니", item.로프버니);
+          temp.로프버니 += item.로프버니;
+        }
+
+        if (item.도미넌트) {
+          console.log("도미넌트", item.도미넌트);
+          temp.도미넌트 += item.도미넌트;
+        }
+
+        if (item.서브미시브) {
+          console.log("서브미시브", item.서브미시브);
+          temp.서브미시브 += item.서브미시브;
+        }
+
+        if (item.스위치) {
+          console.log("스위치", item.스위치);
+          temp.스위치 += item.스위치;
+        }
+
+        if (item.바닐라) {
+          console.log("바닐라", item.바닐라);
+          temp.바닐라 += item.바닐라;
+        }
+      });
       console.log(temp);
 
       let maxKey = "";
       let maxValue = -Infinity;
+      let sortScore = [];
+
+      for (const [key, value] of Object.entries(temp)) {
+        sortScore.push([key, value]);
+      }
+      sortScore.sort((a, b) => b[1] - a[1]);
+      console.log(sortScore);
+
+      setSortedAnswer(sortScore);
+      console.log("점수순으로 정렬하면 : ", sortScore);
 
       for (const [key, value] of Object.entries(temp)) {
         if (value > maxValue) {
@@ -228,11 +294,12 @@ function BDSM(props) {
 
       console.log(`가장 높은 항목의 이름은 ${maxKey}입니다.`);
       setYourBDSM(maxKey);
-
       setStep(2);
-    } else {
-      setIndex(idx + 1);
+
+      return;
     }
+    console.log(emptyIndex);
+    setIndex(emptyIndex);
   }
 
   useEffect(() => {
@@ -442,82 +509,162 @@ function BDSM(props) {
 
       {step === 1 && (
         <Container>
-          <Carousel
-            showArrows={false}
-            // centerMode={true}
-            // centerSlidePercentage={100}
-            showThumbs={false}
-            showStatus={false}
-            showIndicators={false}
-            selectedItem={idx}
-            onChange={(i) => setIndex(i)}
-            swipeable={false}
-          >
-            {data.map((item, index) => (
-              <Stack key={index} p={{ base: "10px", md: "20px" }}>
-                <Text fontSize={"xl"}>
-                  <strong style={{ color: "red" }}>{index + 1}</strong> /{" "}
-                  {data.length}
-                </Text>
-                <FormControl>
-                  <FormLabel fontSize={"lg"} fontWeight={"bold"}>
-                    {item.question}
-                  </FormLabel>
-                </FormControl>
-                <Stack>
-                  <Button
-                    onClick={() => calculate(item, 0)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    동의
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, 1)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    대체적으로 동의
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, 2)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    약간 동의
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, -1)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    모르겠음
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, 3)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    약간 비동의
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, 4)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    대체적으로 비동의
-                  </Button>
-                  <Button
-                    onClick={() => calculate(item, 5)}
-                    colorScheme="red"
-                    variant={"outline"}
-                  >
-                    비동의
-                  </Button>
+          <Stack>
+            <Progress
+              colorScheme="teal"
+              w={"100%"}
+              value={answer.length}
+              max={43}
+              min={0}
+              bgColor={"#d9d9d9"}
+              size={"lg"}
+            >
+              <ProgressLabel
+                textAlign={"right"}
+                color="black"
+                fontWeight={"bold"}
+                fontSize={"lg"}
+              >
+                {parseInt((answer.length / 43) * 100)}%
+              </ProgressLabel>
+            </Progress>
+            <Carousel
+              showArrows={false}
+              // centerMode={true}
+              // centerSlidePercentage={100}
+              showThumbs={false}
+              showStatus={false}
+              showIndicators={false}
+              selectedItem={idx}
+              onChange={(i) => setIndex(i)}
+              swipeable={false}
+            >
+              {data.map((item, index) => (
+                <Stack key={index} p={{ base: "10px", sm: "10px", md: "10px" }}>
+                  <Text fontSize={"xl"}>
+                    <strong style={{ color: "red" }}>{index + 1}</strong> /{" "}
+                    {data.length}
+                  </Text>
+                  <FormControl>
+                    <FormLabel fontSize={"lg"} fontWeight={"bold"}>
+                      {item.question}
+                    </FormLabel>
+                  </FormControl>
+                  <Stack>
+                    <Button
+                      onClick={() => selectAnswer(item, 0)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "동의" ? "solid" : "outline"
+                      }
+                    >
+                      동의
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, 1)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "대체적으로 동의"
+                          ? "solid"
+                          : "outline"
+                      }
+                    >
+                      대체적으로 동의
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, 2)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "약간 동의"
+                          ? "solid"
+                          : "outline"
+                      }
+                    >
+                      약간 동의
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, -1)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "모르겠음"
+                          ? "solid"
+                          : "outline"
+                      }
+                    >
+                      모르겠음
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, 3)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "약간 비동의"
+                          ? "solid"
+                          : "outline"
+                      }
+                    >
+                      약간 비동의
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, 4)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "대체적으로 비동의"
+                          ? "solid"
+                          : "outline"
+                      }
+                    >
+                      대체적으로 비동의
+                    </Button>
+                    <Button
+                      onClick={() => selectAnswer(item, 5)}
+                      colorScheme="red"
+                      variant={
+                        answer[index]?.answer === "비동의" ? "solid" : "outline"
+                      }
+                    >
+                      비동의
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            ))}
-          </Carousel>
+              ))}
+            </Carousel>
+            <HStack p={{ base: "10px", sm: "10px", md: "10px", lg: "20px" }}>
+              <Button
+                display={idx === 0 ? "none" : "block"}
+                w={"100%"}
+                colorScheme="teal"
+                variant={"outline"}
+                onClick={() => setIndex(idx - 1)}
+              >
+                이전으로
+              </Button>
+              <Button
+                display={idx === data.length - 1 ? "none" : "block"}
+                w={"100%"}
+                colorScheme="teal"
+                variant={"outline"}
+                onClick={() => {
+                  if (answer[idx]) {
+                    setIndex(idx + 1);
+                  } else {
+                    alert("답변하지 않았습니다!");
+                  }
+                }}
+              >
+                다음으로
+              </Button>
+
+              <Button
+                display={idx === data.length - 1 ? "block" : "none"}
+                w={"100%"}
+                colorScheme="teal"
+                variant={"outline"}
+                onClick={calculateBDSM}
+              >
+                결과보기
+              </Button>
+            </HStack>
+          </Stack>
         </Container>
       )}
 
@@ -525,18 +672,59 @@ function BDSM(props) {
         <Container>
           <Stack spacing={{ base: "10px", md: "20px" }}>
             <Stack>
-              <Text>[BDSM 진단] 당신의 BDSM을 진단해드립니다!</Text>
+              <Text fontSize={"lg"} fontWeight={"bold"}>
+                [BDSM 진단] 당신의 BDSM을 진단해드립니다!
+              </Text>
               {/* <Heading>{yourBDSM}</Heading> */}
               <Image src={require(`../../assets/type/${yourBDSM}.jpg`)} />
+              <Button colorScheme="red" onClick={() => setStep(0)}>
+                다시하기
+              </Button>
+              <Stack>
+                <Text fontSize={"lg"} fontWeight={"bold"}>
+                  결과요약
+                </Text>
+                {sortedAnswer.map((item, index) => (
+                  <HStack key={index} justifyContent={"space-between"}>
+                    <HStack w={"60%"}>
+                      <Text color={item[1] > 0 ? "green" : "red"}>
+                        {item[1]}%
+                      </Text>
+                      <HStack spacing={0} w={"100%"}>
+                        <NegativeProgressBar
+                          value={item[1] < 0 ? item[1] : 0}
+                          maxValue={Math.abs(sortedAnswer[0][1])}
+                        />
+                        <PositiveProgressBar
+                          maxValue={Math.abs(sortedAnswer[0][1])}
+                          value={item[1] > 0 ? item[1] : 0}
+                        />
+                      </HStack>
+                    </HStack>
+                    <Text
+                      w={"40%"}
+                      textAlign={"center"}
+                      color={item[1] > 0 ? "green" : "red"}
+                    >
+                      {item[0]}
+                    </Text>
+                  </HStack>
+                ))}
+                <Button
+                  colorScheme="red"
+                  variant="outline"
+                  w={"100%"}
+                  onClick={() => navigate("/bdsm/view")}
+                >
+                  BDSM 성향모두보기
+                </Button>
+              </Stack>
               <HStack justifyContent={"flex-end"}>
                 <IconButton
                   onClick={() => handleShareClick()}
                   icon={<BsShare size={"24px"} />}
                 />
               </HStack>
-              <Button colorScheme="gray" onClick={() => setStep(0)}>
-                다시하기
-              </Button>
             </Stack>
             <Stack spacing={{ base: "10px", md: "20px" }}>
               <Heading size={"md"}>내 성향에 맞는 성인용품은?</Heading>
@@ -568,5 +756,38 @@ function BDSM(props) {
     </Stack>
   );
 }
+
+const PositiveProgressBar = ({ value, ...props }) => {
+  return (
+    <Progress
+      {...props}
+      w={"50%"}
+      value={Math.abs(value)}
+      colorScheme="green"
+      style={{
+        backgroundColor: "#d9d9d9",
+        height: "10px",
+      }}
+      h="20px" // 높이 설정
+    ></Progress>
+  );
+};
+
+const NegativeProgressBar = ({ value, ...props }) => {
+  return (
+    <Progress
+      transform={value < 0 ? "rotate(180deg)" : "rotate(0deg)"}
+      {...props}
+      w={"50%"}
+      value={Math.abs(value)}
+      style={{
+        backgroundColor: "#d9d9d9",
+        height: "10px",
+      }}
+      sx={{ "& > div": { backgroundColor: "red" } }}
+      h="20px" // 높이 설정
+    />
+  );
+};
 
 export default BDSM;
