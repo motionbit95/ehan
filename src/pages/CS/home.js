@@ -371,17 +371,6 @@ function Home(props) {
                 <Text mt={"10px"} fontSize={"large"} fontWeight={"bold"}>
                   {category}
                 </Text>
-                <Cert
-                  isOpen={isOpen}
-                  onOpen={onOpen}
-                  onClose={() => {
-                    navigate(`/menu`, {
-                      state: product,
-                    });
-                    localStorage.setItem("adult", "true");
-                    onClose();
-                  }}
-                />
                 {/* Set 객체의 각 요소를 반복하여 JSX로 표시 */}
                 {productList?.products?.map(
                   (item, index) =>
@@ -510,6 +499,26 @@ function Home(props) {
               </Stack>
             ))}
           </Stack>
+          <Cert
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            onVerified={() => {
+              console.log("onVerified");
+              navigate(`/menu`, {
+                state: product,
+              });
+              localStorage.setItem("adult", "true");
+              onClose();
+            }}
+            // onClose={() => {
+            //   navigate(`/menu`, {
+            //     state: product,
+            //   });
+            //   localStorage.setItem("adult", "true");
+            //   onClose();
+            // }}
+          />
         </Stack>
       </Skeleton>
       <Footer

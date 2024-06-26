@@ -20,6 +20,7 @@ import { GlobalStateProvider } from "./GlobalState";
 import SearchOrder from "./pages/CS/searchOrder";
 import BDSM from "./pages/CS/bdsm";
 import { HelmetProvider } from "react-helmet-async";
+import BdsmView from "./pages/CS/bdsmView";
 
 function App() {
   // url 주소에 admin이 포함되어있으면 관리자 페이지입니다.
@@ -57,6 +58,11 @@ function App() {
                   <Route path="/admin/income" element={<Income />} />
                   <Route path="/admin/product" element={<Product />} />
                   <Route path="/bdsm" title="BDSM" element={<BDSM />} />
+                  <Route
+                    path="/bdsm/view"
+                    title="BDSM"
+                    element={<BdsmView />}
+                  />
                 </Routes>
               </BrowserRouter>
             </Container>

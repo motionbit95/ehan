@@ -420,6 +420,14 @@ function BDSM(props) {
                 >
                   시작하기
                 </Button>
+                <Button
+                  colorScheme="red"
+                  variant="outline"
+                  w={"100%"}
+                  onClick={() => navigate("/bdsm/view")}
+                >
+                  BDSM 성향모두보기
+                </Button>
               </VStack>
             </form>
             <HStack justifyContent={"flex-end"}>
