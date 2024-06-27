@@ -123,7 +123,7 @@ function BDSM(props) {
 
   function selectAnswer(item, index) {
     let tempAnswer = answer;
-    console.log(item, index, item.score[index]);
+    // console.log(item, index, item.score[index]);
     if (index > 0) {
       tempAnswer[item.index] = item.score[index];
     } else {
@@ -137,7 +137,7 @@ function BDSM(props) {
         answer: "모르겠음",
       };
     }
-    console.log(tempAnswer);
+    console.log("[" + (item.index + 1) + "번]", tempAnswer[item.index]);
     setAnswer(tempAnswer);
 
     if (tempAnswer) {

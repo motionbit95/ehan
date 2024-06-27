@@ -770,7 +770,8 @@ export const data = [
   },
   {
     index: 19,
-    question: "나는 상대를 순종적으로 만들 수 있는 나만의 방법이 있다.",
+    question:
+      "나는 관계 중 혹은 관계 후 투정부리고 징징대는 상대가 사랑스럽고 귀엽다.",
     score: [
       {
         answer: "동의",
