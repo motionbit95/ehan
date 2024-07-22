@@ -70,8 +70,23 @@ function BDSM(props) {
 
   const [answer, setAnswer] = useState([]);
   const [sortedAnswer, setSortedAnswer] = useState([]);
+  const [selectIndex, setSelectIndex] = useState(-1);
 
   const submitInfo = (e) => {
+    if (e.target[0].value === "--선택--") {
+      alert("성별을 선택해주세요.");
+      return;
+    } else if (e.target[1].value === "--선택--") {
+      alert("연령을 선택해주세요.");
+      return;
+    } else if (e.target[2].value === "--선택--") {
+      alert("성적취향을 선택해주세요.");
+      return;
+    } else if (isAgree === false) {
+      alert("이용약관에 동의해주세요.");
+      return;
+    }
+
     // 데이터 초기화 - init
     setIndex(0);
     setScore({
@@ -382,6 +397,7 @@ function BDSM(props) {
                         outline: "none",
                       }}
                     >
+                      <option value={null}>--선택--</option>
                       <option value={"남자"}>남자</option>
                       <option value={"여자"}>여자</option>
                       <option value={"트렌스젠더(MTF)"}>트렌스젠더(MTF)</option>
@@ -408,6 +424,7 @@ function BDSM(props) {
                         outline: "none",
                       }}
                     >
+                      <option value={null}>--선택--</option>
                       <option value={"19세 이하"}>19세 이하</option>
                       <option value={"20세~22세"}>20세~22세</option>
                       <option value={"23세~26세"}>23세~26세</option>
@@ -439,6 +456,7 @@ function BDSM(props) {
                         outline: "none",
                       }}
                     >
+                      <option value={null}>--선택--</option>
                       <option value={"이성애자"}>이성애자</option>
                       <option value={"동성애자"}>동성애자</option>
                       <option value={"양성애자"}>양성애자</option>
@@ -498,10 +516,9 @@ function BDSM(props) {
               </VStack>
             </form>
             <HStack justifyContent={"flex-end"}>
-              <IconButton
-                onClick={() => clip()}
-                icon={<BsShare size={"24px"} />}
-              />
+              <Button onClick={() => clip()} leftIcon={<BsShare />}>
+                링크 공유하기
+              </Button>
             </HStack>
           </Stack>
         </Container>
@@ -685,30 +702,40 @@ function BDSM(props) {
                   결과요약
                 </Text>
                 {sortedAnswer.map((item, index) => (
-                  <HStack key={index} justifyContent={"space-between"}>
-                    <HStack w={"60%"}>
-                      <Text color={item[1] > 0 ? "green" : "red"}>
-                        {item[1]}%
-                      </Text>
-                      <HStack spacing={0} w={"100%"}>
-                        <NegativeProgressBar
-                          value={item[1] < 0 ? item[1] : 0}
-                          maxValue={Math.abs(sortedAnswer[0][1])}
-                        />
-                        <PositiveProgressBar
-                          maxValue={Math.abs(sortedAnswer[0][1])}
-                          value={item[1] > 0 ? item[1] : 0}
-                        />
+                  <Stack spacing={0}>
+                    <HStack key={index} justifyContent={"space-between"}>
+                      <HStack w={"60%"}>
+                        <Text color={item[1] > 0 ? "green" : "red"}>
+                          {item[1]}%
+                        </Text>
+                        <HStack spacing={0} w={"100%"}>
+                          <NegativeProgressBar
+                            value={item[1] < 0 ? item[1] : 0}
+                            maxValue={Math.abs(sortedAnswer[0][1])}
+                          />
+                          <PositiveProgressBar
+                            maxValue={Math.abs(sortedAnswer[0][1])}
+                            value={item[1] > 0 ? item[1] : 0}
+                          />
+                        </HStack>
                       </HStack>
+                      <Text
+                        w={"40%"}
+                        textAlign={"center"}
+                        color={item[1] > 0 ? "green" : "red"}
+                      >
+                        {item[0]}
+                      </Text>
+                      <Button onClick={() => setSelectIndex(index)} size={"sm"}>
+                        해설
+                      </Button>
                     </HStack>
-                    <Text
-                      w={"40%"}
-                      textAlign={"center"}
-                      color={item[1] > 0 ? "green" : "red"}
-                    >
-                      {item[0]}
-                    </Text>
-                  </HStack>
+                    {selectIndex === index && (
+                      <Image
+                        src={require(`../../assets/type/${item[0]}.jpg`)}
+                      />
+                    )}
+                  </Stack>
                 ))}
                 <Button
                   colorScheme="red"
@@ -720,10 +747,12 @@ function BDSM(props) {
                 </Button>
               </Stack>
               <HStack justifyContent={"flex-end"}>
-                <IconButton
+                <Button
                   onClick={() => handleShareClick()}
-                  icon={<BsShare size={"24px"} />}
-                />
+                  leftIcon={<BsShare />}
+                >
+                  링크 공유하기
+                </Button>
               </HStack>
             </Stack>
             <Stack spacing={{ base: "10px", md: "20px" }}>
