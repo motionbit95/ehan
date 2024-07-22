@@ -75,8 +75,10 @@ function Payment(props) {
   };
 
   useEffect(() => {
+    console.log(shop_id);
     if (shop_id) {
       getShop(shop_id).then((res) => {
+        console.log(res);
         setShopData(res);
       });
     }
@@ -122,9 +124,7 @@ function Payment(props) {
               <FormControl isRequired>
                 <FormLabel>지점</FormLabel>
                 <Input
-                  defaultValue={
-                    shopData.shop_address + " " + shopData.shop_name
-                  }
+                  value={shopData?.shop_address + " " + shopData?.shop_name}
                   readOnly
                   placeholder="배달받을 지점의 주소를 입력하세요."
                   onChange={(e) =>

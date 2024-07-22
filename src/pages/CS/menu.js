@@ -173,6 +173,7 @@ function Menu(props) {
             />
           </Flex>
         </Flex>
+        <Image id="img" src={menu?.product_detail}></Image>
       </Stack>
 
       <Box h={"10vh"}>

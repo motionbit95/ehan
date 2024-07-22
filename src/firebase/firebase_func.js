@@ -464,9 +464,12 @@ export const postAdmin = async (e) => {
     [e.target[2].name]: e.target[2].value, // admin_password
     // [e.target[3].name]: e.target[3].value, // admin_password_confirm
     [e.target[4].name]: e.target[4].value, // shop_id
-    [e.target[5].name]: e.target[5].value, // permission
+    // [e.target[5].name]: e.target[5].value, // keyword
+    [e.target[6].name]: e.target[6].value, // permission
     createAt: new Date(),
   };
+
+  console.log(adminInfo);
 
   try {
     const docRef = await addDoc(collection(db, "ACCOUNT"), adminInfo);
@@ -516,6 +519,7 @@ export const changeAdminPassword = (oldPassword, newPassword, doc_id) => {
 
 // 상품 저장 함수
 export const postProduct = async (product) => {
+  console.log(product);
   const productInfo = {
     ...product,
     createAt: new Date(),

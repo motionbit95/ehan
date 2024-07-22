@@ -35,6 +35,7 @@ import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase_conf";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { deleteUser } from "firebase/auth";
+import SearchShop from "../../components/SearchShop";
 function AccountInfo({ permission, admin, shopList, ...props }) {
   const [changePassword, setChangePassword] = useState(false);
   const [name, setName] = useState(admin.name);
@@ -116,20 +117,21 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
             <FormControl>
               <FormLabel>관리 지점</FormLabel>
               {permission === "supervisor" ? (
-                <Select
-                  onChange={handleChangeShop}
-                  defaultValue={admin?.shop_id ? admin?.shop_id : ""}
-                  isDisabled={permission !== "supervisor"}
-                  name="shop_id"
-                >
-                  <option value="">관리 지점을 선택하세요.</option>
-                  {shopList?.map((shop) => (
-                    <option key={shop.doc_id} value={shop.doc_id}>
-                      {shop.shop_name}
-                    </option>
-                  ))}
-                </Select>
+                <SearchShop onSelect={handleChangeShop}></SearchShop>
               ) : (
+                // <Select
+                //   onChange={handleChangeShop}
+                //   defaultValue={admin?.shop_id ? admin?.shop_id : ""}
+                //   isDisabled={permission !== "supervisor"}
+                //   name="shop_id"
+                // >
+                //   <option value="">관리 지점을 선택하세요.</option>
+                //   {shopList?.map((shop) => (
+                //     <option key={shop.doc_id} value={shop.doc_id}>
+                //       {shop.shop_name}
+                //     </option>
+                //   ))}
+                // </Select>
                 <Input
                   disabled
                   defaultValue={
@@ -249,6 +251,7 @@ function Account(props) {
   const [adminList, setAdminList] = useState([]);
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [selectAdmin, setSelectAdmin] = useState(null);
+  const [shopId, setShopId] = useState(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -346,6 +349,9 @@ function Account(props) {
     window.location.reload();
   };
 
+  const [depth1, setDepth1] = useState("");
+  const [depth2, setDepth2] = useState("");
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -406,7 +412,11 @@ function Account(props) {
                     </FormControl>
                     <FormControl>
                       <FormLabel>관리 지점</FormLabel>
-                      <Select
+                      {/* <Input name="shop_id" type="text" value={shopId}></Input> */}
+                      <SearchShop
+                        onSelect={(value) => setShopId(value)}
+                      ></SearchShop>
+                      {/* <Select
                         name="shop_id"
                         defaultValue={admin.shop_id ? admin.shop_id : ""}
                       >
@@ -416,11 +426,11 @@ function Account(props) {
                             {shop.shop_name}
                           </option>
                         ))}
-                      </Select>
+                      </Select> */}
                     </FormControl>
                     <FormControl isRequired>
                       <FormLabel>권한 설정</FormLabel>
-                      <Select name="permission">
+                      <Select name="permission" defaultValue={admin.permission}>
                         <option value="advisor">서브 관리자</option>
                         <option value="supervisor">메인 관리자</option>
                       </Select>
@@ -459,11 +469,22 @@ function Account(props) {
                     </FormControl>
                     <FormControl isRequired>
                       <FormLabel>1차 카테고리</FormLabel>
-                      <RDepth1 />
+                      <RDepth1
+                        defaultValue={depth1}
+                        onChangeDepth1={(value) => {
+                          setDepth1(value);
+                        }}
+                      />
                     </FormControl>
                     <FormControl isRequired>
                       <FormLabel>2차 카테고리</FormLabel>
-                      <RDepth2 />
+                      <RDepth2
+                        depth1={depth1}
+                        defaultValue={depth2}
+                        onChangeDepth2={(value) => {
+                          setDepth2(value);
+                        }}
+                      />
                     </FormControl>
                     <FormControl>
                       <FormLabel>배너 이미지</FormLabel>
@@ -624,7 +645,10 @@ function Account(props) {
                       </FormControl>
                       <FormControl isRequired>
                         <FormLabel>권한 설정</FormLabel>
-                        <Select name="permission">
+                        <Select
+                          name="permission"
+                          defaultValue={admin?.permission}
+                        >
                           <option value="advisor">서브 관리자</option>
                           <option value="supervisor">메인 관리자</option>
                         </Select>
@@ -664,11 +688,22 @@ function Account(props) {
                       </FormControl>
                       <FormControl isRequired>
                         <FormLabel>1차 카테고리</FormLabel>
-                        <RDepth1 />
+                        <RDepth1
+                          defaultValue={depth1}
+                          onChangeDepth1={(value) => {
+                            setDepth1(value);
+                          }}
+                        />
                       </FormControl>
                       <FormControl isRequired>
                         <FormLabel>2차 카테고리</FormLabel>
-                        <RDepth2 />
+                        <RDepth2
+                          depth1={depth1}
+                          defaultValue={depth2}
+                          onChangeDepth2={(value) => {
+                            setDepth2(value);
+                          }}
+                        />
                       </FormControl>
                       <FormControl>
                         <FormLabel>배너 이미지</FormLabel>
