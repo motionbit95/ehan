@@ -154,8 +154,8 @@ function Result(props) {
             <Text>
               주문번호 : {data?.orderId ? data?.orderId : data?.order_id}
             </Text>
-            <Text>배송지 : {order?.order_address}</Text>
-            <Text>주문코드 : {order?.order_code}</Text>
+            <Text>지점 : {order?.order_address}</Text>
+            <Text>호실 : {order?.order_code}</Text>
             <Text>배송메세지 : {order?.order_message}</Text>
             <Text>연락처 : {order?.user_phone}</Text>
           </Stack>

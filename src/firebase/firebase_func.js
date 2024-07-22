@@ -583,6 +583,12 @@ export const getShopName = async (shop_id) => {
   return docSnap.data().shop_name;
 };
 
+export const getShop = async (shop_id) => {
+  const docRef = doc(db, "SHOP", shop_id);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data();
+};
+
 export const updateInventoryData = async (
   shop_id,
   product_id,

@@ -220,7 +220,7 @@ function Dashboard(props) {
               <ModalBody>
                 <Stack>
                   <Text fontWeight="bold" fontSize={"16px"}>
-                    배송지 주소 : {newOrder?.order_address}
+                    지점 주소 : {newOrder?.order_address}
                   </Text>
                   <Text fontWeight="bold" fontSize={"15px"}>
                     주문 상품 {newOrder?.pay_product.length}개 / 총{" "}

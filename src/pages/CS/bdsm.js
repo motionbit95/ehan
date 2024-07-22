@@ -124,7 +124,7 @@ function BDSM(props) {
   function selectAnswer(item, index) {
     let tempAnswer = answer;
     // console.log(item, index, item.score[index]);
-    if (index > 0) {
+    if (index >= 0) {
       tempAnswer[item.index] = item.score[index];
     } else {
       if (idx === 12) {

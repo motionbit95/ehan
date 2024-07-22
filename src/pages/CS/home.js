@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../components/RFooter";
-import { CopyIcon, SearchIcon } from "@chakra-ui/icons";
+import { CheckIcon, CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
 import Cert from "./cert";
 import MetaTag from "../../SEOMetaTag";
@@ -283,6 +283,19 @@ function Home(props) {
                   })
                 }
               />
+              <IconButton
+                isRounded={"full"}
+                bgColor={"white"}
+                w={"40px"}
+                h={"40px"}
+                borderRadius={"100%"}
+                size={"sm"}
+                icon={null}
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.reload();
+                }}
+              />
             </HStack>
           </Flex>
           <Flex
@@ -315,6 +328,20 @@ function Home(props) {
               </Text>
             </Flex>
           </Flex>
+          <Button
+            size={"lg"}
+            leftIcon={localStorage.getItem("adult") ? <CheckIcon /> : null}
+            colorScheme={localStorage.getItem("adult") ? "green" : "gray"}
+            onClick={() => {
+              if (!localStorage.getItem("adult")) {
+                onOpen();
+              }
+            }}
+          >
+            {!localStorage.getItem("adult")
+              ? "성인인증하고 모든 상품 보기"
+              : "성인인증 완료"}
+          </Button>
         </Stack>
         <Stack>
           <Stack
@@ -393,15 +420,19 @@ function Home(props) {
                               shop_id: shopInfo?.doc_id,
                               inventory_count: getInventoryCount(item.doc_id),
                             });
-
-                            onOpen();
-                            // navigate(`/menu`, {
-                            //   state: {
-                            //     data: item,
-                            //     shop_id: shopInfo?.doc_id,
-                            //     inventory_count: getInventoryCount(item.doc_id),
-                            //   },
-                            // });
+                            if (!localStorage.getItem("adult")) {
+                              onOpen();
+                            } else {
+                              navigate(`/menu`, {
+                                state: {
+                                  data: item,
+                                  shop_id: shopInfo?.doc_id,
+                                  inventory_count: getInventoryCount(
+                                    item.doc_id
+                                  ),
+                                },
+                              });
+                            }
                           }}
                           width={"100%"}
                           spacing={"20px"}

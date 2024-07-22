@@ -27,6 +27,13 @@ import {
   useRadio,
   Image,
 } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 function Cert(props) {
@@ -205,15 +212,27 @@ function Cert(props) {
                   <Checkbox size={"lg"} onChange={() => setToggle(!toggle)}>
                     [필수] 약관에 동의합니다.
                   </Checkbox>
-                  <Text opacity={0.6}>
-                    동의 거부 시 서비스 이용이 제한됩니다.
-                  </Text>
-                  <Button
-                    justifyContent={"space-between"}
-                    rightIcon={<ChevronRightIcon />}
-                  >
-                    개인정보 수집 및 이용동의
-                  </Button>
+                  <Accordion>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton>
+                          <Box as="span" flex="1" textAlign="left">
+                            개인정보 수집 및 이용동의
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <Text opacity={0.6}>
+                          동의 거부 시 서비스 이용이 제한됩니다.
+                        </Text>
+                        <Text opacity={0.6}>
+                          수집된 정보는 성인인증을 위한 수단으로만 사용되며, 그
+                          외 다른 목적으로 수집되지 않습니다.
+                        </Text>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
                 </Stack>
               </VStack>
             )}

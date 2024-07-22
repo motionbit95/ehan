@@ -173,7 +173,7 @@ function Order(props) {
                       <Th>결제내역</Th>
                       <Th>결제(환불)금액</Th>
                       <Th>결제영수증</Th>
-                      <Th>배송지</Th>
+                      <Th>지점</Th>
                       <Th>주문상태</Th>
                       <Th>결제취소</Th>
                       <Th>삭제</Th>
@@ -355,7 +355,7 @@ function Order(props) {
                     <Thead h={"40px"}>
                       <Tr>
                         <Th>주문상태</Th>
-                        <Th>결제내역/배송지</Th>
+                        <Th>결제내역/지점</Th>
                         <Th textAlign={"center"}>결제영수증</Th>
                       </Tr>
                     </Thead>

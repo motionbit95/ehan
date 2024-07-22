@@ -10,9 +10,13 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { postPayment } from "../../firebase/firebase_func";
+import {
+  getShop,
+  getShopName,
+  postPayment,
+} from "../../firebase/firebase_func";
 import { auth } from "../../firebase/firebase_conf";
 import { formatCurrency } from "./home";
 import { PG_CLIENT_ID, SERVER_URL } from "../../firebase/api";
@@ -30,6 +34,7 @@ function Payment(props) {
   });
 
   const shop_id = location.state?.shop_id;
+  const [shopData, setShopData] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -69,6 +74,14 @@ function Payment(props) {
     return Math.random().toString(16).substr(2, length);
   };
 
+  useEffect(() => {
+    if (shop_id) {
+      getShop(shop_id).then((res) => {
+        setShopData(res);
+      });
+    }
+  }, [shop_id]);
+
   return (
     <Stack
       position={"relative"}
@@ -107,9 +120,13 @@ function Payment(props) {
           <Stack overflow={"auto"}>
             <Stack padding={"2vh"} bgColor={"white"}>
               <FormControl isRequired>
-                <FormLabel>배송지</FormLabel>
+                <FormLabel>지점</FormLabel>
                 <Input
-                  placeholder="배달받을 주소를 입력하세요."
+                  defaultValue={
+                    shopData.shop_address + " " + shopData.shop_name
+                  }
+                  readOnly
+                  placeholder="배달받을 지점의 주소를 입력하세요."
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -119,9 +136,9 @@ function Payment(props) {
                 />
               </FormControl>
               <FormControl isRequired>
-                <FormLabel>주문 코드</FormLabel>
+                <FormLabel>호실</FormLabel>
                 <Input
-                  placeholder="매장에서 확인 가능한 주문 코드를 입력하세요."
+                  placeholder="숙박중이신 호실을 입력해주세요."
                   onChange={(e) =>
                     setFormData({ ...formData, order_code: e.target.value })
                   }
@@ -140,7 +157,14 @@ function Payment(props) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>연락처</FormLabel>
+                <FormLabel>
+                  <HStack>
+                    <Text>연락처</Text>
+                    <Text color={"gray.500"} fontSize={"xs"}>
+                      미기입시 배송 알림을 전송하지 않습니다.
+                    </Text>
+                  </HStack>
+                </FormLabel>
                 <Input
                   placeholder="알림받을 연락처를 입력해주세요."
                   onChange={(e) =>
