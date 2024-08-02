@@ -21,10 +21,12 @@ import SearchOrder from "./pages/CS/searchOrder";
 import BDSM from "./pages/CS/bdsm";
 import { HelmetProvider } from "react-helmet-async";
 import BdsmView from "./pages/CS/bdsmView";
+import Landing from "./Page/Home";
 
 function App() {
   // url 주소에 admin이 포함되어있으면 관리자 페이지입니다.
   const isAdmin = window.location.pathname.includes("admin");
+
   return (
     <GlobalStateProvider>
       <ChakraProvider>
@@ -34,7 +36,9 @@ function App() {
               p={0}
               w={"100%"}
               maxW={
-                isAdmin || window.location.pathname.includes("bdsm")
+                isAdmin ||
+                window.location.pathname.includes("bdsm") ||
+                window.location.pathname === "/"
                   ? "100%"
                   : "400px"
               }
@@ -43,7 +47,8 @@ function App() {
             >
               <BrowserRouter>
                 <Routes>
-                  <Route path="*" element={<Home />} />
+                  <Route path="/" element={<Landing />} />
+                  {/* <Route path="*" element={<Home />} /> */}
                   <Route path="/home/*" element={<Home />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/payment" element={<Payment />} />
