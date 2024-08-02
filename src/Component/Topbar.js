@@ -1,5 +1,6 @@
 import { Box, Container, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import React from "react";
+import { ChosunBg, ChosunGu } from "./Text";
 
 const Topbar = ({ scrollToSection, activeSection }) => {
   return (
@@ -13,45 +14,45 @@ const Topbar = ({ scrollToSection, activeSection }) => {
           p={{ base: 4, md: 8 }}
         >
           <Box>
-            <Text fontSize={{ base: "sm", md: "xl" }} fontWeight="bold">
+            <ChosunBg fontSize={{ base: "sm", md: "xl" }} fontWeight="bold">
               REDSWITCH
-            </Text>
+            </ChosunBg>
             {/* <Image /> */}
           </Box>
           <HStack
             fontSize={{ base: "10px", md: "16px" }}
-            spacing={{ base: 1, md: 4 }}
+            spacing={{ base: 2, md: 4 }}
           >
-            <Text
+            <ChosunGu
               fontWeight={activeSection === "main" ? "bold" : "normal"}
               onClick={() => scrollToSection("main")}
             >
               MAIN
-            </Text>
-            <Text
+            </ChosunGu>
+            <ChosunGu
               fontWeight={activeSection === "intro" ? "bold" : "normal"}
               onClick={() => scrollToSection("intro")}
             >
               INTRO
-            </Text>
-            <Text
+            </ChosunGu>
+            <ChosunGu
               fontWeight={activeSection === "service" ? "bold" : "normal"}
               onClick={() => scrollToSection("service")}
             >
               SERVICE
-            </Text>
-            <Text
+            </ChosunGu>
+            <ChosunGu
               fontWeight={activeSection === "customer" ? "bold" : "normal"}
               onClick={() => scrollToSection("customer")}
             >
               CUSTOMER
-            </Text>
-            <Text
+            </ChosunGu>
+            <ChosunGu
               fontWeight={activeSection === "contactUs" ? "bold" : "normal"}
               onClick={() => scrollToSection("contactUs")}
             >
               CONTACT US
-            </Text>
+            </ChosunGu>
           </HStack>
         </HStack>
       </Container>

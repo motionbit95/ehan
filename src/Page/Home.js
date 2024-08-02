@@ -113,7 +113,12 @@ const GOModal = ({ isOpen, onClose }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalCloseButton size={"lg"} color={"white"} />
-        <ModalBody alignContent={"center"} bgColor={"#0F0F0F"} color={"white"}>
+        <ModalBody
+          alignContent={"center"}
+          py={6}
+          bgColor={"#0F0F0F"}
+          color={"white"}
+        >
           <Stack spacing={3}>
             <Stack>
               <Text fontSize={"40px"} fontWeight={"900"}>
@@ -127,23 +132,23 @@ const GOModal = ({ isOpen, onClose }) => {
             <Text>※ 신청하는 가맹점 정보를 입력하세요.</Text>
             <Stack
               divider={<StackDivider borderColor={"#808080"} />}
-              color={"#808080"}
-              spacing={0}
+              color={"white"}
+              spacing={"1px"}
               borderBottom={"1px solid #808080"}
             >
               <Input
                 border={"none"}
                 placeholder="가맹점명"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
-                p={0}
+                color={"white"}
+                px={0}
                 focusBorderColor="#0F0F0F"
               />
               <Input
                 border={"none"}
                 placeholder="담당자 이름"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
+                color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
               />
@@ -151,7 +156,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 border={"none"}
                 placeholder="담당자 연락처"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
+                color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
               />
@@ -159,7 +164,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 border={"none"}
                 placeholder="담당자 이메일"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
+                color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
               />
@@ -167,7 +172,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 border={"none"}
                 placeholder="가맹점 주소"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
+                color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
               />
@@ -175,7 +180,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 border={"none"}
                 placeholder="객실 수"
                 _placeholder={{ color: "#808080" }}
-                color={"#808080"}
+                color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
               />
