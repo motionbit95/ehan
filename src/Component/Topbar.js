@@ -1,6 +1,7 @@
 import { Box, Container, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { ChosunBg, ChosunGu } from "./Text";
+import Logo from "../components/Logo";
 
 const Topbar = ({ scrollToSection, activeSection }) => {
   return (
@@ -13,12 +14,12 @@ const Topbar = ({ scrollToSection, activeSection }) => {
           justify={"space-between"}
           p={{ base: 4, md: 8 }}
         >
-          <Box>
+          <HStack>
+            <Logo />
             <ChosunBg fontSize={{ base: "sm", md: "xl" }} fontWeight="bold">
               REDSWITCH
             </ChosunBg>
-            {/* <Image /> */}
-          </Box>
+          </HStack>
           <HStack
             fontSize={{ base: "10px", md: "16px" }}
             spacing={{ base: 2, md: 4 }}

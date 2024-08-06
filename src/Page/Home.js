@@ -14,7 +14,7 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Topbar from "../Component/Topbar";
 import Main from "./Main";
 import Intro from "./Intro";
@@ -80,6 +80,60 @@ const Landing = () => {
     };
   }, []);
 
+  const sectionRefs = useRef([]);
+  const [currentSection, setCurrentSection] = useState(0);
+
+  const handleScrolls = (deltaY) => {
+    if (deltaY > 0 && currentSection < sectionRefs.current.length - 1) {
+      setCurrentSection((prev) => prev + 1);
+    } else if (deltaY < 0 && currentSection > 0) {
+      setCurrentSection((prev) => prev - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleWheel = (event) => {
+      event.preventDefault();
+      handleScrolls(event.deltaY);
+    };
+
+    const handleTouchStart = (event) => {
+      const startY = event.touches[0].clientY;
+      const handleTouchMove = (moveEvent) => {
+        const moveY = moveEvent.touches[0].clientY;
+        const deltaY = startY - moveY;
+        if (Math.abs(deltaY) > 50) {
+          handleScroll(deltaY);
+          document.removeEventListener("touchmove", handleTouchMove);
+        }
+      };
+
+      document.addEventListener("touchmove", handleTouchMove);
+
+      const handleTouchEnd = () => {
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
+
+      document.addEventListener("touchend", handleTouchEnd);
+    };
+
+    document.addEventListener("wheel", handleWheel, { passive: false });
+    document.addEventListener("touchstart", handleTouchStart);
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("touchstart", handleTouchStart);
+    };
+  }, [currentSection]);
+
+  useEffect(() => {
+    const sectionElement = sectionRefs.current[currentSection];
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentSection]);
+
   return (
     <Stack
       position={"relative"}
@@ -90,11 +144,11 @@ const Landing = () => {
       <Topbar scrollToSection={scrollToSection} activeSection={activeSection} />
       <Container px={0}>
         <Stack spacing={0} pt={"64px"}>
-          <Main />
-          <Intro />
-          <Service />
-          <Customer />
-          <ContactUs />
+          <Main ref={(el) => (sectionRefs.current[0] = el)} />
+          <Intro ref={(el) => (sectionRefs.current[1] = el)} />
+          <Service ref={(el) => (sectionRefs.current[2] = el)} />
+          <Customer ref={(el) => (sectionRefs.current[3] = el)} />
+          <ContactUs ref={(el) => (sectionRefs.current[4] = el)} />
         </Stack>
       </Container>
       <Footer handleopenModal={handleopenModal} />

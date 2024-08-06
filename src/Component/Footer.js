@@ -1,7 +1,16 @@
-import { Container, Flex, HStack, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  HStack,
+  IconButton,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { ChosunGu } from "./Text";
 import { HiUpload } from "react-icons/hi";
+import { FaInstagram } from "react-icons/fa";
 
 const Footer = ({ handleopenModal }) => {
   return (
@@ -18,6 +27,13 @@ const Footer = ({ handleopenModal }) => {
         <HiUpload />
         <ChosunGu>가맹점 신청하기</ChosunGu>
       </HStack>
+      <IconButton
+        position={"fixed"}
+        right={4}
+        bottom={16}
+        variant={"ghost"}
+        icon={<FaInstagram />}
+      />
     </Flex>
   );
 };
