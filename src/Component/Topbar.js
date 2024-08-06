@@ -15,7 +15,9 @@ const Topbar = ({ scrollToSection, activeSection }) => {
           p={{ base: 4, md: 8 }}
         >
           <HStack>
-            <Logo />
+            <Box w={{ base: "24px", md: "36px" }}>
+              <Image src={require("../Asset/redswitchLogo.png")} />
+            </Box>
             <ChosunBg fontSize={{ base: "sm", md: "xl" }} fontWeight="bold">
               REDSWITCH
             </ChosunBg>
