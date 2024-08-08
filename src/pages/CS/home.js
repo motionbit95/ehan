@@ -27,7 +27,6 @@ import { Footer } from "../../components/RFooter";
 import { CheckIcon, CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
 import Cert from "./cert";
-import MetaTag from "../../SEOMetaTag";
 import { ChosunGu } from "../../Component/Text";
 
 export function formatCurrency(number, currencyCode = "KRW") {
@@ -244,7 +243,6 @@ function Home(props) {
       height={"auto"}
       bgColor={"white"}
     >
-      <MetaTag title={"레드스위치"} />
       <Skeleton isLoaded={shopInfo !== null}>
         <Stack
           id="banner"

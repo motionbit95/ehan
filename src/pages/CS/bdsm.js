@@ -341,15 +341,7 @@ function BDSM(props) {
     handleShopInfo();
   }, []); // useEffect가 최초 한 번만 실행되도록 빈 배열을 전달합니다.
 
-  const [ogTitle, setOgTitle] = useState("나의 성적 취향은? BDSM 테스트");
-  const [ogDescription, setOgDescription] = useState("BDSM 테스트 바로가기");
-  const [ogImage, setOgImage] = useState(`%PUBLIC_URL%/type/bdsm.jpg`);
-
   const handleShareClick = () => {
-    setOgTitle("나의 성적 취향은? BDSM 테스트");
-    setOgDescription(yourBDSM);
-    setOgImage(`%PUBLIC_URL%/type/${yourBDSM}.jpg`);
-
     const urlToShare = window.location.href;
     navigator.clipboard
       .writeText(urlToShare)
@@ -363,14 +355,6 @@ function BDSM(props) {
 
   return (
     <Stack justifyContent={"space-between"} minH={window.innerHeight}>
-      <Helmet>
-        <title>{ogTitle}</title>
-        <meta name="description" content={ogDescription} />
-        <meta property="og:url" content="https://redswitch.kr/bdsm" />
-        <meta property="og:title" content={ogTitle} />
-        <meta property="og:description" content={ogDescription} />
-        <meta property="og:image" content={ogImage} />
-      </Helmet>
       {/* <HStack p={{ base: "1vh", md: "2vh" }} id="header">
         <Logo />
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
