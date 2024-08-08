@@ -20,6 +20,7 @@ import {
   Tabs,
   Text,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../components/RFooter";
@@ -27,6 +28,7 @@ import { CheckIcon, CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
 import Cert from "./cert";
 import MetaTag from "../../SEOMetaTag";
+import { ChosunGu } from "../../Component/Text";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -114,6 +116,37 @@ function Home(props) {
     // 푸시알림 관련
     // navigator.serviceWorker.addEventListener("message", handleMessage);
     // getMessageToken();
+  }, []);
+
+  useEffect(() => {
+    // 로컬 스토리지에 저장된 타임스탬프가 있는지 확인합니다
+    if (!localStorage.getItem("cert_timestamp")) {
+      // 인증된 시간이 없다면 리셋
+      localStorage.removeItem("adult");
+    } else {
+      // 인증이 만료되었는지 검토
+      console.log(localStorage.getItem("cert_timestamp"));
+
+      // 현재 시간의 타임스탬프를 가져옵니다
+      const currentTimestamp = new Date().getTime();
+
+      // 2시간을 밀리초로 변환합니다 (2시간 = 2 * 60 * 60 * 1000 밀리초)
+      const twoHoursInMilliseconds = 2 * 60 * 60 * 1000;
+
+      // 저장된 타임스탬프와 현재 시간의 차이를 계산합니다
+      const timeDifference =
+        currentTimestamp - parseInt(localStorage.getItem("cert_timestamp"));
+
+      // 2시간 이상 차이가 나는지 확인합니다
+      if (timeDifference >= twoHoursInMilliseconds) {
+        // 2시간이 경과되었으므로 타임스탬프 및 인증 플래그를 초기화합니다
+        localStorage.removeItem("cert_timestamp");
+        localStorage.removeItem("adult");
+        console.log("2시간 이상 경과되었습니다. 타임스탬프를 초기화합니다.");
+      } else {
+        console.log("2시간 미만 경과되었습니다.");
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -226,6 +259,19 @@ function Home(props) {
           padding={"2vh 3vh"}
           bgColor={"#eee"}
         >
+          <Circle
+            id="circle"
+            bgColor={"white"}
+            w={"100px"}
+            h={"100px"}
+            position={"absolute"}
+            top={"50px"}
+            left={"30px"}
+            border={"5px solid #8c8c8c"}
+            zIndex={"99"}
+            cursor={"pointer"}
+            onClick={() => navigate(`/bdsm`)}
+          ></Circle>
           <Flex
             id="header"
             height={"48px"}
@@ -328,21 +374,41 @@ function Home(props) {
               </Text>
             </Flex>
           </Flex>
-          <Button
-            size={"lg"}
-            leftIcon={localStorage.getItem("adult") ? <CheckIcon /> : null}
-            colorScheme={localStorage.getItem("adult") ? "green" : "gray"}
-            onClick={() => {
-              if (!localStorage.getItem("adult")) {
-                onOpen();
-              }
-            }}
-          >
-            {!localStorage.getItem("adult")
-              ? "성인인증하고 모든 상품 보기"
-              : "성인인증 완료"}
-          </Button>
         </Stack>
+        <Box bgColor={"#d9d9d9"} padding={"1vh 2vh"}>
+          <VStack>
+            <Button
+              mt={"-3vh"}
+              size={"sm"}
+              leftIcon={
+                localStorage.getItem("adult") ? (
+                  <CheckIcon />
+                ) : (
+                  <Image
+                    w={"24px"}
+                    h={"24px"}
+                    bgColor={"white"}
+                    src={require("../../assets/logo192.png")}
+                  />
+                )
+              }
+              colorScheme={localStorage.getItem("adult") ? "green" : "gray"}
+              onClick={() => {
+                if (!localStorage.getItem("adult")) {
+                  onOpen();
+                }
+              }}
+            >
+              {!localStorage.getItem("adult")
+                ? "초간단 성인인증하기"
+                : "성인인증 완료"}
+            </Button>
+            <ChosunGu fontSize={"sm"}>
+              성인인증을 하시면 전체 상세 이미지를 보실 수 있으며, 성인인증 관련
+              개인정보 및 기록은 보관되지 않습니다.
+            </ChosunGu>
+          </VStack>
+        </Box>
         <Stack>
           <Stack
             className="scroll_view"
@@ -487,16 +553,24 @@ function Home(props) {
                                   justifyContent={"center"}
                                   alignItems={"center"}
                                 >
-                                  <Circle
-                                    bgColor={"white"}
-                                    w="80%"
-                                    h="80%"
-                                    border={"8px solid red"}
-                                  >
-                                    <Text fontSize={"xl"} fontWeight={"bold"}>
-                                      19
-                                    </Text>
-                                  </Circle>
+                                  {item.illust ? (
+                                    <Image
+                                      src={item.illust}
+                                      alt=""
+                                      borderRadius={"lg"}
+                                    />
+                                  ) : (
+                                    <Circle
+                                      bgColor={"white"}
+                                      w="80%"
+                                      h="80%"
+                                      border={"8px solid red"}
+                                    >
+                                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                                        19
+                                      </Text>
+                                    </Circle>
+                                  )}
                                 </Box>
                               )}
                             </Box>
@@ -535,12 +609,17 @@ function Home(props) {
             onOpen={onOpen}
             onClose={onClose}
             onVerified={() => {
-              console.log("onVerified");
+              localStorage.setItem("adult", "true");
+              localStorage.setItem("cert_timestamp", new Date().getTime());
+              onClose();
+              if (!product) {
+                window.location.reload();
+                return;
+              }
+
               navigate(`/menu`, {
                 state: product,
               });
-              localStorage.setItem("adult", "true");
-              onClose();
             }}
             // onClose={() => {
             //   navigate(`/menu`, {

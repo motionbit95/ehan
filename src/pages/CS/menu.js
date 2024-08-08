@@ -22,7 +22,7 @@ function Menu(props) {
   const [count, setCount] = useState(1);
 
   useEffect(() => {
-    setMenu(location.state.data);
+    setMenu(location.state?.data);
   }, []);
 
   const addCart = async () => {

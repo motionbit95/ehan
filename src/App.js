@@ -36,14 +36,12 @@ function App() {
               p={0}
               w={"100%"}
               maxW={
-                isAdmin ||
-                window.location.pathname.includes("bdsm") ||
-                window.location.pathname === "/"
+                isAdmin || window.location.pathname === "/"
                   ? "100%"
-                  : "400px"
+                  : "container.sm"
               }
               bgColor={"#f1f1f1"}
-              minH={window.innerHeight}
+              minH={"100vh"}
             >
               <BrowserRouter>
                 <Routes>

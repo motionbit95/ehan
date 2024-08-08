@@ -68,7 +68,7 @@ function ProductInfo({ shopList, permission, ...props }) {
           product_origin_price: 0,
           product_price: 0,
           product_category: categories[0],
-          product_detail: "",
+          illiust: "",
           shop_id: props.shop_id,
         }
   );
@@ -80,7 +80,8 @@ function ProductInfo({ shopList, permission, ...props }) {
   const handleChange = (event) => {
     if (
       event.target.name === "product_images" ||
-      event.target.name === "product_detail"
+      event.target.name === "product_detail" ||
+      event.target.name === "illiust"
     ) {
       debug("파일을 선택했습니다. ", event.target.files[0].name);
       // 03.06 - 이미지는 하나만 선택하도록 변경
@@ -136,6 +137,11 @@ function ProductInfo({ shopList, permission, ...props }) {
     props.product?.product_detail ? props.product?.product_detail : null
   );
 
+  const illustRef = useRef();
+  const [illustImage, setIllustmage] = useState(
+    props.product?.illiust ? props.product?.illiust : null
+  );
+
   const handleFileChange = (event) => {
     // 파일 정보를 product 정보에 저장합니다.
     handleChange(event);
@@ -176,6 +182,26 @@ function ProductInfo({ shopList, permission, ...props }) {
     }
   };
 
+  const handleIllustFileChange = (event) => {
+    // 파일 정보를 product 정보에 저장합니다.
+    handleChange(event);
+
+    if (event.target.files[0]) {
+      // 파일을 Blob으로 변환하여 미리보기 이미지 설정
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const fileAsBlob = new Blob([reader.result], {
+          type: event.target.files[0].type,
+        }); // Blob로 저장
+        setIllustmage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+    } else {
+      // 파일이 선택되지 않은 경우 미리보기 이미지 초기화
+      setIllustmage(null);
+    }
+  };
+
   function onImageUpload(ref) {
     if (ref) {
       ref.current.click();
@@ -207,6 +233,20 @@ function ProductInfo({ shopList, permission, ...props }) {
     props.onChangeProduct({
       ...product,
       product_detail: "",
+    });
+  }
+
+  function onDeleteIllustImage() {
+    // 파일 ui 에 담긴 정보도 지워줘야한다.
+    illustRef.current.value = "";
+    setIllustmage(null);
+    setProduct({
+      ...product,
+      illiust: "",
+    });
+    props.onChangeProduct({
+      ...product,
+      illiust: "",
     });
   }
 
@@ -369,6 +409,60 @@ function ProductInfo({ shopList, permission, ...props }) {
                 >
                   <IconButton
                     onClick={onDeleteDetailImage}
+                    icon={<AddIcon />}
+                    variant={"ghost"}
+                    size={"lg"}
+                    _hover={{ bg: "none" }}
+                  />
+                </Flex>
+              )}
+            </InputGroup>
+          </Stack>
+        </FormControl>
+        <FormControl>
+          <FormLabel>상품 일러스트 등록</FormLabel>
+          <Stack direction={"column-reverse"}>
+            <InputGroup w={"100px"}>
+              <Input
+                type="file"
+                name="illust"
+                onChange={handleIllustFileChange}
+                display={"none"}
+                ref={illustRef}
+                accept="image/*"
+              />
+              {illustImage ? (
+                <>
+                  <Image
+                    onClick={() => onImageUpload(illustRef)}
+                    src={illustImage}
+                    w={"100px"}
+                    h={"100px"}
+                    objectFit={"cover"}
+                  />
+                  <IconButton
+                    size={"xs"}
+                    position={"absolute"}
+                    top={0}
+                    right={0}
+                    onClick={onDeleteIllustImage}
+                    icon={<CloseIcon />}
+                    // variant={"ghost"}
+                  />
+                </>
+              ) : (
+                <Flex
+                  border={"1px solid #d9d9d9"}
+                  borderRadius={"10px"}
+                  onClick={() => onImageUpload(illustRef)}
+                  src={illustImage}
+                  w={"100px"}
+                  h={"100px"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <IconButton
+                    onClick={onDeleteIllustImage}
                     icon={<AddIcon />}
                     variant={"ghost"}
                     size={"lg"}

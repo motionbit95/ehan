@@ -6,6 +6,7 @@ import {
   AccordionPanel,
   Box,
   Button,
+  Center,
   Checkbox,
   Container,
   Flex,
@@ -35,6 +36,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../../firebase/firebase_func";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { ChosunGu } from "../../Component/Text";
 
 function BDSM(props) {
   const navigate = useNavigate();
@@ -369,10 +371,13 @@ function BDSM(props) {
         <meta property="og:description" content={ogDescription} />
         <meta property="og:image" content={ogImage} />
       </Helmet>
-      <HStack p={{ base: "1vh", md: "2vh" }} id="header">
+      {/* <HStack p={{ base: "1vh", md: "2vh" }} id="header">
         <Logo />
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
-      </HStack>
+      </HStack> */}
+      <Center bgColor={"#8c8c8c"} aspectRatio={"5/1"}>
+        <ChosunGu>배너광고(예정)</ChosunGu>
+      </Center>
       {step === 0 && (
         <Container maxW="container.sm">
           <Stack>
@@ -516,8 +521,19 @@ function BDSM(props) {
               </VStack>
             </form>
             <HStack justifyContent={"flex-end"}>
-              <Button onClick={() => clip()} leftIcon={<BsShare />}>
-                링크 공유하기
+              <Button
+                size={"xs"}
+                colorScheme="red"
+                onClick={() => (window.location.href = "/")}
+              >
+                레드스위치 바로가기
+              </Button>
+              <Button size={"xs"} colorScheme="green">
+                {" "}
+                내 주변 설치지점 찾기
+              </Button>
+              <Button size={"xs"} onClick={() => clip()} leftIcon={<BsShare />}>
+                테스트링크 공유하기
               </Button>
             </HStack>
           </Stack>
@@ -747,12 +763,26 @@ function BDSM(props) {
                 </Button>
               </Stack>
               <HStack justifyContent={"flex-end"}>
-                <Button
-                  onClick={() => handleShareClick()}
-                  leftIcon={<BsShare />}
-                >
-                  링크 공유하기
-                </Button>
+                <HStack justifyContent={"flex-end"}>
+                  <Button
+                    size={"xs"}
+                    colorScheme="red"
+                    onClick={() => (window.location.href = "/")}
+                  >
+                    레드스위치 바로가기
+                  </Button>
+                  <Button size={"xs"} colorScheme="green">
+                    {" "}
+                    내 주변 설치지점 찾기
+                  </Button>
+                  <Button
+                    size={"xs"}
+                    onClick={() => handleShareClick()}
+                    leftIcon={<BsShare />}
+                  >
+                    테스트링크 공유하기
+                  </Button>
+                </HStack>
               </HStack>
             </Stack>
             <Stack spacing={{ base: "10px", md: "20px" }}>
@@ -772,16 +802,9 @@ function BDSM(props) {
         </Container>
       )}
 
-      <Flex
-        alignItems={"flex-start"}
-        justifyContent={"flex-end"}
-        w={"100%"}
-        h={{ base: "24vw", md: "16vw" }}
-        bgColor={"#d9d9d9"}
-        p={{ base: "10px", md: "20px" }}
-      >
-        {/* <Tag colorScheme="red">AD</Tag> */}
-      </Flex>
+      <Center bgColor={"#8c8c8c"} aspectRatio={"5/1"}>
+        <ChosunGu>배너광고(예정)</ChosunGu>
+      </Center>
     </Stack>
   );
 }

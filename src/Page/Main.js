@@ -19,7 +19,7 @@ const Main = () => {
           <ChosunBg color={"red"}>RED</ChosunBg>
           <ChosunBg>SWITCH</ChosunBg>
         </Stack>
-        <Text>가장 필요한 순간, 간편 주문, 즉시 도착</Text>
+        <ChosunGu>가장 필요한 순간, 간편 주문, 즉시 도착</ChosunGu>
       </Stack>
       <Stack>
         <Image src={require("../Asset/Resize/001.png")} />
