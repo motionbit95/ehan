@@ -32,11 +32,12 @@ import { BsShare } from "react-icons/bs";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import { data } from "../../bdms";
-import { doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../../firebase/firebase_func";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ChosunGu } from "../../Component/Text";
+import { db } from "../../firebase/firebase_conf";
 
 function BDSM(props) {
   const navigate = useNavigate();
@@ -73,6 +74,34 @@ function BDSM(props) {
   const [answer, setAnswer] = useState([]);
   const [sortedAnswer, setSortedAnswer] = useState([]);
   const [selectIndex, setSelectIndex] = useState(-1);
+
+  const [result, setResult] = useState({
+    gender: "",
+    age: "",
+    type: "",
+    마스터: 0,
+    슬레이브: 0,
+    헌터: 0,
+    프레이: 0,
+    브랫테이머: 0,
+    브랫: 0,
+    오너: 0,
+    펫: 0,
+    대디: 0,
+    리틀: 0,
+    사디스트: 0,
+    마조히스트: 0,
+    스팽커: 0,
+    스팽키: 0,
+    디그레이더: 0,
+    디그레이디: 0,
+    리거: 0,
+    로프버니: 0,
+    도미넌트: 0,
+    서브미시브: 0,
+    스위치: 0,
+    바닐라: 0,
+  });
 
   const submitInfo = (e) => {
     if (e.target[0].value === "--선택--") {
@@ -289,6 +318,17 @@ function BDSM(props) {
       });
       console.log(temp);
 
+      setResult({ ...result, ...temp });
+
+      // 저장
+      addDoc(collection(db, "BDSM"), { ...result, ...temp })
+        .then(() => {
+          console.log("success");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       let maxKey = "";
       let maxValue = -Infinity;
       let sortScore = [];
@@ -377,7 +417,9 @@ function BDSM(props) {
                       name="gender"
                       colorScheme="red"
                       bgColor={"white"}
-                      onChange={(e) => console.log(e.target.value)}
+                      onChange={(e) =>
+                        setResult({ ...result, gender: e.target.value })
+                      }
                       _focus={{
                         boxShadow: "none",
                         borderColor: "red.400",
@@ -404,7 +446,9 @@ function BDSM(props) {
                       name="age"
                       colorScheme="red"
                       bgColor={"white"}
-                      onChange={(e) => console.log(e.target.value)}
+                      onChange={(e) =>
+                        setResult({ ...result, age: e.target.value })
+                      }
                       _focus={{
                         boxShadow: "none",
                         borderColor: "red.400",
@@ -436,7 +480,9 @@ function BDSM(props) {
                       name="type"
                       colorScheme="red"
                       bgColor={"white"}
-                      onChange={(e) => console.log(e.target.value)}
+                      onChange={(e) =>
+                        setResult({ ...result, type: e.target.value })
+                      }
                       _focus={{
                         boxShadow: "none",
                         borderColor: "red.400",

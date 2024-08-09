@@ -43,6 +43,7 @@ import {
 } from "firebase/firestore";
 import { formatCurrency } from "../CS/home";
 import $ from "jquery";
+import BDSM from "./bdsm";
 
 function Dashboard(props) {
   const navigate = useNavigate();
@@ -128,6 +129,8 @@ function Dashboard(props) {
         return <Inventory shopList={shopList} />;
       case "product":
         return <Product shopList={shopList} />;
+      case "bdsm":
+        return <BDSM />;
       default:
         return <Home />;
     }

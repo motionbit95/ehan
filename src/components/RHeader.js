@@ -19,6 +19,7 @@ import {
 import {
   AttachmentIcon,
   CheckCircleIcon,
+  CopyIcon,
   DownloadIcon,
   DragHandleIcon,
   EditIcon,
@@ -153,15 +154,26 @@ const RHeader = (props) => {
                 손익분석
               </Button>
             </Stack>
-            <Button
-              leftIcon={<CheckCircleIcon />}
-              onClick={() => handleClick("account")}
-              variant={currentMenu === "account" ? "solid" : "ghost"}
-              justifyContent={"flex-start"}
-              w={"100%"}
-            >
-              관리자 설정
-            </Button>
+            <Stack>
+              <Button
+                leftIcon={<CopyIcon />}
+                onClick={() => handleClick("bdsm")}
+                variant={currentMenu === "bdsm" ? "solid" : "ghost"}
+                justifyContent={"flex-start"}
+                w={"100%"}
+              >
+                BDSM 결과
+              </Button>
+              <Button
+                leftIcon={<CheckCircleIcon />}
+                onClick={() => handleClick("account")}
+                variant={currentMenu === "account" ? "solid" : "ghost"}
+                justifyContent={"flex-start"}
+                w={"100%"}
+              >
+                관리자 설정
+              </Button>
+            </Stack>
           </Stack>
         </Box>
       ) : (
@@ -224,14 +236,24 @@ const RHeader = (props) => {
                         손익분석
                       </Button>
                     </Stack>
-                    <Button
-                      onClick={() => handleClick("account")}
-                      variant={currentMenu === "account" ? "solid" : "ghost"}
-                      justifyContent={"flex-start"}
-                      w={"100%"}
-                    >
-                      관리자 설정
-                    </Button>
+                    <Stack>
+                      <Button
+                        onClick={() => handleClick("bdsm")}
+                        variant={currentMenu === "bdsm" ? "solid" : "ghost"}
+                        justifyContent={"flex-start"}
+                        w={"100%"}
+                      >
+                        BDSM 결과
+                      </Button>
+                      <Button
+                        onClick={() => handleClick("account")}
+                        variant={currentMenu === "account" ? "solid" : "ghost"}
+                        justifyContent={"flex-start"}
+                        w={"100%"}
+                      >
+                        관리자 설정
+                      </Button>
+                    </Stack>
                   </Stack>
                 </VStack>
               </DrawerBody>
