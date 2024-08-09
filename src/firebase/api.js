@@ -67,6 +67,25 @@ export const timestampToDate = (timestamp) => {
   }
 };
 
+export const timestampToTime = (timestamp) => {
+  try {
+    // Convert Firestore timestamp to milliseconds
+    const milliseconds =
+      timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+
+    // Convert milliseconds to a Date object
+    const date = milliseconds ? new Date(milliseconds) : new Date();
+
+    // Format the date as a string (adjust format as needed)
+    const dateString = date.toLocaleTimeString(); // Example format, adjust as needed
+    return dateString;
+
+    // console.log(dateString); // Output the formatted date string
+  } catch (error) {
+    return null;
+  }
+};
+
 export function getCurrentTime() {
   return new Date();
 }

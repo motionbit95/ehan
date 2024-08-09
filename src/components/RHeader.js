@@ -142,7 +142,7 @@ const RHeader = (props) => {
                 justifyContent={"flex-start"}
                 w={"100%"}
               >
-                재고관리
+                지점관리
               </Button>
               <Button
                 leftIcon={<SearchIcon />}
@@ -151,7 +151,7 @@ const RHeader = (props) => {
                 justifyContent={"flex-start"}
                 w={"100%"}
               >
-                손익분석
+                매출분석
               </Button>
             </Stack>
             <Stack>
@@ -225,7 +225,7 @@ const RHeader = (props) => {
                         justifyContent={"flex-start"}
                         w={"100%"}
                       >
-                        재고관리
+                        지점관리
                       </Button>
                       <Button
                         onClick={() => handleClick("income")}
@@ -233,7 +233,7 @@ const RHeader = (props) => {
                         justifyContent={"flex-start"}
                         w={"100%"}
                       >
-                        손익분석
+                        매출분석
                       </Button>
                     </Stack>
                     <Stack>

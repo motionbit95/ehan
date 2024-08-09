@@ -826,9 +826,11 @@ export const getFilteredInventory = async (value) => {
     );
 
     if (
-      (value.shop_id === doc.data().shop_id || !value.shop_id) &&
-      createAt >= new Date(value.dateRange[0]) &&
-      createAt <= new Date(value.dateRange[1])
+      value.shop_id === doc.data().shop_id ||
+      !value.shop_id
+      // &&
+      // createAt >= new Date(value.dateRange[0]) &&
+      // createAt <= new Date(value.dateRange[1])
     ) {
       filteredProduct.push({ ...doc.data(), doc_id: doc.id });
     }

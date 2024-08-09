@@ -19,11 +19,19 @@ import {
   HStack,
   Switch,
   Image,
+  Card,
+  CardHeader,
+  useDisclosure,
+  CardBody,
+  Input,
+  Box,
+  Divider,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
   createInventoryData,
   getFilteredInventory,
+  getShopName,
   getTotalProducts,
   readInventoryData,
 } from "../../firebase/firebase_func";
@@ -32,8 +40,28 @@ import PopupBase from "../../modals/PopupBase";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
 import RFilter from "../../components/RFilter";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
+import { ChosunBg } from "../../Component/Text";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+import ToastEditor from "../../components/ToastEditor";
+import { timestampToDate, timestampToTime } from "../../firebase/api";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -42,6 +70,7 @@ function ProductColumn({ productList, product_id }) {
   useEffect(() => {
     searchProduct();
   }, [product_id]);
+
   function searchProduct() {
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
     for (let item of productList) {
@@ -97,14 +126,29 @@ function Inventory({ ...props }) {
   // 재고리스트
   const [inventoryList, setInventoryList] = useState([]);
 
+  const [postList, setPostList] = useState([]);
+
+  useEffect(() => {
+    getDocs(collection(db, "POST")).then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({ ...doc.data(), doc_id: doc.id });
+        setPostList(list);
+      });
+    });
+  }, []);
+
   useEffect(() => {
     readInventory();
     setTotalProduct();
   }, [selectedShop]);
 
-  if (!inventoryList) {
-    readInventory();
-  }
+  useEffect(() => {
+    if (admin?.shop_id) {
+      console.log(admin?.shop_id);
+      readInventory();
+    }
+  }, [admin?.shop_id]);
 
   function searchShopName(id) {
     // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
@@ -206,9 +250,23 @@ function Inventory({ ...props }) {
   ]);
 
   async function getFilteredData(value) {
+    console.log(value);
     let newList = await getFilteredInventory(value);
+    console.log(newList);
     setInventoryList(newList);
   }
+
+  useEffect(() => {
+    console.log(totalProducts);
+  }, [totalProducts]);
+
+  const deletePost = async (id) => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      await deleteDoc(doc(db, "POST", id)).then(() => {
+        window.location.reload();
+      });
+    }
+  };
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -287,6 +345,66 @@ function Inventory({ ...props }) {
           />
           <Stack p={"20px"} w={"100%"} h={"100%"}>
             {/* <Text>관리자 설정</Text> */}
+            <Stack>
+              <Card>
+                <CardHeader>
+                  <HStack justifyContent={"space-between"}>
+                    <Text fontWeight={"bold"}>게시판</Text>
+                    <BasicUsage />
+                  </HStack>
+                </CardHeader>
+                <CardBody>
+                  <TableContainer
+                    border={"1px solid #d9d9d9"}
+                    bgColor={"white"}
+                    borderRadius={"10px"}
+                    p={"10px"}
+                    mb={"20px"}
+                  >
+                    <Table variant="simple" size={"sm"}>
+                      <Thead h={"40px"}>
+                        <Tr>
+                          <Th>No</Th>
+                          <Th>제목</Th>
+                          <Th>작성자</Th>
+                          <Th>관리지점</Th>
+                          <Th>답변</Th>
+                          {admin?.permission === "supervisor" && <Th>삭제</Th>}
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {postList?.map((item, index) => (
+                          <Tr key={index}>
+                            <Td>{index + 1}</Td>
+                            <Td>{item.title}</Td>
+                            <Td>{item.created_by.admin_name}</Td>
+                            <Td>{item.created_by.shop_id}</Td>
+                            <Td>
+                              <AnswerUsage post={item} />
+                            </Td>
+                            {admin?.permission === "supervisor" && (
+                              <Td w={"30px"}>
+                                <Button
+                                  size={"sm"}
+                                  onClick={() => {
+                                    deletePost(item.doc_id);
+                                  }}
+                                  colorScheme="red"
+                                  variant={"outline"}
+                                  leftIcon={<DeleteIcon />}
+                                >
+                                  삭제
+                                </Button>
+                              </Td>
+                            )}
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </CardBody>
+              </Card>
+            </Stack>
             <Stack>
               <TableContainer
                 border={"1px solid #d9d9d9"}
@@ -563,3 +681,159 @@ function Inventory({ ...props }) {
 }
 
 export default Inventory;
+
+function BasicUsage() {
+  const { admin } = useGlobalState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [content, setContent] = useState(" ");
+  const [title, setTitle] = useState(" ");
+
+  const addPost = () => {
+    console.log(admin);
+    console.log(content);
+
+    addDoc(collection(db, "POST"), {
+      content: content,
+      created_at: serverTimestamp(),
+      created_by: admin,
+      updated_at: serverTimestamp(),
+      updated_by: admin,
+      title: title,
+    }).then(() => {
+      console.log("added");
+      setContent(" ");
+      window.location.reload();
+      onClose();
+    });
+  };
+  return (
+    <>
+      <Button colorScheme="red" onClick={onOpen}>
+        글작성
+      </Button>
+
+      <Modal size={"2xl"} isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>게시판 글작성</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack>
+              <Input
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="제목을 입력하세요."
+              ></Input>
+              <ToastEditor
+                onChange={(html) => {
+                  setContent(html);
+                }}
+                initialValue=" "
+              />
+            </Stack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              닫기
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                addPost();
+              }}
+            >
+              등록
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
+
+function AnswerUsage({ post }) {
+  const { admin } = useGlobalState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [reply, setReply] = useState(" ");
+
+  const updateReply = () => {
+    updateDoc(doc(db, "POST", post.doc_id), {
+      reply: reply,
+      updated_at: serverTimestamp(),
+      updated_by: admin,
+    }).then(() => {
+      console.log("updated");
+      setReply(" ");
+      window.location.reload();
+      onClose();
+    });
+  };
+
+  return (
+    <>
+      <Button
+        size={"sm"}
+        onClick={onOpen}
+        colorScheme={post.reply ? "green" : "gray"}
+      >
+        {post.reply ? "답변완료" : "답변작성"}
+      </Button>
+
+      <Modal size={"2xl"} isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {post.reply ? "답변이 완료된 게시글입니다." : "게시판 답변 작성"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack>
+              <Text fontSize={"xl"} fontWeight={"bold"}>
+                {post.title}
+              </Text>
+              <Text>
+                {timestampToDate(post.created_at)}{" "}
+                {timestampToTime(post.created_at)}
+              </Text>
+              <Box p={4} borderRadius={"lg"}>
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              </Box>
+              <Divider />
+              {post.reply ? (
+                <Box p={4} borderRadius={"lg"} bg={"gray.100"}>
+                  <Stack>
+                    <Text fontWeight={"bold"} fontSize={"lg"}>
+                      답변
+                    </Text>
+                    <div dangerouslySetInnerHTML={{ __html: post.reply }} />
+                  </Stack>
+                </Box>
+              ) : (
+                <ToastEditor
+                  onChange={(html) => {
+                    setReply(html);
+                  }}
+                  initialValue=" "
+                />
+              )}
+            </Stack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              닫기
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                updateReply();
+              }}
+            >
+              등록
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
