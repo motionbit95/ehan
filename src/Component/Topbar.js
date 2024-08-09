@@ -1,11 +1,10 @@
 import { Box, Container, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { ChosunBg, ChosunGu } from "./Text";
-import Logo from "../components/Logo";
 
-const Topbar = ({ scrollToSection, activeSection }) => {
+const Topbar = ({ handleNavClick }) => {
   return (
-    <Flex position={"fixed"} bgColor={"black"} w={"100%"}>
+    <Flex position={"fixed"} bgColor={"black"} w={"100%"} zIndex={111}>
       <Container px={0}>
         <HStack
           w={"100%"}
@@ -26,33 +25,30 @@ const Topbar = ({ scrollToSection, activeSection }) => {
             fontSize={{ base: "10px", md: "16px" }}
             spacing={{ base: 2, md: 4 }}
           >
-            <ChosunGu
-              fontWeight={activeSection === "main" ? "bold" : "normal"}
-              onClick={() => scrollToSection("main")}
-            >
+            <ChosunGu onClick={() => handleNavClick("main")} cursor={"pointer"}>
               MAIN
             </ChosunGu>
             <ChosunGu
-              fontWeight={activeSection === "intro" ? "bold" : "normal"}
-              onClick={() => scrollToSection("intro")}
+              onClick={() => handleNavClick("intro1")}
+              cursor={"pointer"}
             >
               INTRO
             </ChosunGu>
             <ChosunGu
-              fontWeight={activeSection === "service" ? "bold" : "normal"}
-              onClick={() => scrollToSection("service")}
+              onClick={() => handleNavClick("service1")}
+              cursor={"pointer"}
             >
               SERVICE
             </ChosunGu>
             <ChosunGu
-              fontWeight={activeSection === "customer" ? "bold" : "normal"}
-              onClick={() => scrollToSection("customer")}
+              onClick={() => handleNavClick("customer")}
+              cursor={"pointer"}
             >
               CUSTOMER
             </ChosunGu>
             <ChosunGu
-              fontWeight={activeSection === "contactUs" ? "bold" : "normal"}
-              onClick={() => scrollToSection("contactUs")}
+              onClick={() => handleNavClick("contact")}
+              cursor={"pointer"}
             >
               CONTACT US
             </ChosunGu>

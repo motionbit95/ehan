@@ -14,17 +14,17 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Topbar from "../Component/Topbar";
 import Main from "./Main";
-import Intro from "./Intro";
-import Service from "./Service";
+import Intro, { Intro1, Intro2, Intro3 } from "./Intro";
+import Service, { Service1, Service2, Service3, Service4 } from "./Service";
 import Customer from "./Customer";
 import ContactUs from "./ContactUs";
 import Footer from "../Component/Footer";
+import { Section, SectionsContainer } from "react-fullpage";
 
 const Landing = () => {
-  const [activeSection, setActiveSection] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleopenModal = () => {
@@ -34,105 +34,29 @@ const Landing = () => {
     setIsModalOpen(false);
   };
 
-  const scrollToSection = (sectionId) => {
-    const sectionElement = document.getElementById(sectionId);
-    const offset = 64; // 탑바의 높이
-
-    if (sectionElement) {
-      const elementPosition = sectionElement.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-
-      setActiveSection(sectionId);
-    }
-  };
-
-  const handleScroll = () => {
-    const sections = ["main", "intro", "service", "customer", "contactUs"];
-    const offset = 64; // 탑바의 높이
-    const scrollPosition = window.pageYOffset + offset;
-
-    for (const section of sections) {
-      const sectionElement = document.getElementById(section);
-      if (sectionElement) {
-        const sectionTop = sectionElement.offsetTop;
-        const sectionHeight = sectionElement.offsetHeight;
-
-        if (
-          scrollPosition >= sectionTop &&
-          scrollPosition < sectionTop + sectionHeight
-        ) {
-          setActiveSection(section);
-          break;
-        }
-      }
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const sectionRefs = useRef([]);
-  const [currentSection, setCurrentSection] = useState(0);
-
-  const handleScrolls = (deltaY) => {
-    if (deltaY > 0 && currentSection < sectionRefs.current.length - 1) {
-      setCurrentSection((prev) => prev + 1);
-    } else if (deltaY < 0 && currentSection > 0) {
-      setCurrentSection((prev) => prev - 1);
-    }
-  };
-
-  useEffect(() => {
-    const handleWheel = (event) => {
-      event.preventDefault();
-      handleScrolls(event.deltaY);
-    };
-
-    const handleTouchStart = (event) => {
-      const startY = event.touches[0].clientY;
-      const handleTouchMove = (moveEvent) => {
-        const moveY = moveEvent.touches[0].clientY;
-        const deltaY = startY - moveY;
-        if (Math.abs(deltaY) > 50) {
-          handleScroll(deltaY);
-          document.removeEventListener("touchmove", handleTouchMove);
-        }
-      };
-
-      document.addEventListener("touchmove", handleTouchMove);
-
-      const handleTouchEnd = () => {
-        document.removeEventListener("touchmove", handleTouchMove);
-        document.removeEventListener("touchend", handleTouchEnd);
-      };
-
-      document.addEventListener("touchend", handleTouchEnd);
-    };
-
-    document.addEventListener("wheel", handleWheel, { passive: false });
-    document.addEventListener("touchstart", handleTouchStart);
-
-    return () => {
-      document.removeEventListener("wheel", handleWheel);
-      document.removeEventListener("touchstart", handleTouchStart);
-    };
-  }, [currentSection]);
-
-  useEffect(() => {
-    const sectionElement = sectionRefs.current[currentSection];
+  const handleNavClick = (id) => {
+    const sectionElement = document.getElementById(id);
     if (sectionElement) {
       sectionElement.scrollIntoView({ behavior: "smooth" });
     }
-  }, [currentSection]);
+  };
+
+  let options = {
+    anchors: [
+      "main",
+      "intro1",
+      "intro2",
+      "intro3",
+      "service1",
+      "service2",
+      "service3",
+      "service4",
+      "customer",
+      "contact",
+    ],
+    navigation: false,
+    fitToSection: true,
+  };
 
   return (
     <Stack
@@ -141,15 +65,40 @@ const Landing = () => {
       bgColor={"black"}
       color={"white"}
     >
-      <Topbar scrollToSection={scrollToSection} activeSection={activeSection} />
-      <Container px={0}>
-        <Stack spacing={0} pt={"64px"}>
-          <Main ref={(el) => (sectionRefs.current[0] = el)} />
-          <Intro ref={(el) => (sectionRefs.current[1] = el)} />
-          <Service ref={(el) => (sectionRefs.current[2] = el)} />
-          <Customer ref={(el) => (sectionRefs.current[3] = el)} />
-          <ContactUs ref={(el) => (sectionRefs.current[4] = el)} />
-        </Stack>
+      <Topbar handleNavClick={handleNavClick} />
+      <Container maxW={"md"}>
+        <SectionsContainer {...options}>
+          <Section id="main">
+            <Main />
+          </Section>
+          <Section id="intro1">
+            <Intro1 />
+          </Section>
+          <Section id="intro2">
+            <Intro2 />
+          </Section>
+          <Section id="intro3">
+            <Intro3 />
+          </Section>
+          <Section id="service1">
+            <Service1 />
+          </Section>
+          <Section id="service2">
+            <Service2 />
+          </Section>
+          <Section id="service3">
+            <Service3 />
+          </Section>
+          <Section id="service4">
+            <Service4 />
+          </Section>
+          <Section id="customer">
+            <Customer />
+          </Section>
+          <Section id="contact">
+            <ContactUs />
+          </Section>
+        </SectionsContainer>
       </Container>
       <Footer handleopenModal={handleopenModal} />
       {isModalOpen && (

@@ -5,12 +5,10 @@ import { ChosunBg, ChosunGu } from "../Component/Text";
 const Main = () => {
   return (
     <Stack
-      id="main"
-      minH="calc(100vh - 64px)"
+      // id="main"
       align={"center"}
       justify={"center"}
-      py={6}
-      mb={8}
+      h={"100vh"}
       spacing={6}
     >
       <Stack>

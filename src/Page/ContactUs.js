@@ -4,7 +4,12 @@ import { ChosunBg, ChosunGu } from "../Component/Text";
 
 const ContactUs = () => {
   return (
-    <Stack id="contactUs" h="100vh" justify={"center"} spacing={8}>
+    <Stack
+      // id="contactUs"
+      h={"100vh"}
+      justify={"center"}
+      spacing={8}
+    >
       <Stack px={4}>
         <ChosunBg fontSize={"36px"}>레드스위치</ChosunBg>
         <Image src={require("../Asset/Resize/009.png")} />

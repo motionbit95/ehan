@@ -6,8 +6,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 const Customer = () => {
   return (
     <Stack
-      id="customer"
-      minH="calc(100vh - 64px)"
+      // id="customer"
+      h={"100vh"}
       justify={"center"}
       spacing={12}
     >

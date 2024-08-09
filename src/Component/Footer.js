@@ -15,7 +15,7 @@ import { FaInstagram } from "react-icons/fa";
 
 const Footer = ({ handleopenModal }) => {
   return (
-    <Flex position={"fixed"} bottom={"0"} w={"100%"}>
+    <Flex position={"fixed"} bottom={"0"} w={"100%"} zIndex={111}>
       <HStack
         w={"100%"}
         py={3}
