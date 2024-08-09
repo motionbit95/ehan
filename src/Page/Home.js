@@ -35,6 +35,7 @@ const Landing = () => {
   };
 
   const handleNavClick = (id) => {
+    console.log(id);
     const sectionElement = document.getElementById(id);
     if (sectionElement) {
       sectionElement.scrollIntoView({ behavior: "smooth" });
@@ -43,16 +44,26 @@ const Landing = () => {
 
   let options = {
     anchors: [
-      "main",
-      "intro1",
-      "intro2",
-      "intro3",
-      "service1",
-      "service2",
-      "service3",
-      "service4",
-      "customer",
-      "contact",
+      // "main",
+      // "intro1",
+      // "intro2",
+      // "intro3",
+      // "service1",
+      // "service2",
+      // "service3",
+      // "service4",
+      // "customer",
+      // "contact",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
     ],
     navigation: false,
     fitToSection: true,
