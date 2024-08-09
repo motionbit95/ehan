@@ -41,6 +41,8 @@ function Payment(props) {
     // 필수 정보가 입력되었을 때
     console.log("모든 정보가 입력되었습니다!!");
     // callNicePayPopup();
+
+    window.location.replace(process.env.REACT_APP_SERVER_URL + `/payment`);
   };
 
   const callNicePayPopup = async () => {
@@ -178,7 +180,7 @@ function Payment(props) {
               <FormControl isRequired>
                 <FormLabel>결제수단</FormLabel>
                 <HStack gap={"1vh"}>
-                  <Button
+                  {/* <Button
                     colorScheme={payMethod === "kakaopay" ? "red" : "gray"}
                     onClick={() => setPayMethod("kakaopay")}
                   >
@@ -189,7 +191,7 @@ function Payment(props) {
                     onClick={() => setPayMethod("naverpayCard")}
                   >
                     네이버페이
-                  </Button>
+                  </Button> */}
                   <Button
                     colorScheme={payMethod === "card" ? "red" : "gray"}
                     onClick={() => setPayMethod("card")}
