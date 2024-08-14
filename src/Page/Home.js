@@ -34,14 +34,6 @@ const Landing = () => {
     setIsModalOpen(false);
   };
 
-  const handleNavClick = (id) => {
-    console.log(id);
-    const sectionElement = document.getElementById(id);
-    if (sectionElement) {
-      sectionElement.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   let options = {
     anchors: [
       // "main",
@@ -76,12 +68,13 @@ const Landing = () => {
       bgColor={"black"}
       color={"white"}
     >
-      <Topbar handleNavClick={handleNavClick} />
-      <Container maxW={"md"}>
+      <Topbar />
+      <Container maxW={{ base: "full", md: "md" }}>
         <SectionsContainer {...options}>
           <Section id="main">
             <Main />
           </Section>
+          {/* <Stack spacing={0} id="intro"> */}
           <Section id="intro1">
             <Intro1 />
           </Section>
@@ -91,6 +84,8 @@ const Landing = () => {
           <Section id="intro3">
             <Intro3 />
           </Section>
+          {/* </Stack> */}
+          {/* <Stack spacing={0} id="service"> */}
           <Section id="service1">
             <Service1 />
           </Section>
@@ -103,6 +98,7 @@ const Landing = () => {
           <Section id="service4">
             <Service4 />
           </Section>
+          {/* </Stack> */}
           <Section id="customer">
             <Customer />
           </Section>

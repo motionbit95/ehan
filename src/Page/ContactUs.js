@@ -1,8 +1,28 @@
-import { HStack, Image, Stack, Text } from "@chakra-ui/react";
-import React from "react";
+import {
+  HStack,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 import { ChosunBg, ChosunGu } from "../Component/Text";
 
 const ContactUs = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("terms");
+
+  const handleopenModal = (type) => {
+    setModalType(type);
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Stack
       // id="contactUs"
@@ -47,15 +67,45 @@ const ContactUs = () => {
         </Stack>
       </Stack>
       <HStack spacing={4} color={"#808080"} justify={"center"}>
-        <ChosunGu textDecoration={"underline"} cursor={"pointer"}>
+        <ChosunGu
+          textDecoration={"underline"}
+          cursor={"pointer"}
+          onClick={() => handleopenModal("terms")}
+        >
           이용약관
         </ChosunGu>
-        <ChosunGu textDecoration={"underline"} cursor={"pointer"}>
+        <ChosunGu
+          textDecoration={"underline"}
+          cursor={"pointer"}
+          onClick={() => handleopenModal("privacy")}
+        >
           개인정보처리방침
         </ChosunGu>
       </HStack>
+      {isModalOpen && (
+        <Terms
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          istype={modalType}
+        />
+      )}
     </Stack>
   );
 };
 
 export default ContactUs;
+
+const Terms = ({ isOpen, onClose, istype }) => {
+  return (
+    <Modal size={{ base: "full", md: "2xl" }} isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalCloseButton size={"lg"} color={"white"} />
+        <ModalBody py={6} bgColor={"#0F0F0F"} color={"white"}>
+          {istype === "terms" && <Text>이용약관</Text>}
+          {istype === "privacy" && <Text>개인정보처리방침</Text>}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};

@@ -1,11 +1,26 @@
 import { Box, Container, Flex, HStack, Image, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChosunBg, ChosunGu } from "./Text";
 
-const Topbar = ({ handleNavClick }) => {
+const Topbar = () => {
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash);
+    };
+
+    // 해시 변경을 감지하는 이벤트 리스너 등록
+    window.addEventListener("hashchange", handleHashChange);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 해제
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
   return (
     <Flex position={"fixed"} bgColor={"black"} w={"100%"} zIndex={111}>
-      <Container px={0}>
+      <Container px={0} maxW={{ base: "100%", md: "xl" }}>
         <HStack
           w={"100%"}
           h={{ base: "64px", md: "64px" }}
@@ -14,50 +29,68 @@ const Topbar = ({ handleNavClick }) => {
           p={{ base: 4, md: 8 }}
         >
           <HStack>
-            <Box w={{ base: "24px", md: "36px" }}>
+            <Box w={{ base: "20px", md: "28px" }}>
               <Image src={require("../Asset/redswitchLogo.png")} />
             </Box>
-            <ChosunBg fontSize={{ base: "sm", md: "xl" }} fontWeight="bold">
+            <ChosunBg fontSize={{ base: "sm", md: "lg" }} fontWeight="bold">
               REDSWITCH
             </ChosunBg>
           </HStack>
           <HStack
-            fontSize={{ base: "10px", md: "16px" }}
-            spacing={{ base: 2, md: 4 }}
+            fontSize={{ base: "11px", md: "sm" }}
+            spacing={{ base: 1, md: 2 }}
           >
             <ChosunGu
-              fontSize="xs"
-              onClick={() => handleNavClick("main")}
+              as={"a"}
+              href={"#1"}
               cursor={"pointer"}
+              fontWeight={currentHash === "#1" ? "bold" : "normal"}
             >
               MAIN
             </ChosunGu>
             <ChosunGu
-              onClick={() => handleNavClick("intro1")}
+              as={"a"}
+              href={"#2"}
               cursor={"pointer"}
-              fontSize="xs"
+              fontWeight={
+                currentHash === "#2" ||
+                currentHash === "#3" ||
+                currentHash === "#4"
+                  ? "bold"
+                  : "normal"
+              }
             >
               INTRO
             </ChosunGu>
             <ChosunGu
-              onClick={() => handleNavClick("service1")}
+              as={"a"}
+              href={"#5"}
               cursor={"pointer"}
-              fontSize="xs"
+              fontWeight={
+                currentHash === "#5" ||
+                currentHash === "#6" ||
+                currentHash === "#7" ||
+                currentHash === "#8"
+                  ? "bold"
+                  : "normal"
+              }
             >
               SERVICE
             </ChosunGu>
             <ChosunGu
-              onClick={() => handleNavClick("customer")}
+              as={"a"}
+              href={"#9"}
               cursor={"pointer"}
-              fontSize="xs"
+              fontWeight={currentHash === "#9" ? "bold" : "normal"}
             >
               CUSTOMER
             </ChosunGu>
             <ChosunGu
-              onClick={() => handleNavClick("contact")}
+              as={"a"}
+              href={"#10"}
               cursor={"pointer"}
-              fontSize="xs"
               whiteSpace={"nowrap"}
+              fontWeight={currentHash === "#10" ? "bold" : "normal"}
             >
               CONTACT US
             </ChosunGu>

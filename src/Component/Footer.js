@@ -36,6 +36,9 @@ const Footer = ({ handleopenModal }) => {
         bgGradient="linear(to-r, #833ab4, #fd1d1d, #fcb045)"
         p={1}
         cursor={"pointer"}
+        // onClick={() =>
+        //   window.open("https://www.instagram.com/redswitch.official/")
+        // }
       >
         <IconButton
           icon={<FaInstagram size="24px" color="white" />}
