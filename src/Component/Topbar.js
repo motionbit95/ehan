@@ -26,7 +26,7 @@ const Topbar = ({ handleNavClick }) => {
             spacing={{ base: 2, md: 4 }}
           >
             <ChosunGu
-              fontSize="sm"
+              fontSize="xs"
               onClick={() => handleNavClick("main")}
               cursor={"pointer"}
             >
@@ -35,28 +35,28 @@ const Topbar = ({ handleNavClick }) => {
             <ChosunGu
               onClick={() => handleNavClick("intro1")}
               cursor={"pointer"}
-              fontSize="sm"
+              fontSize="xs"
             >
               INTRO
             </ChosunGu>
             <ChosunGu
               onClick={() => handleNavClick("service1")}
               cursor={"pointer"}
-              fontSize="sm"
+              fontSize="xs"
             >
               SERVICE
             </ChosunGu>
             <ChosunGu
               onClick={() => handleNavClick("customer")}
               cursor={"pointer"}
-              fontSize="sm"
+              fontSize="xs"
             >
               CUSTOMER
             </ChosunGu>
             <ChosunGu
               onClick={() => handleNavClick("contact")}
               cursor={"pointer"}
-              fontSize="sm"
+              fontSize="xs"
               whiteSpace={"nowrap"}
             >
               CONTACT US

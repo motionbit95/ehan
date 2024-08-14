@@ -26,6 +26,10 @@ import {
   Input,
   Box,
   Divider,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -46,6 +50,9 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -61,7 +68,11 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import ToastEditor from "../../components/ToastEditor";
-import { timestampToDate, timestampToTime } from "../../firebase/api";
+import {
+  compareTimestampWithCurrentTime,
+  timestampToDate,
+  timestampToTime,
+} from "../../firebase/api";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -127,6 +138,25 @@ function Inventory({ ...props }) {
   const [inventoryList, setInventoryList] = useState([]);
 
   const [postList, setPostList] = useState([]);
+  const [inventoryAlarm, setInventoryAlarm] = useState([]);
+
+  const updateAlarm = () => {
+    const q = query(
+      collection(db, "INVENTORY_ALARM"),
+      orderBy("created_at", "desc")
+    );
+    getDocs(q).then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({ ...doc.data(), doc_id: doc.id });
+        setInventoryAlarm(list);
+      });
+    });
+  };
+
+  useEffect(() => {
+    updateAlarm();
+  }, []);
 
   useEffect(() => {
     getDocs(collection(db, "POST")).then((querySnapshot) => {
@@ -204,6 +234,22 @@ function Inventory({ ...props }) {
         await updateDoc(doc(db, "INVENTORY", element.doc_id), element);
       });
     }
+
+    // 재고 변동 내역 저장
+    await addDoc(collection(db, "INVENTORY_ALARM"), {
+      created_at: serverTimestamp(),
+      created_by: admin,
+      updated_at: serverTimestamp(),
+      updated_by: admin,
+      shop_id: admin?.shop_id,
+      content:
+        admin?.permission === "supervisor"
+          ? "관리자가 재고를 변경하였습니다."
+          : (await getShopName(admin?.shop_id)) + "의 재고가 변경되었습니다.",
+    }).then(() => {
+      console.log("success");
+      updateAlarm();
+    });
   };
 
   const deleteInventory = async (id) => {
@@ -402,6 +448,38 @@ function Inventory({ ...props }) {
                       </Tbody>
                     </Table>
                   </TableContainer>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardHeader fontWeight={"bold"}>재고 타임라인</CardHeader>
+                <CardBody>
+                  <Stack w={"100%"} overflow={"auto"}>
+                    {inventoryAlarm.map(
+                      (item, index) =>
+                        index < 5 && (
+                          <Alert key={index} borderRadius={"10px"}>
+                            <HStack
+                              w={"100%"}
+                              justifyContent={"space-between"}
+                              alignItems={"flex-start"}
+                            >
+                              <HStack>
+                                <AlertIcon />
+                                <Stack spacing={"1px"}>
+                                  <AlertTitle>{item.content}</AlertTitle>
+                                  <AlertDescription></AlertDescription>
+                                </Stack>
+                              </HStack>
+                              <Text fontSize={"sm"}>
+                                {compareTimestampWithCurrentTime(
+                                  item.created_at
+                                )}
+                              </Text>
+                            </HStack>
+                          </Alert>
+                        )
+                    )}
+                  </Stack>
                 </CardBody>
               </Card>
             </Stack>

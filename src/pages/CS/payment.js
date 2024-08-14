@@ -12,11 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  getShop,
-  getShopName,
-  postPayment,
-} from "../../firebase/firebase_func";
+import { getShop, postPayment } from "../../firebase/firebase_func";
 import { auth } from "../../firebase/firebase_conf";
 import { formatCurrency } from "./home";
 import { PG_CLIENT_ID, SERVER_URL } from "../../firebase/api";

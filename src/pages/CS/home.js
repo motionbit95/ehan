@@ -327,7 +327,7 @@ function Home(props) {
                   })
                 }
               />
-              <IconButton
+              {/* <IconButton
                 isRounded={"full"}
                 bgColor={"white"}
                 w={"40px"}
@@ -339,7 +339,7 @@ function Home(props) {
                   localStorage.clear();
                   window.location.reload();
                 }}
-              />
+              /> */}
             </HStack>
           </Flex>
           <Flex
