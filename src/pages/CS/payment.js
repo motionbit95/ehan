@@ -36,35 +36,32 @@ function Payment(props) {
     event.preventDefault();
     // 필수 정보가 입력되었을 때
     console.log("모든 정보가 입력되었습니다!!");
-    // callNicePayPopup();
-
-    window.location.replace(process.env.REACT_APP_SERVER_URL + `/payment`);
+    callPayPopup();
   };
 
-  const callNicePayPopup = async () => {
+  const callPayPopup = async () => {
     // PAYMENT DATA를 저장합니다.
     const order_id = random();
-    console.log(location.state.productList);
-    await postPayment({
+    const searchParams = new URLSearchParams([
+      ["order_id", order_id],
+      ["amount", location.state.totalCost],
+    ]);
+    postPayment({
       ...formData,
       shop_id: shop_id,
       uid: auth.currentUser.uid,
       order_id: order_id,
       pay_product: location.state.productList,
-    });
-
-    AUTHNICE.requestPay({
-      clientId: PG_CLIENT_ID,
-      method: payMethod,
-      orderId: order_id,
       amount: location.state.totalCost,
-      goodsName: "나이스페이-상품",
-      returnUrl: SERVER_URL + "/serverAuth",
-      vbankHolder: "레드스위치",
-      fnError: function (result) {
-        alert(result.errorMsg + "");
-      },
-    });
+    })
+      .then((res) => {
+        window.location.replace(
+          `http://localhost:8081/payment?${searchParams.toString()}`
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   //Test orderId 생성
@@ -194,12 +191,12 @@ function Payment(props) {
                   >
                     신용카드
                   </Button>
-                  <Button
+                  {/* <Button
                     colorScheme={payMethod === "vbank" ? "red" : "gray"}
                     onClick={() => setPayMethod("vbank")}
                   >
                     무통장입금
-                  </Button>
+                  </Button> */}
                 </HStack>
               </FormControl>
             </Stack>

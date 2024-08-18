@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getPayment,
+  getShopName,
   postPayment,
   readInventoryData,
   updateInventoryData,
@@ -27,6 +28,7 @@ function Result(props) {
   const data = JSON.parse(payresult.substring(1).replace("data=", ""));
   const [order, setOrder] = useState({});
   const [inventoryList, setInventoryList] = useState([]);
+  const [shopName, setShopName] = useState("");
   useEffect(() => {
     console.log(data);
     // 주문번호로 문서를 찾은 다음 결제 정보 업데이트
@@ -53,8 +55,12 @@ function Result(props) {
   const getOrder = async () => {
     let orderId = data.orderId ? data.orderId : data.order_id;
     const order = await getPayment(orderId);
-    console.log(order.pay_product);
+    // console.log(order.pay_product);
     setOrder(order);
+
+    console.log(orderId);
+
+    setShopName(await getShopName(order.shop_id));
 
     // 이미 order 정보가 들어있는 경우 아래의 과정을 생략합니다. (새로고침등의 이벤트에서 Data가 저장되는 것을 방지)
     if (order.pay_state) return;
@@ -66,14 +72,20 @@ function Result(props) {
     await postPayment({
       ...order,
       pay_date: data.paidAt,
-      pay_price: data.amount,
-      pay_id: data.tid,
-      pay_method: data.payMethod,
       vbank: data.vbank,
       pay_state: data.resultCode,
-      pay_result: data.resultMsg,
-      receipt_url: data.receiptUrl,
       createAt: new Date(), // 현재 시간
+    });
+
+    console.log(order);
+
+    console.log("order", {
+      type: "order",
+      shop_id: order.shop_id,
+      createAt: new Date(),
+      order_id: order.ordNo,
+      alarm_code: "I001",
+      alarm_title: `${order.ordNo} 주문이 접수되었습니다.`,
     });
 
     // 알림을 발생시킵니다.
@@ -146,20 +158,17 @@ function Result(props) {
           </Stack>
           <Stack fontSize={"md"} gap={"0"}>
             <Text>
-              주문일시 :{" "}
-              {data?.ediDate
-                ? data?.ediDate.split("T")[0]
-                : data?.pay_date.split("T")[0]}
+              주문일시 : {data?.paidAt.slice(0, 4)}.{data?.paidAt.slice(4, 6)}.
+              {data?.paidAt.slice(6, 8)} {data?.paidAt.slice(8, 10)}:
+              {data?.paidAt.slice(10, 12)}
             </Text>
-            <Text>
-              주문번호 : {data?.orderId ? data?.orderId : data?.order_id}
-            </Text>
-            <Text>지점 : {order?.order_address}</Text>
+            <Text>주문번호 : {order?.order_id}</Text>
+            <Text>지점 : {shopName}</Text>
             <Text>호실 : {order?.order_code}</Text>
             <Text>배송메세지 : {order?.order_message}</Text>
             <Text>연락처 : {order?.user_phone}</Text>
           </Stack>
-          <Box>
+          {/* <Box>
             <Button
               border={"1px solid #e53e3e"}
               bgColor={"white"}
@@ -171,7 +180,7 @@ function Result(props) {
             >
               결제 영수증 보기
             </Button>
-          </Box>
+          </Box> */}
         </Stack>
         <Stack
           width={"100%"}
@@ -202,9 +211,7 @@ function Result(props) {
             fontSize={"md"}
           >
             <Text>총 주문금액</Text>
-            <Text>
-              {formatCurrency(data?.amount ? data?.amount : data?.pay_price)}원
-            </Text>
+            <Text>{formatCurrency(order?.amount)}원</Text>
           </HStack>
           <Box borderBottom={"1px solid gray"} />
           <HStack
@@ -214,29 +221,12 @@ function Result(props) {
             width={"100%"}
           >
             <Text>총 결제금액</Text>
-            <Text>
-              {formatCurrency(data?.amount ? data?.amount : data?.pay_price)}원
-            </Text>
+            <Text>{formatCurrency(order?.amount)}원</Text>
           </HStack>
           <HStack justify={"space-between"}>
             <Text fontSize={"md"}>결제방법</Text>
             <Stack textAlign={"right"}>
-              {data?.payMethod === "card" || data?.pay_method === "card" ? (
-                <Stack>
-                  <Text fontSize={"large"}>카드</Text>
-                  {/* <div>{data.vbank.vbankName}</div> */}
-                </Stack>
-              ) : data?.payMethod === "vbank" ||
-                data?.pay_method === "vbank" ? (
-                <Stack gap={"0"}>
-                  <Text fontSize={"md"}>무통장입금</Text>
-                  <Text fontSize={"sm"} color={"gray"}>
-                    {data?.vbank?.vbankName ? data?.vbank?.vbankName : ""}
-                  </Text>
-                </Stack>
-              ) : (
-                <Text>전체</Text>
-              )}
+              <Text>신용카드</Text>
             </Stack>
           </HStack>
         </Stack>

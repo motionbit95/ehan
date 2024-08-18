@@ -269,7 +269,10 @@ function Home(props) {
             zIndex={"99"}
             cursor={"pointer"}
             onClick={() => navigate(`/bdsm`)}
-          ></Circle>
+            overflow={"hidden"}
+          >
+            <Image src={require("../../assets/bdsm.png")}></Image>
+          </Circle>
           <Flex
             id="header"
             height={"48px"}
@@ -531,6 +534,7 @@ function Home(props) {
                                   display={"flex"}
                                   justifyContent={"center"}
                                   alignItems={"center"}
+                                  zIndex={999}
                                 >
                                   <Text color={"white"}>품절</Text>
                                 </Box>
@@ -558,16 +562,28 @@ function Home(props) {
                                       borderRadius={"lg"}
                                     />
                                   ) : (
-                                    <Circle
-                                      bgColor={"white"}
-                                      w="80%"
-                                      h="80%"
-                                      border={"8px solid red"}
-                                    >
-                                      <Text fontSize={"xl"} fontWeight={"bold"}>
-                                        19
-                                      </Text>
-                                    </Circle>
+                                    <Image
+                                      objectFit={"cover"}
+                                      // bgColor={"#d9d9d9"}
+                                      width={"100px"}
+                                      height={"100px"}
+                                      borderRadius={"10px"}
+                                      alt=""
+                                      src={item.product_images?.[0].replaceAll(
+                                        "http://",
+                                        "https://"
+                                      )}
+                                    />
+                                    // <Circle
+                                    //   bgColor={"white"}
+                                    //   w="80%"
+                                    //   h="80%"
+                                    //   border={"8px solid red"}
+                                    // >
+                                    //   <Text fontSize={"xl"} fontWeight={"bold"}>
+                                    //     19
+                                    //   </Text>
+                                    // </Circle>
                                   )}
                                 </Box>
                               )}

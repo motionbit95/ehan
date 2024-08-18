@@ -19,6 +19,10 @@ import {
   Card,
   CardBody,
   ButtonGroup,
+  CardHeader,
+  Button,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../GlobalState";
@@ -36,12 +40,66 @@ import { isNumber, timestampToDate } from "../../firebase/api";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
 
+function getFirstAndLastDay(year, month) {
+  // 월은 0부터 시작하므로 입력된 월에서 1을 뺍니다.
+  const firstDay = new Date(year, month - 1, 1);
+
+  // 다음 달의 첫 번째 날에서 하루를 빼면 이번 달의 마지막 날이 됩니다.
+  const lastDay = new Date(year, month, 0);
+
+  // 오늘 날짜
+  const today = new Date();
+
+  // 오늘이 이번 달인지 확인
+  if (today.getFullYear() === year && today.getMonth() + 1 === month) {
+    // 만약 오늘이 이번 달 마지막 날 이전이면 오늘 날짜를 마지막 날로 설정
+    if (today < lastDay) {
+      lastDay.setTime(today.getTime());
+    }
+  }
+
+  // 저번 달의 첫째 날과 마지막 날을 계산
+  const prevMonth = month - 1;
+  const prevYear = prevMonth === 0 ? year - 1 : year;
+  const prevMonthAdjusted = prevMonth === 0 ? 12 : prevMonth;
+
+  const prevFirstDay = new Date(prevYear, prevMonthAdjusted - 1, 1);
+  const prevLastDay = new Date(prevYear, prevMonthAdjusted, 0);
+
+  // YYYY-MM-DD 형식으로 변환
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // 결과를 반환합니다.
+  return {
+    current: {
+      firstDay: formatDate(firstDay),
+      lastDay: formatDate(lastDay),
+    },
+    previous: {
+      firstDay: formatDate(prevFirstDay),
+      lastDay: formatDate(prevLastDay),
+    },
+  };
+}
+
 function Income({ ...props }) {
   const { admin } = useGlobalState();
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [shop_id, setShopId] = useState("");
   const [salesPrice, setSales] = useState("");
   const [originPrice, setOriginPrice] = useState("");
+
+  // 정산
+  const [isCurrent, setIsCurrent] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [prevStartDate, setPrevStartDate] = useState("");
+  const [prevEndDate, setPrevEndDate] = useState("");
 
   // filter
   const [shopFilter, setShopFilter] = useState(null);
@@ -75,6 +133,15 @@ function Income({ ...props }) {
   useEffect(() => {
     setShopId(admin?.shop_id);
     getSales(dateRange, admin?.shop_id);
+
+    let result = getFirstAndLastDay(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1
+    );
+    setStartDate(result.current.firstDay);
+    setEndDate(result.current.lastDay);
+    setPrevStartDate(result.previous.firstDay);
+    setPrevEndDate(result.previous.lastDay);
   }, []);
 
   const addIncome = async (e) => {
@@ -170,261 +237,54 @@ function Income({ ...props }) {
                 <option value="ratio">손익순</option>
               </>
             }
-            children={
-              <PopupBase
-                icon={<AddIcon />}
-                title="분석"
-                action="추가"
-                text="분석"
-                onClose={addIncome}
-              >
-                <Text fontSize={"lg"} fontWeight={"bold"}>
-                  기본정보
-                </Text>
-                <FormControl isRequired>
-                  <FormLabel>관리 지점</FormLabel>
-                  <Select
-                    isDisabled={admin?.permission !== "supervisor"}
-                    defaultValue={admin?.shop_id}
-                    name="shop_id"
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        shop_id: e.target.value,
-                      });
-                      setShopId(e.target.value);
-                      getSales(dateRange, e.target.value);
-                    }}
-                  >
-                    <option value="">전체</option>
-                    {props.shopList?.map((shop, index) => (
-                      <option key={index} value={shop.doc_id}>
-                        {shop.shop_name}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>분석기간</FormLabel>
-                  <HStack w={"100%"}>
-                    {/* <Input
-                      name="date"
-                      w={"100%"}
-                      value={
-                        dateRange
-                          ? dateRange[0]?.toLocaleDateString() +
-                            " ~ " +
-                            dateRange[1]?.toLocaleDateString()
-                          : ""
-                      }
-                      onChange={(e) => {
-                        setIncomeData({
-                          ...incomeData,
-                          start_date: dateRange[0] ? dateRange[0] : "",
-                          end_date: dateRange[1] ? dateRange[1] : "",
-                        });
-                      }}
-                    /> */}
-                    <Calendar
-                      defaultRange={dateRange}
-                      onSelectDate={(dateRange) => {
-                        setDateRange(dateRange);
-                        setIncomeData({
-                          ...incomeData,
-                          start_date: dateRange[0] ? dateRange[0] : "",
-                          end_date: dateRange[1] ? dateRange[1] : "",
-                        });
-                        // 기간 내 매출 계산
-                        getSales(dateRange, shop_id);
-                      }}
-                    />
-                  </HStack>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>매출금액</FormLabel>
-                  <Input
-                    isDisabled
-                    name="sales"
-                    defaultValue={formatCurrency(incomeData.sales)}
-                    value={formatCurrency(salesPrice)}
-                    bgColor={"gray.200"}
-                    color={"gray.600"}
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        sales: e.target.value,
-                      });
-                    }}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>매입금액</FormLabel>
-                  <Input
-                    name="purchase"
-                    defaultValue={formatCurrency(incomeData.purchase)}
-                    value={formatCurrency(originPrice)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) => {
-                      setIncomeData({
-                        ...incomeData,
-                        purchase: e.target.value,
-                      });
-                      setOriginPrice(e.target.value.replaceAll(",", ""));
-                    }}
-                  />
-                </FormControl>
-                <Text fontSize={"lg"} fontWeight={"bold"}>
-                  추가정보
-                </Text>
-                <FormControl>
-                  <FormLabel>임차료</FormLabel>
-                  <Input
-                    name="hire"
-                    value={formatCurrency(incomeData.hire)}
-                    defaultValue={formatCurrency(incomeData.hire)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        hire: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>인건비</FormLabel>
-                  <Input
-                    name="personnel"
-                    defaultValue={formatCurrency(incomeData.personnel)}
-                    value={formatCurrency(incomeData.personnel)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        personnel: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>공과금</FormLabel>
-                  <Input
-                    name="dues"
-                    defaultValue={formatCurrency(incomeData.dues)}
-                    value={formatCurrency(incomeData.dues)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        dues: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>기타비용</FormLabel>
-                  <Input
-                    name="etc"
-                    value={formatCurrency(incomeData.etc)}
-                    defaultValue={formatCurrency(incomeData.etc)}
-                    onKeyDown={(e) => isNumber(e)}
-                    onChange={(e) =>
-                      setIncomeData({
-                        ...incomeData,
-                        etc: e.target.value.replaceAll(",", ""),
-                      })
-                    }
-                  />
-                </FormControl>
-              </PopupBase>
-            }
           />
-          <Stack p={"20px"} w={"100%"} h={"100%"}>
-            {/*표*/}
-            <TableContainer
-              border={"1px solid #d9d9d9"}
-              bgColor={"white"}
-              borderRadius={"10px"}
-              p={"10px"}
-              mb={"20px"}
-            >
-              <Table variant="simple" size={"sm"}>
-                <Thead h={"40px"}>
-                  <Tr>
-                    <Th>No</Th>
-                    <Th>분석날짜</Th>
-                    <Th>지점명</Th>
-                    <Th>조회기간</Th>
-                    <Th>예상손익</Th>
-                    <Th>예상손익률</Th>
-                    {/* <Th textAlign={"center"} w={"30px"}>
-                      수정
-                    </Th> */}
-                    <Th textAlign={"center"} w={"30px"}>
-                      삭제
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {incomeList?.map((item, index) => (
-                    <Tr
-                      key={index}
-                      _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                    >
-                      <Td>{index + 1}</Td>
-                      <Td>
-                        <Text>{`${timestampToDate(item.createAt)}`}</Text>
-                      </Td>
-                      <Td>{searchShopName(item.shop_id)}</Td>
-                      <Td>
-                        {" "}
-                        <Text>{`${timestampToDate(
-                          item.start_date
-                        )} ~ ${timestampToDate(item.end_date)}`}</Text>
-                      </Td>
-                      <Td>
-                        {item.sales -
-                          item.purchase -
-                          item.etc -
-                          item.dues -
-                          item.hire -
-                          item.personnel <
-                        0
-                          ? "-"
-                          : "+"}
-                        {formatCurrency(
-                          item.sales -
-                            item.purchase -
-                            item.etc -
-                            item.dues -
-                            item.hire -
-                            item.personnel
-                        )}
-                      </Td>
-                      <Td
-                        color={
-                          Math.round(item.ratio * 100) < 0
-                            ? "#E53E3E"
-                            : "#34C759"
-                        }
-                      >
-                        {Math.round(item.ratio * 100) < 0 ? "" : "+"}
-                        {Math.round(item.ratio * 100)}%
-                      </Td>
-                      {/* <Td textAlign={"center"}>
-                        <IconButton icon={<EditIcon />} />
-                      </Td> */}
-                      <Td textAlign={"center"}>
-                        <IconButton
-                          onClick={() => deleteIncome(item.doc_id)}
-                          icon={<DeleteIcon />}
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
+          <Stack p={4}>
+            <Text fontWeight={"bold"}>매출분석</Text>
+            <DateSelector
+              onChange={(year, month) => {
+                let result = getFirstAndLastDay(year, month);
+                setStartDate(result.current.firstDay);
+                setEndDate(result.current.lastDay);
+                setPrevStartDate(result.previous.firstDay);
+                setPrevEndDate(result.previous.lastDay);
+              }}
+            />
+            <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+              <GridItem>
+                <Card>
+                  <CardHeader fontSize={"lg"} fontWeight={"bold"}>
+                    {"금월누적매출 (" + startDate + " ~ " + endDate + ")"}
+                  </CardHeader>
+                </Card>
+              </GridItem>
+              <GridItem>
+                <Card>
+                  <CardHeader fontSize={"lg"} fontWeight={"bold"}>
+                    {"전월매출 (" + prevStartDate + " ~ " + prevEndDate + ")"}
+                  </CardHeader>
+                </Card>
+              </GridItem>
+              <GridItem>
+                <Card>
+                  <CardHeader fontSize={"lg"} fontWeight={"bold"}>
+                    {"전일매출 (" +
+                      new Date().getFullYear() +
+                      "-" +
+                      (new Date().getMonth() + 1).toString().padStart(2, "0") +
+                      "-" +
+                      (new Date().getDate() - 1).toString().padStart(2, "0") +
+                      ")"}
+                  </CardHeader>
+                </Card>
+              </GridItem>
+              <GridItem>
+                <Card>
+                  <CardHeader fontSize={"lg"} fontWeight={"bold"}>
+                    금월 정산 예정금액 (전월매출 x 16.5%)
+                  </CardHeader>
+                </Card>
+              </GridItem>
+            </Grid>
           </Stack>
         </Stack>
       ) : (
@@ -688,6 +548,56 @@ function Income({ ...props }) {
         </Flex>
       )}
     </Flex>
+  );
+}
+
+// 날짜 선택 UI
+function DateSelector({ onChange }) {
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+    setMonth(new Date().getMonth() + 1);
+  }, []);
+
+  return (
+    <HStack justifyContent={"flex-end"}>
+      <Select
+        bgColor={"white"}
+        w={"100px"}
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+      >
+        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(
+          (item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          )
+        )}
+      </Select>
+      <Select
+        bgColor={"white"}
+        w={"100px"}
+        value={month}
+        onChange={(e) => setMonth(e.target.value)}
+      >
+        {Array.from({ length: 12 }, (_, i) => i + 1).map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </Select>
+      <Button
+        colorScheme="red"
+        onClick={() => {
+          onChange(year, month);
+        }}
+      >
+        분석
+      </Button>
+    </HStack>
   );
 }
 
