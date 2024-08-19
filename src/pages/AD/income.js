@@ -37,8 +37,17 @@ import {
 } from "../../firebase/firebase_func";
 import { formatCurrency } from "../CS/home";
 import { isNumber, timestampToDate } from "../../firebase/api";
-import { deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase_conf";
+import { set } from "date-fns";
+import { ChosunBg } from "../../Component/Text";
 
 function getFirstAndLastDay(year, month) {
   // 월은 0부터 시작하므로 입력된 월에서 1을 뺍니다.
@@ -114,6 +123,10 @@ function Income({ ...props }) {
     ),
     new Date(),
   ]);
+
+  const [firstSection, setFirstSection] = useState(0);
+  const [secondSection, setSecondSection] = useState(0);
+  const [thirdSection, setThirdSection] = useState(0);
 
   const [incomeData, setIncomeData] = useState({
     date: "",
@@ -212,9 +225,77 @@ function Income({ ...props }) {
 
   async function getFilteredData(value) {
     let newList = await getFilteredIncome(value);
-    console.log(newList);
+    // console.log(newList);
     setIncomeList(newList);
   }
+
+  useEffect(() => {
+    console.log(
+      startDate.replaceAll("-", ""),
+      endDate.replaceAll("-", ""),
+      prevStartDate.replaceAll("-", ""),
+      prevEndDate.replaceAll("-", "")
+    );
+    const q = query(collection(db, "PAYMENT"));
+
+    setFirstSection(0);
+    setSecondSection(0);
+    setThirdSection(0);
+
+    // let list = [];
+    let firstAmount = 0;
+    let secondAmount = 0;
+    let thirdAmount = 0;
+    getDocs(q).then((snapshot) => {
+      snapshot.forEach((doc) => {
+        if (
+          (admin?.permission == !"supervisor" &&
+            doc.data().shop_id === admin?.shop_id) ||
+          admin?.permission == "supervisor"
+        ) {
+          if (
+            doc.data().ediDate &&
+            doc.data().ediDate.slice(0, 8) >= startDate.replaceAll("-", "") &&
+            doc.data().ediDate.slice(0, 8) <= endDate.replaceAll("-", "")
+            // &&
+            // doc.data().ediDate >= startDate.replaceAll("-", "") &&
+            // doc.data().ediDate <= endDate.replaceAll("-", "")
+          ) {
+            // list.push({ ...doc.data(), doc_id: doc.id });
+            firstAmount += parseInt(doc.data().goodsAmt);
+            setFirstSection(firstAmount);
+          }
+
+          if (
+            doc.data().ediDate &&
+            doc.data().ediDate.slice(0, 8) >=
+              prevStartDate.replaceAll("-", "") &&
+            doc.data().ediDate.slice(0, 8) <= prevEndDate.replaceAll("-", "")
+            // &&
+            // doc.data().ediDate >= startDate.replaceAll("-", "") &&
+            // doc.data().ediDate <= endDate.replaceAll("-", "")
+          ) {
+            // list.push({ ...doc.data(), doc_id: doc.id });
+            secondAmount += parseInt(doc.data().goodsAmt);
+            setSecondSection(secondAmount);
+          }
+
+          let yesterday =
+            new Date().getFullYear().toString() +
+            (new Date().getMonth() + 1).toString().padStart(2, "0") +
+            (new Date().getDate() - 1).toString().padStart(2, "0");
+
+          if (
+            doc.data().ediDate &&
+            doc.data().ediDate.slice(0, 8) === yesterday
+          ) {
+            thirdAmount += parseInt(doc.data().goodsAmt);
+            setThirdSection(thirdAmount);
+          }
+        }
+      });
+    });
+  }, [admin, startDate, endDate, prevStartDate, prevEndDate]);
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -232,11 +313,7 @@ function Income({ ...props }) {
             admin={admin}
             shopList={props.shopList}
             onChangeFilter={(value) => getFilteredData(value)}
-            orderFilter={
-              <>
-                <option value="ratio">손익순</option>
-              </>
-            }
+            useSearch={false}
           />
           <Stack p={4}>
             <Text fontWeight={"bold"}>매출분석</Text>
@@ -255,6 +332,11 @@ function Income({ ...props }) {
                   <CardHeader fontSize={"lg"} fontWeight={"bold"}>
                     {"금월누적매출 (" + startDate + " ~ " + endDate + ")"}
                   </CardHeader>
+                  <CardBody>
+                    <ChosunBg fontWeight={"bold"} fontSize={"3xl"}>
+                      {firstSection.toLocaleString("ko-KR")}원
+                    </ChosunBg>
+                  </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
@@ -262,6 +344,11 @@ function Income({ ...props }) {
                   <CardHeader fontSize={"lg"} fontWeight={"bold"}>
                     {"전월매출 (" + prevStartDate + " ~ " + prevEndDate + ")"}
                   </CardHeader>
+                  <CardBody>
+                    <ChosunBg fontWeight={"bold"} fontSize={"3xl"}>
+                      {secondSection.toLocaleString("ko-KR")}원
+                    </ChosunBg>
+                  </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
@@ -275,6 +362,11 @@ function Income({ ...props }) {
                       (new Date().getDate() - 1).toString().padStart(2, "0") +
                       ")"}
                   </CardHeader>
+                  <CardBody>
+                    <ChosunBg fontWeight={"bold"} fontSize={"3xl"}>
+                      {thirdSection.toLocaleString("ko-KR")}원
+                    </ChosunBg>
+                  </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
@@ -282,6 +374,11 @@ function Income({ ...props }) {
                   <CardHeader fontSize={"lg"} fontWeight={"bold"}>
                     금월 정산 예정금액 (전월매출 x 16.5%)
                   </CardHeader>
+                  <CardBody>
+                    <ChosunBg fontWeight={"bold"} fontSize={"3xl"}>
+                      {(secondSection * 0.165).toLocaleString("ko-KR")}원
+                    </ChosunBg>
+                  </CardBody>
                 </Card>
               </GridItem>
             </Grid>
@@ -295,11 +392,7 @@ function Income({ ...props }) {
               admin={admin}
               shopList={props.shopList}
               onChangeFilter={(value) => getFilteredData(value)}
-              orderFilter={
-                <>
-                  <option value="ratio">손익순</option>
-                </>
-              }
+              useSearch={false}
               children={
                 <PopupBase
                   icon={<AddIcon />}

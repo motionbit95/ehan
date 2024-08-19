@@ -296,7 +296,7 @@ function Inventory({ ...props }) {
   ]);
 
   async function getFilteredData(value) {
-    console.log(value);
+    console.log("filter", value);
     let newList = await getFilteredInventory(value);
     console.log(newList);
     setInventoryList(newList);
