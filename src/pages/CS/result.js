@@ -97,6 +97,49 @@ function Result(props) {
             await deleteDoc(doc(db, "CART", products[i].doc_id));
           }
         }
+
+        fetch(process.env.REACT_APP_SERVER_URL + "/aligo/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            recvname_1: "박수정",
+            receiver_1: "01091789973",
+            /*** 필수값입니다 ***/
+            senderkey: "72a675a6cb91659f49edbff03a40f84a4777937c",
+            tpl_code: "TS_5705",
+            sender: "01091789973",
+            subject_1: "견적 요청 접수 완료",
+            emtitle_1: "견적 요청 접수 완료",
+            message_1: `안녕하세요, 고객님.
+웹사이트 개발 전문 모션빛입니다.
+
+고객님의 견적 요청이 접수 완료되어
+담당 매니저 배정 후 순차적으로 연락드릴 예정입니다.
+
+? 혹시 잘못 신청한 내용이나 수정 사항이 있으시면, 상담 시 알려주세요:)`,
+            /*** 필수값입니다 ***/
+            failover: "Y", // Y or N
+            fsubject: "견적 요청 접수 완료",
+            fmessage: `[모션빛] 견적 요청 접수 완료
+고객님의 견적 요청이 접수 완료되어 담당 매니저 배정 후 순차적으로 연락드릴 예정입니다.`,
+            button_1: {
+              button: [
+                {
+                  name: "진행절차와 유의사항 확인",
+                  linkType: "WL",
+                  linkTypeName: "웹링크",
+                  linkPc: "http://motionbit.kr",
+                  linkMo: "http://motionbit.kr",
+                },
+              ],
+            },
+          }),
+        })
+          .then((data) => data.json())
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
       })
       .catch((err) => {
         console.log(err);

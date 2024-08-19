@@ -140,6 +140,20 @@ function Inventory({ ...props }) {
   const [postList, setPostList] = useState([]);
   const [inventoryAlarm, setInventoryAlarm] = useState([]);
 
+  // filter
+  const [shopFilter, setShopFilter] = useState(null);
+  const [dateRange, setDateRange] = useState([
+    new Date(
+      `${new Date().getFullYear()}-${new Date()
+        .getMonth()
+        .toString()
+        .padStart(2, "0")}-${(new Date().getDate() + 1)
+        .toString()
+        .padStart(2, "0")}`
+    ),
+    new Date(),
+  ]);
+
   const updateAlarm = () => {
     const q = query(
       collection(db, "INVENTORY_ALARM"),
@@ -147,9 +161,23 @@ function Inventory({ ...props }) {
     );
     getDocs(q).then((querySnapshot) => {
       const list = [];
+      setInventoryAlarm([]);
       querySnapshot.forEach((doc) => {
-        list.push({ ...doc.data(), doc_id: doc.id });
-        setInventoryAlarm(list);
+        if (shopFilter) {
+          console.log(
+            "1 : ",
+            doc.data().created_by.shop_id,
+            "2 : ",
+            shopFilter.shop_id
+          );
+          if (
+            doc.data().created_by.shop_id === shopFilter.shop_id ||
+            doc.data().created_by.shop_id === ""
+          ) {
+            list.push({ ...doc.data(), doc_id: doc.id });
+            setInventoryAlarm(list);
+          }
+        }
       });
     });
   };
@@ -161,12 +189,27 @@ function Inventory({ ...props }) {
   useEffect(() => {
     getDocs(collection(db, "POST")).then((querySnapshot) => {
       const list = [];
-      querySnapshot.forEach((doc) => {
-        list.push({ ...doc.data(), doc_id: doc.id });
-        setPostList(list);
-      });
+      if (shopFilter) {
+        setPostList([]);
+        querySnapshot.forEach((doc) => {
+          if (
+            doc.data().created_by.shop_id === shopFilter.shop_id ||
+            doc.data().created_by.shop_id === ""
+          ) {
+            list.push({ ...doc.data(), doc_id: doc.id });
+            setPostList(list);
+          }
+        });
+      } else {
+        querySnapshot.forEach((doc) => {
+          list.push({ ...doc.data(), doc_id: doc.id });
+          setPostList(list);
+        });
+      }
     });
-  }, []);
+
+    updateAlarm();
+  }, [shopFilter]);
 
   useEffect(() => {
     readInventory();
@@ -281,22 +324,9 @@ function Inventory({ ...props }) {
     // );
   };
 
-  // filter
-  const [shopFilter, setShopFilter] = useState(null);
-  const [dateRange, setDateRange] = useState([
-    new Date(
-      `${new Date().getFullYear()}-${new Date()
-        .getMonth()
-        .toString()
-        .padStart(2, "0")}-${(new Date().getDate() + 1)
-        .toString()
-        .padStart(2, "0")}`
-    ),
-    new Date(),
-  ]);
-
   async function getFilteredData(value) {
     console.log("filter", value);
+    setShopFilter(value);
     let newList = await getFilteredInventory(value);
     console.log(newList);
     setInventoryList(newList);
@@ -424,7 +454,11 @@ function Inventory({ ...props }) {
                             <Td>{index + 1}</Td>
                             <Td>{item.title}</Td>
                             <Td>{item.created_by.admin_name}</Td>
-                            <Td>{item.created_by.shop_id}</Td>
+                            <Td>
+                              {item.created_by.shop_id === ""
+                                ? "관리자"
+                                : item.created_by.shop_id}
+                            </Td>
                             <Td>
                               <AnswerUsage post={item} />
                             </Td>
