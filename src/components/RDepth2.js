@@ -1,11 +1,22 @@
 import { Select } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { districts } from "../firebase/api";
+import { useGlobalState } from "../GlobalState";
 
 function RDepth2({ depth1, ...props }) {
+  const [depth2, setDepth2] = React.useState("");
+  const { admin } = useGlobalState();
+
+  useEffect(() => {
+    console.log(admin.permission);
+    if (props.defaultValue) setDepth2(props.defaultValue);
+  }, [props.defaultValue]);
+
   return (
     <Select
       {...props}
+      disabled={admin.permission !== "supervisor"}
+      value={depth2}
       _disabled={{ opacity: 1, pointerEvents: "none", bgColor: "#f5f5f5" }}
       name="shop_depth2"
       onChange={(e) => {

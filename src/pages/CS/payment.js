@@ -56,7 +56,8 @@ function Payment(props) {
     })
       .then((res) => {
         window.location.replace(
-          `http://localhost:8081/payment?${searchParams.toString()}`
+          process.env.REACT_APP_SERVER_URL +
+            `/payment?${searchParams.toString()}`
         );
       })
       .catch((err) => {

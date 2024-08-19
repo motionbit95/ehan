@@ -70,6 +70,7 @@ function RFilter({ useSearch = true, ...props }) {
 
   const getShopList = async (depth1, depth2) => {
     console.log("====> ", depth1, depth2);
+    setDepth1(depth1);
     setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
     let filterShop = await queryShop(depth1, depth2);
@@ -138,6 +139,11 @@ function RFilter({ useSearch = true, ...props }) {
             value={depth3 ? depth3 : admin?.shop_id}
             onChange={(e) => {
               setDepth3(e.target.value);
+            }}
+            _disabled={{
+              opacity: 1,
+              pointerEvents: "none",
+              bgColor: "#f5f5f5",
             }}
           >
             {admin?.permission === "supervisor" && (

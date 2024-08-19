@@ -3,6 +3,8 @@ import RHeader from "../../components/RHeader";
 import {
   currentAdmin,
   getAdmin,
+  getShop,
+  getShopName,
   isCurrentUserAnonymous,
 } from "../../firebase/firebase_func";
 import { useGlobalState } from "../../GlobalState";
@@ -54,6 +56,7 @@ function Dashboard(props) {
   );
   const [showPopup, setShowPopup] = useState(false);
   const [newOrder, setNewOrder] = useState(null);
+  const [shop, setShop] = useState({});
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "PAYMENT"), (snapshot) => {
@@ -63,30 +66,42 @@ function Dashboard(props) {
         }
         if (change.type === "modified") {
           // 결제 완료 시 결제 결과 코드를 저장하므로 여기에 들어옵니다.
-
           // doc 의 상점 id와 현재 로그인 된 admin의 id를 비교한 후
           // 로그인 된 admin 상점에 주문이 결제완료 상태일 경우 alert를 표시합니다.
-          getAdmin(auth.currentUser.uid).then((admin) => {
-            if (
-              admin.shop_id === change.doc.data().shop_id &&
-              change.doc.data().pay_state === "0000"
-            ) {
-              // 주문이 추가되었을 때 팝업을 띄움
-              setShowPopup(true);
-              setNewOrder(change.doc.data());
-              return;
-            }
-          });
+          if (
+            admin.shop_id === change.doc.data().shop_id &&
+            change.doc.data().pay_state === "0000"
+          ) {
+            // 주문이 추가되었을 때 팝업을 띄움
+            setShowPopup(true);
+            setNewOrder(change.doc.data());
+            getShop(change.doc.data().shop_id).then((shop) => {
+              setShop(shop);
+            });
+            return;
+          }
+
+          // getAdmin(auth.currentUser.uid).then(async (admin) => {
+          //   if (
+          //     admin.shop_id === change.doc.data().shop_id &&
+          //     change.doc.data().pay_state === "0000"
+          //   ) {
+          //     // 주문이 추가되었을 때 팝업을 띄움
+          //     setShowPopup(true);
+          //     setNewOrder(change.doc.data());
+          //     return;
+          //   }
+          // });
         }
         if (change.type === "removed") {
           console.log("Removed city: ", change.doc.data());
         }
       });
     });
-  }, []);
+  }, [auth.currentUser]);
 
   useEffect(() => {
-    if (admin.doc_id) {
+    if (admin) {
       setGlobalShopList();
       changeMenu(localStorage.getItem("menu"));
     }
@@ -223,11 +238,11 @@ function Dashboard(props) {
               <ModalBody>
                 <Stack>
                   <Text fontWeight="bold" fontSize={"16px"}>
-                    지점 주소 : {newOrder?.order_address}
+                    지점 주소 : {shop.shop_address} ({shop.shop_name})
                   </Text>
                   <Text fontWeight="bold" fontSize={"15px"}>
                     주문 상품 {newOrder?.pay_product.length}개 / 총{" "}
-                    {formatCurrency(newOrder?.pay_price)}원{" / "}
+                    {formatCurrency(newOrder?.goodsAmt)}원{" / "}
                     {newOrder?.pay_state === "0000" ? "결제완료" : ""}
                   </Text>
                   {newOrder?.pay_product.map((product) => {
@@ -241,7 +256,7 @@ function Dashboard(props) {
                       </Stack>
                     );
                   })}
-                  {/* <Text>결제수단 : {newOrder?.pay_method}</Text> */}
+                  {/* <Text>결제수단 : {newOrder?.payMethod}</Text> */}
                 </Stack>
               </ModalBody>
               <ModalFooter>
