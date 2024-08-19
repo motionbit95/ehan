@@ -98,7 +98,7 @@ function Dashboard(props) {
         }
       });
     });
-  }, [auth.currentUser]);
+  }, []);
 
   useEffect(() => {
     if (admin) {

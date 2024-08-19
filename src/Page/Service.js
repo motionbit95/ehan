@@ -20,7 +20,7 @@ export const Service1 = () => {
 };
 export const Service2 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={8}>
+    <Stack h={"100vh"} justify={"center"} spacing={2}>
       <Stack px={4} spacing={0}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           SEX MBTI
@@ -70,7 +70,7 @@ export const Service3 = () => {
 };
 export const Service4 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={8}>
+    <Stack h={"100vh"} justify={"center"} spacing={2}>
       <Stack px={4} spacing={0}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           PARTNER SHIP

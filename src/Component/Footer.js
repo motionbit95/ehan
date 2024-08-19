@@ -46,6 +46,11 @@ const Footer = ({ handleopenModal }) => {
           borderRadius="full"
           _hover={{ bg: "none" }}
           aria-label="Instagram"
+          onClick={() =>
+            window.open(
+              "https://www.instagram.com/redswitch.inc?igsh=MWkyd3B5bXI2d3kwbw=="
+            )
+          }
         />
       </Box>
       {/* <IconButton
