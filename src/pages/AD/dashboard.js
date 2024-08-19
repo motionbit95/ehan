@@ -68,30 +68,33 @@ function Dashboard(props) {
           // 결제 완료 시 결제 결과 코드를 저장하므로 여기에 들어옵니다.
           // doc 의 상점 id와 현재 로그인 된 admin의 id를 비교한 후
           // 로그인 된 admin 상점에 주문이 결제완료 상태일 경우 alert를 표시합니다.
-          if (
-            admin.shop_id === change.doc.data().shop_id &&
-            change.doc.data().pay_state === "0000"
-          ) {
-            // 주문이 추가되었을 때 팝업을 띄움
-            setShowPopup(true);
-            setNewOrder(change.doc.data());
-            getShop(change.doc.data().shop_id).then((shop) => {
-              setShop(shop);
-            });
-            return;
-          }
 
-          // getAdmin(auth.currentUser.uid).then(async (admin) => {
-          //   if (
-          //     admin.shop_id === change.doc.data().shop_id &&
-          //     change.doc.data().pay_state === "0000"
-          //   ) {
-          //     // 주문이 추가되었을 때 팝업을 띄움
-          //     setShowPopup(true);
-          //     setNewOrder(change.doc.data());
-          //     return;
-          //   }
-          // });
+          // if (
+          //   admin.shop_id === change.doc.data().shop_id &&
+          //   change.doc.data().pay_state === "0000"
+          // ) {
+          //   // 주문이 추가되었을 때 팝업을 띄움
+          //   setShowPopup(true);
+          //   setNewOrder(change.doc.data());
+          //   getShop(change.doc.data().shop_id).then((shop) => {
+          //     setShop(shop);
+          //   });
+          //   return;
+          // }
+
+          if (auth.currentUser.uid) {
+            getAdmin(auth.currentUser.uid).then(async (admin) => {
+              if (
+                admin.shop_id === change.doc.data().shop_id &&
+                change.doc.data().pay_state === "0000"
+              ) {
+                // 주문이 추가되었을 때 팝업을 띄움
+                setShowPopup(true);
+                setNewOrder(change.doc.data());
+                return;
+              }
+            });
+          }
         }
         if (change.type === "removed") {
           console.log("Removed city: ", change.doc.data());

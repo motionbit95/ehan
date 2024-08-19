@@ -55,6 +55,9 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
   const handleChangeShop = async (e) => {
     if (window.confirm("관리 지점을 변경하시겠습니까?")) {
       const docRef = doc(db, "ACCOUNT", admin.doc_id);
+      // 오류 발생
+      // 관리지점 데이터가 들어가지지 않음 - shop_id
+      console.log("관리 지점 아이디 : ", e.target.value);
       await updateDoc(docRef, { shop_id: e.target.value });
     }
   };
@@ -414,7 +417,7 @@ function Account(props) {
                       <FormLabel>관리 지점</FormLabel>
                       {/* <Input name="shop_id" type="text" value={shopId}></Input> */}
                       <SearchShop
-                        onSelect={(value) => setShopId(value)}
+                        onSelect={(value) => setShopId(value.toLowerCase())}
                       ></SearchShop>
                       {/* <Select
                         name="shop_id"

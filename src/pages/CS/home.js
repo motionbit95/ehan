@@ -159,7 +159,7 @@ function Home(props) {
 
         if (!docSnap.data()) {
           // 샵을 못찾았으면 테스트샵으로 이동
-          window.location.replace(`/home/test-shop`);
+          // window.location.replace(`/home/test-shop`);
           return;
         }
 
@@ -174,7 +174,7 @@ function Home(props) {
       } catch (error) {
         console.error("shop id로 샵 정보가져오기 오류 발생:", error);
         // 샵을 못찾았으면 테스트샵으로 이동
-        window.location.replace(`/home/test-shop`);
+        // window.location.replace(`/home/test-shop`);
       }
     };
 
