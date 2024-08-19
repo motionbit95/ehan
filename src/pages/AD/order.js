@@ -130,6 +130,18 @@ function Order(props) {
     }
   };
 
+  function searchShopName(id) {
+    // 리스트를 순회하면서 타겟 값과 일치하는 항목을 찾음
+    for (let item of props.shopList) {
+      // 타겟 값과 일치하는 항목을 찾았을 때 해당 정보 반환
+      if (item.doc_id === id) {
+        return item.shop_name;
+      }
+    }
+    // 타겟 값과 일치하는 항목이 없을 경우 null 반환 또는 다른 예외처리 수행
+    return null;
+  }
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -172,7 +184,6 @@ function Order(props) {
                       <Th>결제(환불)일</Th>
                       <Th>결제내역</Th>
                       <Th>결제(환불)금액</Th>
-                      <Th>결제영수증</Th>
                       <Th>지점</Th>
                       <Th>주문상태</Th>
                       <Th>결제취소</Th>
@@ -194,15 +205,18 @@ function Order(props) {
                             }
                             whiteSpace={"pre-line"}
                           >
-                            {item?.pay_date?.split("T")[0]}
+                            {item?.ediDate.slice(0, 4) +
+                              "." +
+                              item?.ediDate.slice(4, 6) +
+                              "." +
+                              item?.ediDate.slice(6, 8)}
                           </Text>
-                          {item?.cancel_date && (
+                          {/* {item?.cancel_date && (
                             <Text> {item?.cancel_date?.split("T")[0]}</Text>
-                          )}
+                          )} */}
                         </Td>
                         <Td fontSize={"sm"} whiteSpace={"pre-line"}>
                           <Text>
-                            {" "}
                             [{item?.order_id}]{"\n"}
                           </Text>
 
@@ -216,31 +230,21 @@ function Order(props) {
                         <Td fontSize={"sm"}>
                           <HStack w={"100%"} justifyContent={"flex-start"}>
                             <Text>
-                              {item?.pay_price
-                                ? formatCurrency(item?.pay_price)
+                              {item?.goodsAmt
+                                ? formatCurrency(item?.goodsAmt)
                                 : "0"}
                               원
                             </Text>
                             <Text>
-                              {item?.pay_method === "vbank"
+                              {item?.payMethod === "VACNT"
                                 ? "계좌이체"
-                                : item?.pay_method === "card"
+                                : item?.payMethod === "CARD"
                                 ? "카드"
                                 : "기타"}
                             </Text>
                           </HStack>
                         </Td>
-                        <Td>
-                          <IconButton
-                            size={"sm"}
-                            icon={<CopyIcon />}
-                            onClick={() => window.open(item?.receipt_url)}
-                          />
-                        </Td>
-                        {/* <Td>
-                            {searchShopName(item.shop_id ? item.shop_id : "")}
-                          </Td> */}
-                        <Td>{item?.order_address}</Td>
+                        <Td>{searchShopName(item?.shop_id)}</Td>
                         <Td>
                           <PopupBase
                             isDisabled={item?.pay_state > "0010"}
@@ -356,7 +360,6 @@ function Order(props) {
                       <Tr>
                         <Th>주문상태</Th>
                         <Th>결제내역/지점</Th>
-                        <Th textAlign={"center"}>결제영수증</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -431,23 +434,29 @@ function Order(props) {
                           <Td fontSize={"sm"}>
                             <Stack>
                               <Text whiteSpace={"pre-line"}>
-                                {item?.pay_date?.split("T")[0]}
+                                {item?.ediDate.slice(0, 4) +
+                                  "." +
+                                  item?.ediDate.slice(4, 6) +
+                                  "." +
+                                  item?.ediDate.slice(6, 8)}
                               </Text>
                               <Text>
-                                {item?.pay_product[0]?.product_name} 외{" "}
-                                {item?.pay_product?.length}건
+                                {item?.pay_product[0]?.product_name}
+                                {item?.pay_product?.length > 1
+                                  ? ` 외 ${item?.pay_product?.length}건`
+                                  : ""}
                               </Text>
-                              <HStack>
-                                <Text fontSize={"md"} fontWeight={"bold"}>
-                                  {item?.pay_price
-                                    ? formatCurrency(item?.pay_price)
+                              <HStack w={"100%"} justifyContent={"flex-start"}>
+                                <Text>
+                                  {item?.goodsAmt
+                                    ? formatCurrency(item?.goodsAmt)
                                     : "0"}
                                   원
                                 </Text>
                                 <Text>
-                                  {item?.pay_method === "vbank"
+                                  {item?.payMethod === "VACNT"
                                     ? "계좌이체"
-                                    : item?.pay_method === "card"
+                                    : item?.payMethod === "CARD"
                                     ? "카드"
                                     : "기타"}
                                 </Text>
@@ -459,13 +468,6 @@ function Order(props) {
                                   : null}
                               </Text>
                             </Stack>
-                          </Td>
-                          <Td textAlign={"center"}>
-                            <IconButton
-                              size={"sm"}
-                              icon={<CopyIcon />}
-                              onClick={() => window.open(item?.receipt_url)}
-                            />
                           </Td>
                         </Tr>
                       ))}

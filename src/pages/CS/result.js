@@ -69,45 +69,38 @@ function Result(props) {
     setInventoryList(inventoryList);
 
     // 받은 결제 정보 업데이트 하는 부분
-    await postPayment({
+    postPayment({
       ...order,
       pay_date: data.paidAt,
-      vbank: data.vbank,
+      vbank: data.vbank ? data.vbank : "",
       pay_state: data.resultCode,
       createAt: new Date(), // 현재 시간
-    });
+    })
+      .then(async (res) => {
+        // 알림을 발생시킵니다.
+        addDoc(collection(db, "ALARM"), {
+          type: "order",
+          shop_id: order.shop_id,
+          createAt: new Date(),
+          order_id: order.doc_id,
+          alarm_code: "I001",
+          alarm_title: `${order.doc_id} 주문이 접수되었습니다.`,
+        });
 
-    console.log(order);
+        if (data.resultCode === "0000") {
+          // 결제에 성공했다면
+          // 장바구니의 상품을 삭제합니다.
 
-    console.log("order", {
-      type: "order",
-      shop_id: order.shop_id,
-      createAt: new Date(),
-      order_id: order.ordNo,
-      alarm_code: "I001",
-      alarm_title: `${order.ordNo} 주문이 접수되었습니다.`,
-    });
-
-    // 알림을 발생시킵니다.
-    addDoc(collection(db, "ALARM"), {
-      type: "order",
-      shop_id: order.shop_id,
-      createAt: new Date(),
-      order_id: order.doc_id,
-      alarm_code: "I001",
-      alarm_title: `${order.doc_id} 주문이 접수되었습니다.`,
-    });
-
-    if (data.resultCode === "0000") {
-      // 결제에 성공했다면
-      // 장바구니의 상품을 삭제합니다.
-
-      const products = order.pay_product;
-      for (let i = 0; i < products.length; i++) {
-        debug("장바구니 id의 상품을 삭제합니다. ", products[i].doc_id);
-        await deleteDoc(doc(db, "CART", products[i].doc_id));
-      }
-    }
+          const products = order.pay_product;
+          for (let i = 0; i < products.length; i++) {
+            debug("장바구니 id의 상품을 삭제합니다. ", products[i].doc_id);
+            await deleteDoc(doc(db, "CART", products[i].doc_id));
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

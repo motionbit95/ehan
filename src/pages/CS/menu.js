@@ -79,7 +79,7 @@ function Menu(props) {
         <Stack id="banner">
           <Center>
             <Image
-              objectFit={"cover"}
+              objectFit={"contain"}
               height={"100%"}
               maxH={"50vh"}
               width={"100%"}

@@ -43,10 +43,10 @@ function Home(props) {
 
   async function getFilteredData(value) {
     let payMethod = [
-      { label: "card", name: "카드", value: 0 },
-      { label: "vbank", name: "무통장입금", value: 0 },
-      { label: "kakaopay", name: "카카오페이", value: 0 },
-      { label: "naverpayCard", name: "네이버페이", value: 0 },
+      { label: "CARD", name: "카드", value: 0 },
+      { label: "VACNT", name: "무통장입금", value: 0 },
+      // { label: "kakaopay", name: "카카오페이", value: 0 },
+      // { label: "naverpayCard", name: "네이버페이", value: 0 },
     ];
 
     let payProduct = [];
@@ -60,7 +60,7 @@ function Home(props) {
 
     for (var j = 0; j < orders.order.length; j++) {
       for (let k = 0; k < payMethod.length; k++) {
-        if (payMethod[k].label === orders.order[j].pay_method) {
+        if (payMethod[k].label === orders.order[j].payMethod) {
           // 해당 객체의 value 수정
           payMethod[k].value += 1; // newValue에 새로운 값을 할당
           break; // 값을 찾았으므로 루프 중단

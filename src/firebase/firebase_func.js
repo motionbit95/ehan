@@ -196,21 +196,23 @@ export const getTotalOrder = async (dateRange, shop_id) => {
   querySnapshot.forEach((doc) => {
     if (doc.data().createAt) {
       const strDate = timestampToDate(doc.data().createAt);
-      const createAt = new Date(
-        strDate.split(". ")[0] +
-          "-" +
-          strDate.split(". ")[1].padStart(2, "0") +
-          "-" +
-          strDate.split(".")[2].trim().padStart(2, "0")
-      );
+      // const createAt = new Date(
+      //   strDate.split(". ")[0] +
+      //     "-" +
+      //     strDate.split(". ")[1].padStart(2, "0") +
+      //     "-" +
+      //     strDate.split(".")[2].trim().padStart(2, "0")
+      // );
 
       if (
-        (shop_id === doc.data().shop_id || !shop_id) &&
-        createAt >= new Date(dateRange[0]) &&
-        createAt <= new Date(dateRange[1])
+        shop_id === doc.data().shop_id ||
+        !shop_id
+        // &&
+        // createAt >= new Date(dateRange[0]) &&
+        // createAt <= new Date(dateRange[1])
       ) {
         order.push({ ...doc.data(), doc_id: doc.id });
-        totalPrice += parseFloat(doc.data().pay_price);
+        totalPrice += parseFloat(doc.data().goodsAmt);
         for (let i = 0; i < doc.data().pay_product.length; i++) {
           totalOriginPrice += parseFloat(
             doc.data().pay_product[i].product_origin_price
@@ -776,7 +778,7 @@ export const getFilteredOrder = async (value) => {
   var q = query(
     collection(db, "PAYMENT"),
     orderBy(
-      value.order ? value.order : "createAt",
+      value.order ? value.order : "ediDate",
       value.order === "pay_state" ? "asc" : "desc"
     )
   );
@@ -786,18 +788,20 @@ export const getFilteredOrder = async (value) => {
   const filteredProduct = [];
   querySnapshot.forEach((doc) => {
     const strDate = timestampToDate(doc.data().createAt);
-    const createAt = new Date(
-      strDate.split(". ")[0] +
-        "-" +
-        strDate.split(". ")[1].padStart(2, "0") +
-        "-" +
-        strDate.split(".")[2].trim().padStart(2, "0")
-    );
+    // const createAt = new Date(
+    //   strDate.split(". ")[0] +
+    //     "-" +
+    //     strDate.split(". ")[1].padStart(2, "0") +
+    //     "-" +
+    //     strDate.split(".")[2].trim().padStart(2, "0")
+    // );
 
     if (
-      (value.shop_id === doc.data().shop_id || !value.shop_id) &&
-      createAt >= new Date(value.dateRange[0]) &&
-      createAt <= new Date(value.dateRange[1])
+      value.shop_id === doc.data().shop_id ||
+      !value.shop_id
+      // &&
+      // createAt >= new Date(value.dateRange[0]) &&
+      // createAt <= new Date(value.dateRange[1])
     ) {
       filteredProduct.push({ ...doc.data(), doc_id: doc.id });
     }
