@@ -4,7 +4,16 @@ import { ChosunGu, Jejumyeongjo, ONEMobilePOP } from "../Component/Text";
 
 export const Service1 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={8}>
+    <Stack
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
+      justify={"center"}
+      spacing={8}
+    >
       <Stack spacing={0} px={4}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           SWITCH ON!
@@ -20,7 +29,16 @@ export const Service1 = () => {
 };
 export const Service2 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={2}>
+    <Stack
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
+      justify={"center"}
+      spacing={2}
+    >
       <Stack px={4} spacing={0}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           SEX MBTI
@@ -31,12 +49,13 @@ export const Service2 = () => {
         {/* <Image src={require("../Asset/005.jpg")} /> */}
         <Image src={require("../Asset/Resize/005.png")} />
       </Box>
-      <Stack px={4} align={"center"} fontSize={"17px"}>
+      <Stack px={2} align={"center"} fontSize={"15px"}>
         <Jejumyeongjo>
           MBTI는 알지만, 섹스 퍼스널리티는 모른다구요?
         </Jejumyeongjo>
-        <Jejumyeongjo fontSize={"12px"}>
-          MBTI처럼 섹스 퍼스널리티에도 22가지의 다양한 성향이 있어요.
+        <Jejumyeongjo fontSize={"17px"} whiteSpace={"pre-line"}>
+          {`MBTI처럼 섹스 퍼스널리티에도 
+          22가지의 다양한 성향이 있어요.`}
         </Jejumyeongjo>
       </Stack>
     </Stack>
@@ -44,7 +63,16 @@ export const Service2 = () => {
 };
 export const Service3 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={8}>
+    <Stack
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
+      justify={"center"}
+      spacing={8}
+    >
       <Stack spacing={0} px={4}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           BDSM TEST
@@ -55,22 +83,38 @@ export const Service3 = () => {
         {/* <Image src={require("../Asset/007.jpg")} /> */}
         <Image src={require("../Asset/Resize/007.png")} />
       </Box>
-      <Stack px={4} align={"center"} pt={4}>
-        <Jejumyeongjo fontSize="22px">
+      <Stack px={2} align={"center"} pt={4}>
+        <Jejumyeongjo fontSize="18px">
           간단한 테스트로 성향을 공유해보세요.
         </Jejumyeongjo>
         <Jejumyeongjo
           fontSize="14px"
           whiteSpace={"pre-line"}
           textAlign={"center"}
-        >{`상대의 성향과 서로에게 필요한 제품을 알 수 있어요.\n지피지기백전백승! 오늘 사랑이 더 깊어지지 않을까요?`}</Jejumyeongjo>
+        >{`상대의 성향과 서로에게 필요한 제품을 알 수 있어요.`}</Jejumyeongjo>
+        <Jejumyeongjo
+          fontSize="12px"
+          whiteSpace={"pre-line"}
+          textAlign={"center"}
+        >
+          지피지기백전백승! 오늘 사랑이 더 깊어지지 않을까요?
+        </Jejumyeongjo>
       </Stack>
     </Stack>
   );
 };
 export const Service4 = () => {
   return (
-    <Stack h={"100vh"} justify={"center"} spacing={2}>
+    <Stack
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
+      justify={"center"}
+      spacing={2}
+    >
       <Stack px={4} spacing={0}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           PARTNER SHIP

@@ -18,7 +18,7 @@ const Footer = ({ handleopenModal }) => {
     <Flex position={"fixed"} bottom={"0"} w={"100%"} zIndex={111}>
       <HStack
         w={"100%"}
-        py={3}
+        py={2}
         bgColor={"#222222"}
         align={"center"}
         justify={"center"}
@@ -30,12 +30,13 @@ const Footer = ({ handleopenModal }) => {
       </HStack>
       <Box
         position="fixed"
-        right={4}
-        bottom={16}
+        right={2}
+        bottom={12}
         borderRadius="full"
         bgGradient="linear(to-r, #833ab4, #fd1d1d, #fcb045)"
         p={1}
         cursor={"pointer"}
+        _hover={{ scale: "1.1" }}
         // onClick={() =>
         //   window.open("https://www.instagram.com/redswitch.official/")
         // }

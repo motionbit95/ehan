@@ -26,7 +26,12 @@ const ContactUs = () => {
   return (
     <Stack
       // id="contactUs"
-      h={"100vh"}
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
       justify={"center"}
       spacing={8}
     >
@@ -67,13 +72,13 @@ const ContactUs = () => {
         </Stack>
       </Stack>
       <HStack spacing={4} color={"#808080"} justify={"center"}>
-        <ChosunGu
+        {/* <ChosunGu
           textDecoration={"underline"}
           cursor={"pointer"}
           onClick={() => handleopenModal("terms")}
         >
           이용약관
-        </ChosunGu>
+        </ChosunGu> */}
         <ChosunGu
           textDecoration={"underline"}
           cursor={"pointer"}

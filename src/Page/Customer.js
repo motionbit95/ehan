@@ -7,7 +7,12 @@ const Customer = () => {
   return (
     <Stack
       // id="customer"
-      h={"100vh"}
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
       justify={"center"}
       spacing={12}
     >

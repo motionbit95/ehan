@@ -8,7 +8,12 @@ const Main = () => {
       // id="main"
       align={"center"}
       justify={"center"}
-      h={"100vh"}
+      minHeight="100vh"
+      css={{
+        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+          minHeight: "-webkit-fill-available",
+        },
+      }}
       spacing={6}
     >
       <Stack>
