@@ -7,12 +7,13 @@ export const Intro1 = () => {
     <Stack
       // id="intro1"
       w={"full"}
-      minHeight="100vh"
-      css={{
-        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
-          minHeight: "-webkit-fill-available",
-        },
-      }}
+      h={"100vh"}
+      // minHeight="100vh"
+      // css={{
+      //   "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
+      //     minHeight: "-webkit-fill-available",
+      //   },
+      // }}
       align={"center"}
       justify={"center"}
     >
