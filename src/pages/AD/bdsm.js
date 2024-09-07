@@ -321,7 +321,7 @@ function BDSM(props) {
         p={{ base: 4, md: 8 }}
       >
         <ChosunBg fontSize={{ base: "16px", md: "24px" }}>BDSM 결과</ChosunBg>
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={4}>
           <Card>
             <CardHeader>
               <HStack justify={"space-between"}>

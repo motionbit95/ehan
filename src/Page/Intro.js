@@ -17,7 +17,7 @@ export const Intro1 = () => {
       align={"center"}
       justify={"center"}
     >
-      <Image src={require("../Asset/002.jpg")} />
+      <Image height={"100%"} src={require("../Asset/002.jpg")} />
       {/* <Image src={require("../Asset/Resize/002.png")} /> */}
     </Stack>
   );

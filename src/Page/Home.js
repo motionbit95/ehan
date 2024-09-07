@@ -118,6 +118,15 @@ const Landing = () => {
 export default Landing;
 
 const GOModal = ({ isOpen, onClose }) => {
+  const [isAgree, setAgree] = useState(false);
+  const [form, setForm] = useState({
+    shop_name: "",
+    user_name: "",
+    user_tel: "",
+    user_email: "",
+    shop_address: "",
+    room_cnt: "",
+  });
   return (
     <Modal size={{ base: "full", md: "2xl" }} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -153,6 +162,9 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 px={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) =>
+                  setForm({ ...form, shop_name: e.target.value })
+                }
               />
               <Input
                 border={"none"}
@@ -161,6 +173,9 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) =>
+                  setForm({ ...form, user_name: e.target.value })
+                }
               />
               <Input
                 border={"none"}
@@ -169,6 +184,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) => setForm({ ...form, user_tel: e.target.value })}
               />
               <Input
                 border={"none"}
@@ -177,6 +193,9 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) =>
+                  setForm({ ...form, user_email: e.target.value })
+                }
               />
               <Input
                 border={"none"}
@@ -185,6 +204,9 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) =>
+                  setForm({ ...form, shop_address: e.target.value })
+                }
               />
               <Input
                 border={"none"}
@@ -193,11 +215,12 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"white"}
                 p={0}
                 focusBorderColor="#0F0F0F"
+                onChange={(e) => setForm({ ...form, room_cnt: e.target.value })}
               />
             </Stack>
             <HStack justify={"space-between"}>
               <HStack>
-                <Checkbox />
+                <Checkbox onChange={(e) => setAgree(e.target.checked)} />
                 <Text>개인 정보 및 활용에 동의합니다.</Text>
               </HStack>
               <Text
@@ -210,7 +233,30 @@ const GOModal = ({ isOpen, onClose }) => {
               </Text>
             </HStack>
             <Stack align={"center"} pt={8}>
-              <Button color={"white"} bgColor={"red"}>
+              <Button
+                isDisabled={!isAgree}
+                color={"white"}
+                bgColor={"red"}
+                onClick={() => {
+                  fetch(process.env.REACT_APP_SERVER_URL + "/sendEmail", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      email: form.user_email,
+                      content: form,
+                    }),
+                  })
+                    .then((data) => {
+                      // 전송 성공!
+                      console.log(data);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }}
+              >
                 신청하기
               </Button>
             </Stack>

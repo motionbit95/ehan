@@ -223,9 +223,11 @@ function Income({ ...props }) {
     return null;
   }
 
+  const [selectedShop, setSelectedShop] = useState("");
+
   async function getFilteredData(value) {
     let newList = await getFilteredIncome(value);
-    // console.log(newList);
+    setSelectedShop(value.shop_id);
     setIncomeList(newList);
   }
 
@@ -248,10 +250,12 @@ function Income({ ...props }) {
     let thirdAmount = 0;
     getDocs(q).then((snapshot) => {
       snapshot.forEach((doc) => {
+        console.log(doc.data().shop_id, selectedShop);
         if (
-          (admin?.permission == !"supervisor" &&
+          (admin?.permission !== "supervisor" &&
             doc.data().shop_id === admin?.shop_id) ||
-          admin?.permission == "supervisor"
+          (admin?.permission === "supervisor" &&
+            doc.data().shop_id === selectedShop)
         ) {
           if (
             doc.data().ediDate &&
@@ -295,7 +299,7 @@ function Income({ ...props }) {
         }
       });
     });
-  }, [admin, startDate, endDate, prevStartDate, prevEndDate]);
+  }, [admin, startDate, endDate, prevStartDate, prevEndDate, selectedShop]);
 
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
@@ -372,7 +376,7 @@ function Income({ ...props }) {
               <GridItem>
                 <Card>
                   <CardHeader fontSize={"lg"} fontWeight={"bold"}>
-                    금월 정산 예정금액 (전월매출 x 16.5%)
+                    금월 정산 예정금액
                   </CardHeader>
                   <CardBody>
                     <ChosunBg fontWeight={"bold"} fontSize={"3xl"}>

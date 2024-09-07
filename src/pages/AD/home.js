@@ -34,14 +34,15 @@ function Home(props) {
   const [alramList, setAlarmList] = useState([]);
 
   useEffect(() => {
-    updateAlarmList();
+    updateAlarmList(admin?.shop_id);
   }, [admin]);
 
-  async function updateAlarmList() {
-    getAlarmList(admin?.shop_id).then((list) => setAlarmList(list));
+  async function updateAlarmList(shop_id) {
+    getAlarmList(shop_id).then((list) => setAlarmList(list));
   }
 
   async function getFilteredData(value) {
+    updateAlarmList(value.shop_id);
     let payMethod = [
       { label: "CARD", name: "카드", value: 0 },
       { label: "VACNT", name: "무통장입금", value: 0 },

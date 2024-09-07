@@ -15,7 +15,7 @@ function RDepth2({ depth1, ...props }) {
   return (
     <Select
       {...props}
-      disabled={admin.permission !== "supervisor"}
+      disabled={admin.permission !== "supervisor" || !depth1}
       value={depth2}
       _disabled={{ opacity: 1, pointerEvents: "none", bgColor: "#f5f5f5" }}
       name="shop_depth2"

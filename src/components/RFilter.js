@@ -17,7 +17,10 @@ import React, { useEffect, useRef, useState } from "react";
 import Calendar from "./Calendar";
 import RDepth1 from "./RDepth1";
 import RDepth2 from "./RDepth2";
-import { queryShop } from "../firebase/firebase_func";
+import { getShop, queryShop } from "../firebase/firebase_func";
+import { SearchShopButton } from "./SearchShop";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase_conf";
 
 function RFilter({ useSearch = true, ...props }) {
   const keywordRef = useRef();
@@ -73,8 +76,21 @@ function RFilter({ useSearch = true, ...props }) {
     setDepth1(depth1);
     setDepth2(depth2);
     // 필터링 된 샵 리스트만 가지고 오도록 하는 함수
-    let filterShop = await queryShop(depth1, depth2);
-    setFilteredShopList(filterShop);
+    queryShop(depth1, depth2)
+      .then((list) => {
+        if (list.length === 0) {
+          if (props.onChangeFilter)
+            props.onChangeFilter({
+              shop_id: "unknown",
+              dateRange: dateRange,
+              order: order,
+              keyword: keyword,
+            });
+          return;
+        }
+        setFilteredShopList(list);
+      })
+      .catch((error) => console.log(error));
   };
 
   const getShopInfo = (id) => {
@@ -97,6 +113,21 @@ function RFilter({ useSearch = true, ...props }) {
         keyword: keyword,
       });
   }, [depth3, dateRange, order, keyword]);
+
+  const handleChangeShop = async (e) => {
+    getShop(e).then((data) => {
+      getShopList(data.shop_depth1, data.shop_depth2);
+      setDepth3(e);
+    });
+
+    setDepth3(e);
+    props.onChangeFilter({
+      shop_id: e,
+      dateRange: dateRange,
+      order: order,
+      keyword: keyword,
+    });
+  };
 
   return (
     <Flex
@@ -134,7 +165,7 @@ function RFilter({ useSearch = true, ...props }) {
             }}
           />
           <Select
-            isDisabled={admin?.permission !== "supervisor"}
+            isDisabled={admin?.permission !== "supervisor" || !depth2}
             defaultValue={admin?.shop_id}
             value={depth3 ? depth3 : admin?.shop_id}
             onChange={(e) => {
@@ -155,6 +186,7 @@ function RFilter({ useSearch = true, ...props }) {
               </option>
             ))}
           </Select>
+          <SearchShopButton onSelect={handleChangeShop} />
         </HStack>
         {useSearch && (
           <Select onChange={(e) => setOrder(e.target.value)}>

@@ -93,6 +93,11 @@ const BarChart = ({ dataset, color }) => {
           display: false, // y축의 그리드 라인을 숨깁니다.
         },
       },
+      x: {
+        ticks: {
+          autoSkip: false, // 모든 x축 항목을 표시
+        },
+      },
     },
     responsive: true,
     plugins: {
