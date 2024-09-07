@@ -1,4 +1,12 @@
-import { Box, Container, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  HStack,
+  Image,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { ChosunBg, ChosunGu } from "./Text";
 
@@ -21,12 +29,13 @@ const Topbar = () => {
   return (
     <Flex position={"fixed"} bgColor={"black"} w={"100%"} zIndex={111}>
       <Container px={0} maxW={{ base: "100%", md: "xl" }}>
-        <HStack
+        <Stack
           w={"100%"}
           h={{ base: "64px", md: "64px" }}
-          align={"center"}
+          align={{ base: "strat", md: "center" }}
           justify={"space-between"}
           p={{ base: 4, md: 8 }}
+          direction={{ base: "column", md: "row" }}
         >
           <HStack>
             <Box w={{ base: "20px", md: "28px" }}>
@@ -37,8 +46,10 @@ const Topbar = () => {
             </ChosunBg>
           </HStack>
           <HStack
-            fontSize={{ base: "10px", md: "sm" }}
+            fontSize={{ base: "12px", md: "sm" }}
             spacing={{ base: 1, md: 2 }}
+            px={{ base: "2", md: "0" }}
+            justify={{ base: "space-between", md: "center" }}
           >
             <ChosunGu
               as={"a"}
@@ -95,7 +106,7 @@ const Topbar = () => {
               CONTACT US
             </ChosunGu>
           </HStack>
-        </HStack>
+        </Stack>
       </Container>
     </Flex>
   );
