@@ -18,9 +18,12 @@ const Customer = () => {
     >
       <Stack px={4} spacing={0}>
         <ChosunBg fontSize={"36px"}>설치 지점</ChosunBg>
-        <ChosunGu fontSize={"11px"}>
-          주변 설치 지점을 검색하여 전국 어디서든 레드스위치를 경험할 수
-          있습니다.
+        <ChosunGu
+          fontSize={{ base: "12px", md: "14px" }}
+          whiteSpace={{ base: "pre-line", md: "normal" }}
+        >
+          {`주변 설치 지점을 검색하여 
+          전국 어디서든 레드스위치를 경험할 수 있습니다.`}
         </ChosunGu>
       </Stack>
       <Stack align={"center"} spacing={8}>
@@ -28,7 +31,7 @@ const Customer = () => {
           <IconButton
             icon={<ChevronLeftIcon />}
             borderRadius={"full"}
-            size={"sm"}
+            size={"xs"}
           />
           <HStack spacing={4}>
             <Box borderRadius={"full"} overflow={"hidden"}>
@@ -44,7 +47,7 @@ const Customer = () => {
           <IconButton
             icon={<ChevronRightIcon />}
             borderRadius={"full"}
-            size={"sm"}
+            size={"xs"}
           />
         </HStack>
         <HStack align={"center"} spacing={0}>
@@ -55,10 +58,16 @@ const Customer = () => {
           />
           <HStack spacing={4}>
             <Box overflow={"hidden"}>
-              <Image w={"150px"} h={"150px"} bgColor={"white"} />
+              <Image
+                boxSize={{ base: "48px", md: "160px" }}
+                bgColor={"white"}
+              />
             </Box>
             <Box overflow={"hidden"}>
-              <Image w={"150px"} h={"150px"} bgColor={"white"} />
+              <Image
+                boxSize={{ base: "48px", md: "160px" }}
+                bgColor={"white"}
+              />
             </Box>
           </HStack>
           <IconButton

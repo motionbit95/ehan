@@ -43,29 +43,29 @@ export const Intro2 = () => {
         </ONEMobilePOP>
         <ChosunGu>성인용품 사용해보신 적이 있나요?</ChosunGu>
       </Stack>
-      <Stack>
+      <Stack spacing={0}>
         {/* <Image src={require("../Asset/003.jpg")} /> */}
         <Image src={require("../Asset/Resize/003.png")} />
-      </Stack>
-      <Stack align={"center"} px={2}>
-        <Jejumyeongjo fontSize={"15px"}>
-          대답하기 부끄러운 것은 저 뿐만이 아니겠죠?
-        </Jejumyeongjo>
-        <Stack>
-          <Jejumyeongjo
-            whiteSpace={"nowrap"}
-            fontSize={"18px"}
-            textAlign={"center"}
-          >
-            {`우리는 성적인 존재가 아닌 척 하는 데에`}
+        <Stack align={"center"} px={2} mt={-3}>
+          <Jejumyeongjo fontSize={{ base: "15px", md: "lg" }}>
+            대답하기 부끄러운 것은 저 뿐만이 아니겠죠?
           </Jejumyeongjo>
-          <Jejumyeongjo
-            whiteSpace={"nowrap"}
-            fontSize={"18px"}
-            textAlign={"center"}
-          >
-            {`너무 오랜 시간을 보냈습니다.`}
-          </Jejumyeongjo>
+          <Stack spacing={0}>
+            <Jejumyeongjo
+              whiteSpace={"nowrap"}
+              fontSize={{ base: "18px", md: "xl" }}
+              textAlign={"center"}
+            >
+              {`우리는 성적인 존재가 아닌 척 하는 데에`}
+            </Jejumyeongjo>
+            <Jejumyeongjo
+              whiteSpace={"nowrap"}
+              fontSize={{ base: "18px", md: "xl" }}
+              textAlign={"center"}
+            >
+              {`너무 오랜 시간을 보냈습니다.`}
+            </Jejumyeongjo>
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
@@ -92,10 +92,12 @@ export const Intro3 = () => {
         <ChosunGu>성인용품 시장 5조원 시대</ChosunGu>
       </Stack>
       {/* <Image src={require("../Asset/004.jpg")} /> */}
-      <Image src={require("../Asset/Resize/004.png")} />
-      <Stack>
+      <Box px={{ base: 0, md: 6 }}>
+        <Image src={require("../Asset/Resize/004.png")} />
+      </Box>
+      <Stack spacing={0}>
         <Jejumyeongjo
-          fontSize={"15px"}
+          fontSize={{ base: "15px", md: "lg" }}
           px={2}
           textAlign={"center"}
           whiteSpace={"nowrap"}
@@ -103,7 +105,7 @@ export const Intro3 = () => {
           {`하지만 더 나은 섹스를 위한 어덜트토이를 갖기까지`}
         </Jejumyeongjo>
         <Jejumyeongjo
-          fontSize={"15px"}
+          fontSize={{ base: "15px", md: "lg" }}
           px={2}
           textAlign={"center"}
           whiteSpace={"nowrap"}

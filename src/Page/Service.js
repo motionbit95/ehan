@@ -20,7 +20,7 @@ export const Service1 = () => {
         </ONEMobilePOP>
         <ChosunGu>가장 필요한 순간. 간편 주문, 즉시 도착!</ChosunGu>
       </Stack>
-      <Box w={"full"}>
+      <Box pl={{ base: 0, md: 20 }}>
         {/* <Image src={require("../Asset/006.jpg")} /> */}
         <Image src={require("../Asset/Resize/006.png")} />
       </Box>
@@ -45,11 +45,11 @@ export const Service2 = () => {
         </ONEMobilePOP>
         <ChosunGu>너 섹비티아이 뭐야?</ChosunGu>
       </Stack>
-      <Box w={"full"}>
+      <Box w={"full"} pl={{ base: 0, md: 20 }}>
         {/* <Image src={require("../Asset/005.jpg")} /> */}
         <Image src={require("../Asset/Resize/005.png")} />
       </Box>
-      <Stack px={2} align={"center"} fontSize={"15px"}>
+      <Stack align={"center"} fontSize={"14px"} pl={{ base: 0, md: 20 }}>
         <Jejumyeongjo>
           MBTI는 알지만, 섹스 퍼스널리티는 모른다구요?
         </Jejumyeongjo>
@@ -79,21 +79,21 @@ export const Service3 = () => {
         </ONEMobilePOP>
         <ChosunGu>무료 SEX MBTI 테스트</ChosunGu>
       </Stack>
-      <Box w={"full"}>
+      <Box w={"full"} pl={{ base: 0, md: 20 }}>
         {/* <Image src={require("../Asset/007.jpg")} /> */}
         <Image src={require("../Asset/Resize/007.png")} />
       </Box>
-      <Stack px={2} align={"center"} pt={4}>
-        <Jejumyeongjo fontSize="18px">
+      <Stack pl={{ base: 0, md: 20 }} align={"center"} pt={4} spacing={0}>
+        <Jejumyeongjo fontSize={{ base: "18px", md: "24px" }}>
           간단한 테스트로 성향을 공유해보세요.
         </Jejumyeongjo>
         <Jejumyeongjo
-          fontSize="14px"
+          fontSize={{ base: "12px", md: "14px" }}
           whiteSpace={"pre-line"}
           textAlign={"center"}
         >{`상대의 성향과 서로에게 필요한 제품을 알 수 있어요.`}</Jejumyeongjo>
         <Jejumyeongjo
-          fontSize="12px"
+          fontSize={{ base: "12px", md: "14px" }}
           whiteSpace={"pre-line"}
           textAlign={"center"}
         >
@@ -119,16 +119,18 @@ export const Service4 = () => {
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           PARTNER SHIP
         </ONEMobilePOP>
-        <ChosunGu>성인용품이 가장 필요한 순간은 언제일까요?</ChosunGu>
+        <ChosunGu fontSize={{ base: "14px", md: "16px" }}>
+          성인용품이 가장 필요한 순간은 언제일까요?
+        </ChosunGu>
       </Stack>
-      <Box w={"full"}>
+      <Box w={"full"} pl={{ base: 0, md: 20 }}>
         {/* <Image src={require("../Asset/008.jpg")} /> */}
         <Image src={require("../Asset/Resize/008.png")} />
       </Box>
       <Jejumyeongjo
-        fontSize="18px"
+        fontSize={{ base: "16px", md: "20px" }}
         whiteSpace={"pre-line"}
-        px={4}
+        pl={{ base: 0, md: 20 }}
         textAlign={"center"}
       >{`주문부터 재고관리까지 저희가 합니다!\n사장님은 문고리에 걸어만 주세요.`}</Jejumyeongjo>
     </Stack>

@@ -482,6 +482,9 @@ function Inventory({ ...props }) {
                       </Tbody>
                     </Table>
                   </TableContainer>
+                  {/* <Stack align={"flex-end"}>
+                    <Text>재고 저장버튼</Text>
+                  </Stack> */}
                 </CardBody>
               </Card>
               <Card>

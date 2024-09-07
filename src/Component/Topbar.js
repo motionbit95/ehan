@@ -37,7 +37,7 @@ const Topbar = () => {
             </ChosunBg>
           </HStack>
           <HStack
-            fontSize={{ base: "11px", md: "sm" }}
+            fontSize={{ base: "10px", md: "sm" }}
             spacing={{ base: 1, md: 2 }}
           >
             <ChosunGu
