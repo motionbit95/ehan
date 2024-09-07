@@ -61,8 +61,8 @@ function Cert(props) {
   const [receiptID, setReceiptID] = useState(null);
   const callCert = async () => {
     console.log(
-      // process.env.REACT_APP_SERVER_URL +
-      "http://localhost:8081" +
+      process.env.REACT_APP_SERVER_URL +
+        // "http://localhost:8081" +
         `/${certType}/RequestIdentity/` +
         userInfo.name +
         "/" +
@@ -72,8 +72,8 @@ function Cert(props) {
     );
     // endpoint "/RequestIdentity/:name/:phone/:birthday"
     fetch(
-      // process.env.REACT_APP_SERVER_URL +
-      "http://localhost:8081" +
+      process.env.REACT_APP_SERVER_URL +
+        // "http://localhost:8081" +
         `/${certType}/RequestIdentity/` +
         userInfo.name +
         "/" +
@@ -98,8 +98,10 @@ function Cert(props) {
 
   const callStatus = async () => {
     fetch(
-      // process.env.REACT_APP_SERVER_URL +
-      "http://localhost:8081" + `/${certType}/GetIdentityStatus/` + receiptID
+      process.env.REACT_APP_SERVER_URL +
+        // "http://localhost:8081" +
+        `/${certType}/GetIdentityStatus/` +
+        receiptID
     )
       .then(async (res) => res.json())
       .then(async (data) => {
@@ -137,8 +139,8 @@ function Cert(props) {
   const callVerify = async () => {
     if (certOption === "PASS") {
       fetch(
-        // process.env.REACT_APP_SERVER_URL +
-        "http://localhost:8081" +
+        process.env.REACT_APP_SERVER_URL +
+          // "http://localhost:8081" +
           `/${certType}/VerifyIdentity/` +
           receiptID +
           "/" +
@@ -176,8 +178,10 @@ function Cert(props) {
         });
     } else {
       fetch(
-        // process.env.REACT_APP_SERVER_URL +
-        "http://localhost:8081" + `/${certType}/VerifyIdentity/` + receiptID
+        process.env.REACT_APP_SERVER_URL +
+          // "http://localhost:8081" +
+          `/${certType}/VerifyIdentity/` +
+          receiptID
       )
         .then(async (res) => res.json())
         .then(async (data) => {
