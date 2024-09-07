@@ -41,6 +41,7 @@ function Cert(props) {
   const [toggle, setToggle] = useState(false);
   const [step, setStep] = useState(props.step ? props.step : 0);
   const [certType, setCertType] = useState("KakaocertService");
+  const [certOption, setCertOption] = useState("카카오톡");
 
   const options = ["카카오톡", "네이버", "PASS"];
 
@@ -60,7 +61,8 @@ function Cert(props) {
   const [receiptID, setReceiptID] = useState(null);
   const callCert = async () => {
     console.log(
-      process.env.REACT_APP_SERVER_URL +
+      // process.env.REACT_APP_SERVER_URL +
+      "http://localhost:8081" +
         `/${certType}/RequestIdentity/` +
         userInfo.name +
         "/" +
@@ -70,7 +72,8 @@ function Cert(props) {
     );
     // endpoint "/RequestIdentity/:name/:phone/:birthday"
     fetch(
-      process.env.REACT_APP_SERVER_URL +
+      // process.env.REACT_APP_SERVER_URL +
+      "http://localhost:8081" +
         `/${certType}/RequestIdentity/` +
         userInfo.name +
         "/" +
@@ -95,9 +98,8 @@ function Cert(props) {
 
   const callStatus = async () => {
     fetch(
-      process.env.REACT_APP_SERVER_URL +
-        `/${certType}/GetIdentityStatus/` +
-        receiptID
+      // process.env.REACT_APP_SERVER_URL +
+      "http://localhost:8081" + `/${certType}/GetIdentityStatus/` + receiptID
     )
       .then(async (res) => res.json())
       .then(async (data) => {
@@ -133,39 +135,79 @@ function Cert(props) {
   }, [receiptID]);
 
   const callVerify = async () => {
-    fetch(
-      process.env.REACT_APP_SERVER_URL +
-        `/${certType}/VerifyIdentity/` +
-        receiptID
-    )
-      .then(async (res) => res.json())
-      .then(async (data) => {
-        // console.log(data);
-        if (data.state === 0) {
-          // 대기
-          alert("인증을 진행해주세요!");
-          return false;
-        }
+    if (certOption === "PASS") {
+      fetch(
+        // process.env.REACT_APP_SERVER_URL +
+        "http://localhost:8081" +
+          `/${certType}/VerifyIdentity/` +
+          receiptID +
+          "/" +
+          userInfo.name +
+          "/" +
+          userInfo.phone
+      )
+        .then(async (res) => res.json())
+        .then(async (data) => {
+          console.log(data.state);
+          if (parseInt(data.state) === 0) {
+            // 대기
+            alert("인증을 진행해주세요!");
+            return false;
+          }
 
-        if (data.state === 1) {
-          // 완료
-          console.log("인증이 완료되었습니다.");
-          onVerified();
-          return true;
-        }
+          if (parseInt(data.state) === 1) {
+            // 완료
+            console.log("인증이 완료되었습니다.");
+            onVerified();
+            return true;
+          }
 
-        if (data.state === 2) {
-          // 만료
-          alert("인증이 만료되었습니다. 다시 진행해주세요.");
-          setStep(1); // 인증요청 화면으로 이동
+          if (parseInt(data.state) === 2) {
+            // 만료
+            alert("인증이 만료되었습니다. 다시 진행해주세요.");
+            setStep(1); // 인증요청 화면으로 이동
+            return false;
+          }
+        })
+        .catch(async (error) => {
+          console.log(error);
+          alert(`[${error.code}] ${error.message}`);
           return false;
-        }
-      })
-      .catch(async (error) => {
-        console.log(error);
-        alert(`[${error.code}] ${error.message}`);
-        return false;
-      });
+        });
+    } else {
+      fetch(
+        // process.env.REACT_APP_SERVER_URL +
+        "http://localhost:8081" + `/${certType}/VerifyIdentity/` + receiptID
+      )
+        .then(async (res) => res.json())
+        .then(async (data) => {
+          console.log(data.state);
+          if (parseInt(data.state) === 0) {
+            // 대기
+            alert("인증을 진행해주세요!");
+            return false;
+          }
+
+          if (parseInt(data.state) === 1) {
+            // 완료
+            console.log("인증이 완료되었습니다.");
+            onVerified();
+            return true;
+          }
+
+          if (parseInt(data.state) === 2) {
+            // 만료
+            alert("인증이 만료되었습니다. 다시 진행해주세요.");
+            setStep(1); // 인증요청 화면으로 이동
+            return false;
+          }
+        })
+        .catch(async (error) => {
+          console.log(error);
+          alert(`[${error.code}] ${error.message}`);
+          return false;
+        });
+    }
   };
 
   const moveStep = () => {
@@ -247,9 +289,20 @@ function Cert(props) {
                         <RadioCard
                           key={value}
                           {...radio}
+                          isChecked={value === certOption}
                           onChange={(e) => {
-                            if (e.target.value !== "카카오톡") {
-                              alert("준비중입니다.");
+                            console.log(e.target.value);
+                            setCertOption(e.target.value);
+                            if (e.target.value === "카카오톡") {
+                              setCertType("KakaocertService");
+                            }
+
+                            if (e.target.value === "네이버") {
+                              setCertType("NavercertService");
+                            }
+
+                            if (e.target.value === "PASS") {
+                              setCertType("PasscertService");
                             }
                           }}
                         >
@@ -293,7 +346,15 @@ function Cert(props) {
             {step === 2 && (
               <Stack>
                 <Text>본인인증을 진행하고 인증완료 버튼을 클릭해주세요.</Text>
-                <Image src={require("../../assets/kakaostep.jpg")} />
+                {certOption === "카카오톡" && (
+                  <Image src={require("../../assets/kakaostep.jpg")} />
+                )}
+                {certOption === "네이버" && (
+                  <Image src={require("../../assets/naverstep.png")} />
+                )}
+                {certOption === "PASS" && (
+                  <Image src={require("../../assets/passstep.png")} />
+                )}
               </Stack>
             )}
           </ModalBody>
@@ -305,6 +366,7 @@ function Cert(props) {
               // onClick={onClose}
               w={"100%"}
               onClick={async () => {
+                console.log(step);
                 if (step === 0) {
                   moveStep();
                 }
