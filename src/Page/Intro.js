@@ -1,4 +1,4 @@
-import { Box, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Stack, Text } from "@chakra-ui/react";
 import React from "react";
 import { ChosunGu, Jejumyeongjo, ONEMobilePOP } from "../Component/Text";
 
@@ -8,6 +8,7 @@ export const Intro1 = () => {
       // id="intro1"
       w={"full"}
       h={"100vh"}
+      position={"relative"}
       // minHeight="100vh"
       // css={{
       //   "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -17,8 +18,29 @@ export const Intro1 = () => {
       align={"center"}
       justify={"center"}
     >
-      <Image height={"100%"} src={require("../Asset/002.jpg")} />
-      {/* <Image src={require("../Asset/Resize/002.png")} /> */}
+      {/* <Image src={require("../Asset/002.jpg")} /> */}
+      <Image src={require("../Asset/Resize/002.png")} />
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          1
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          3
+        </Text>
+      </Flex>
     </Stack>
   );
 };
@@ -28,6 +50,7 @@ export const Intro2 = () => {
     <Stack
       // id="intro2"
       w={"full"}
+      position={"relative"}
       minHeight="100vh"
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -68,6 +91,27 @@ export const Intro2 = () => {
           </Stack>
         </Stack>
       </Stack>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          2
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          3
+        </Text>
+      </Flex>
     </Stack>
   );
 };
@@ -77,6 +121,7 @@ export const Intro3 = () => {
     <Stack
       // id="intro3"
       spacing={8}
+      position={"relative"}
       minHeight="100vh"
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -113,6 +158,27 @@ export const Intro3 = () => {
           {`우리는 부끄러운 마음과 걱정이 먼저 앞서는걸요.`}
         </Jejumyeongjo>
       </Stack>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          3
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          3
+        </Text>
+      </Flex>
     </Stack>
   );
 };

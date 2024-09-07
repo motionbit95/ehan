@@ -30,6 +30,7 @@ import {
 import { auth } from "../firebase/firebase_conf";
 import { useGlobalState } from "../GlobalState";
 import Logo from "./Logo";
+import { ChosunBg } from "../Component/Text";
 
 const RHeader = (props) => {
   const [isDesktopView, setIsDesktopView] = useState(window.innerWidth > 768); // 기본적으로 데스크탑 뷰
@@ -71,7 +72,7 @@ const RHeader = (props) => {
         <Flex align="center" width={"100%"} justify="space-between">
           <HStack>
             <Logo />
-            <Text fontWeight="bold">REDSWITCH</Text>
+            <ChosunBg fontWeight="bold">REDSWITCH</ChosunBg>
           </HStack>
           <Text display={{ base: "none", md: "block" }} mr={4}>
             {admin?.admin_name}

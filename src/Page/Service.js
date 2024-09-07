@@ -1,4 +1,4 @@
-import { Box, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Stack, Text } from "@chakra-ui/react";
 import React from "react";
 import { ChosunGu, Jejumyeongjo, ONEMobilePOP } from "../Component/Text";
 
@@ -13,6 +13,7 @@ export const Service1 = () => {
       }}
       justify={"center"}
       spacing={8}
+      position={"relative"}
     >
       <Stack spacing={0} px={4}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
@@ -24,6 +25,27 @@ export const Service1 = () => {
         {/* <Image src={require("../Asset/006.jpg")} /> */}
         <Image src={require("../Asset/Resize/006.png")} />
       </Box>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          1
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          4
+        </Text>
+      </Flex>
     </Stack>
   );
 };
@@ -31,6 +53,7 @@ export const Service2 = () => {
   return (
     <Stack
       minHeight="100vh"
+      position={"relative"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",
@@ -58,12 +81,34 @@ export const Service2 = () => {
           22가지의 다양한 성향이 있어요.`}
         </Jejumyeongjo>
       </Stack>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          2
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          4
+        </Text>
+      </Flex>
     </Stack>
   );
 };
 export const Service3 = () => {
   return (
     <Stack
+      position={"relative"}
       minHeight="100vh"
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -100,6 +145,27 @@ export const Service3 = () => {
           지피지기백전백승! 오늘 사랑이 더 깊어지지 않을까요?
         </Jejumyeongjo>
       </Stack>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          3
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          4
+        </Text>
+      </Flex>
     </Stack>
   );
 };
@@ -107,6 +173,7 @@ export const Service4 = () => {
   return (
     <Stack
       minHeight="100vh"
+      position={"relative"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",
@@ -115,7 +182,7 @@ export const Service4 = () => {
       justify={"center"}
       spacing={2}
     >
-      <Stack px={4} spacing={0}>
+      <Stack px={4} spacing={0} pb={6}>
         <ONEMobilePOP color={"red"} fontSize={"36px"}>
           PARTNER SHIP
         </ONEMobilePOP>
@@ -133,6 +200,27 @@ export const Service4 = () => {
         pl={{ base: 0, md: 20 }}
         textAlign={"center"}
       >{`주문부터 재고관리까지 저희가 합니다!\n사장님은 문고리에 걸어만 주세요.`}</Jejumyeongjo>
+      <Flex
+        // display={{ base: "none", md: "flex" }}
+        position={"absolute"}
+        bottom={{ base: "6vh", md: "40" }}
+        left={4}
+        color={"rgb(255, 255, 255, 0.6)"}
+      >
+        <Text
+          fontSize={"24px"}
+          color={"white"}
+          fontWeight={"extrabold"}
+          position={"relative"}
+          bottom={3}
+        >
+          4
+        </Text>
+        <Text>/</Text>
+        <Text fontSize={"14px"} position={"relative"} top={1}>
+          4
+        </Text>
+      </Flex>
     </Stack>
   );
 };
