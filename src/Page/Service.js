@@ -6,6 +6,7 @@ export const Service1 = () => {
   return (
     <Stack
       minHeight="100vh"
+      overflow={"hidden"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",
@@ -16,7 +17,13 @@ export const Service1 = () => {
       position={"relative"}
     >
       <Stack spacing={0} px={4}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           SWITCH ON!
         </ONEMobilePOP>
         <ChosunGu>가장 필요한 순간. 간편 주문, 즉시 도착!</ChosunGu>
@@ -53,6 +60,7 @@ export const Service2 = () => {
   return (
     <Stack
       minHeight="100vh"
+      overflow={"hidden"}
       position={"relative"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -63,7 +71,13 @@ export const Service2 = () => {
       spacing={2}
     >
       <Stack px={4} spacing={0}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           SEX MBTI
         </ONEMobilePOP>
         <ChosunGu>너 섹비티아이 뭐야?</ChosunGu>
@@ -110,6 +124,7 @@ export const Service3 = () => {
     <Stack
       position={"relative"}
       minHeight="100vh"
+      overflow={"hidden"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",
@@ -119,7 +134,13 @@ export const Service3 = () => {
       spacing={8}
     >
       <Stack spacing={0} px={4}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           BDSM TEST
         </ONEMobilePOP>
         <ChosunGu>무료 SEX MBTI 테스트</ChosunGu>
@@ -173,6 +194,7 @@ export const Service4 = () => {
   return (
     <Stack
       minHeight="100vh"
+      overflow={"hidden"}
       position={"relative"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
@@ -183,7 +205,13 @@ export const Service4 = () => {
       spacing={2}
     >
       <Stack px={4} spacing={0} pb={6}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           PARTNER SHIP
         </ONEMobilePOP>
         <ChosunGu fontSize={{ base: "14px", md: "16px" }}>

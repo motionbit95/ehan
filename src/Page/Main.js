@@ -6,6 +6,7 @@ const Main = () => {
   return (
     <Stack
       // id="main"
+      overflow={"hidden"}
       align={"center"}
       justify={"center"}
       minHeight="100vh"

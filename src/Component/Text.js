@@ -22,9 +22,9 @@ export function ONEMobilePOP(props) {
     <Text
       {...props}
       fontFamily={"ONE-Mobile-POP"}
-      textShadow={
-        "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
-      }
+      // textShadow={
+      //   "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+      // }
     >
       {props.children}
     </Text>
@@ -34,6 +34,14 @@ export function ONEMobilePOP(props) {
 export function Jejumyeongjo(props) {
   return (
     <Text {...props} fontFamily={"JejuMyeongjo"}>
+      {props.children}
+    </Text>
+  );
+}
+
+export function Godo(props) {
+  return (
+    <Text {...props} fontFamily={"Godo"}>
       {props.children}
     </Text>
   );

@@ -27,6 +27,7 @@ const ContactUs = () => {
     <Stack
       // id="contactUs"
       minHeight="100vh"
+      overflow={"hidden"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",

@@ -69,7 +69,7 @@ const Landing = () => {
       color={"white"}
     >
       <Topbar />
-      <Container maxW={{ base: "full", md: "xl" }}>
+      <Container maxW={{ base: "full", md: "xl" }} p={0}>
         <SectionsContainer {...options}>
           <Section id="main">
             <Main />

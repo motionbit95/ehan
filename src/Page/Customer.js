@@ -8,6 +8,7 @@ const Customer = () => {
     <Stack
       // id="customer"
       minHeight="100vh"
+      overflow={"hidden"}
       css={{
         "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
           minHeight: "-webkit-fill-available",
@@ -27,7 +28,7 @@ const Customer = () => {
         </ChosunGu>
       </Stack>
       <Stack align={"center"} spacing={8}>
-        <HStack align={"center"} spacing={8}>
+        <HStack align={"center"} spacing={{ base: 4, md: 8 }}>
           <IconButton
             icon={<ChevronLeftIcon />}
             borderRadius={"full"}
@@ -59,13 +60,13 @@ const Customer = () => {
           <HStack spacing={4}>
             <Box overflow={"hidden"}>
               <Image
-                boxSize={{ base: "48px", md: "160px" }}
+                boxSize={{ base: "100px", md: "160px" }}
                 bgColor={"white"}
               />
             </Box>
             <Box overflow={"hidden"}>
               <Image
-                boxSize={{ base: "48px", md: "160px" }}
+                boxSize={{ base: "100px", md: "160px" }}
                 bgColor={"white"}
               />
             </Box>

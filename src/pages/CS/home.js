@@ -27,7 +27,13 @@ import { Footer } from "../../components/RFooter";
 import { CheckIcon, CopyIcon, SearchIcon } from "@chakra-ui/icons";
 import Logo from "../../components/Logo";
 import Cert from "./cert";
-import { ChosunGu } from "../../Component/Text";
+import {
+  ChosunBg,
+  ChosunGu,
+  Godo,
+  Jejumyeongjo,
+  ONEMobilePOP,
+} from "../../Component/Text";
 
 export function formatCurrency(number, currencyCode = "KRW") {
   const formattedNumber = new Intl.NumberFormat("ko-KR", {
@@ -246,41 +252,27 @@ function Home(props) {
       <Skeleton isLoaded={shopInfo !== null}>
         <Stack
           id="banner"
-          height={"40vh"}
           flexDirection={"column"}
           alignItems={"center"}
           backgroundImage={`url(${shopInfo?.shop_img})`}
           backgroundSize={"cover"}
           backgroundPosition={"center"}
           backgroundRepeat={"no-repeat"}
-          opacity={"0.7"}
-          padding={"2vh 3vh"}
-          bgColor={"#eee"}
+          // opacity={"0.7"}
+          // padding={"2vh 3vh"}
+          bgColor={"#F1F1F1"}
         >
-          <Circle
-            id="circle"
+          <Stack
+            // p={"2vh 3vh"}
+            spacing={0}
             bgColor={"white"}
-            w={"100px"}
-            h={"100px"}
-            position={"absolute"}
-            top={"50px"}
-            left={"30px"}
-            border={"5px solid #8c8c8c"}
-            zIndex={"99"}
-            cursor={"pointer"}
-            onClick={() => navigate(`/bdsm`)}
-            overflow={"hidden"}
-          >
-            <Image src={require("../../assets/bdsm.png")}></Image>
-          </Circle>
-          <Flex
             id="header"
-            height={"48px"}
+            // height={"48px"}
             width={"100%"}
             justifyContent={"space-between"}
-            alignItems={"flex-start"}
+            align={"center"}
           >
-            <Image
+            {/* <Image
               visibility={shopInfo?.logo_img ? "visible" : "hidden"}
               src={shopInfo?.logo_img}
               alt="logo_img"
@@ -294,11 +286,33 @@ function Home(props) {
                   },
                 })
               }
-            />
-            <HStack gap={"20px"}>
+            /> */}
+            <Stack spacing={0} align={"center"} pt={"2vh"}>
+              <HStack spacing={0} align={"center"} justify={"center"}>
+                <Box w={{ base: "20px", md: "28px" }}>
+                  <Image src={require("../../Asset/redswitchLogo.png")} />
+                </Box>
+                <ChosunBg
+                  fontSize={{ base: "xl", md: "2xl" }}
+                  fontWeight="bold"
+                >
+                  REDSWITCH
+                </ChosunBg>
+              </HStack>
+              <Text
+                mt={"-6px"}
+                fontSize={"8px"}
+                color={"black"}
+                fontWeight={"bold"}
+              >
+                비대면 어덜트토이 플랫폼
+              </Text>
+            </Stack>
+            <HStack w={"100%"} justify={"flex-end"} mt={-1} spacing={0}>
               <IconButton
-                isRounded={"full"}
-                bgColor={"white"}
+                // isRounded={"full"}
+                variant={"unstyled"}
+                // bgColor={"white"}
                 w={"40px"}
                 h={"40px"}
                 borderRadius={"100%"}
@@ -314,13 +328,20 @@ function Home(props) {
                 }
               />
               <IconButton
-                isRounded={"full"}
-                bgColor={"white"}
+                // isRounded={"full"}
+                // bgColor={"white"}
+                variant={"unstyled"}
                 w={"40px"}
                 h={"40px"}
                 borderRadius={"100%"}
                 size={"sm"}
-                icon={<Image src={require("../../image/ShoppingCart.png")} />}
+                icon={
+                  <Image
+                    w={"32px"}
+                    h={"32px"}
+                    src={require("../../image/cart-outline-svgrepo-com.png")}
+                  />
+                }
                 onClick={() =>
                   navigate(`/cart`, {
                     state: {
@@ -344,55 +365,109 @@ function Home(props) {
                 }}
               /> */}
             </HStack>
-          </Flex>
-          <Flex
-            id="title"
-            w={"100%"}
-            h={"100%"}
-            justify={"space-between"}
-            alignItems={"center"}
+          </Stack>
+          <HStack align={"center"}>
+            <Box w={"130px"} zIndex={"99"} cursor={"pointer"}>
+              <Image src={require("../../assets/bdsm_gray.png")} />
+            </Box>
+            <Stack>
+              <Stack spacing={0}>
+                <ONEMobilePOP
+                  textShadow={
+                    "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000"
+                  }
+                  color={"red"}
+                  fontSize={"32px"}
+                  lineHeight={"0.9"}
+                >
+                  BDSM TEST
+                </ONEMobilePOP>
+                <Godo fontSize={"sm"} fontWeight={"extrabold"}>
+                  나의 "SEX MBTI"는 무엇일까?
+                </Godo>
+              </Stack>
+              <Godo
+                fontSize={"sm"}
+                textAlign={"end"}
+                textDecoration={"underline"}
+                fontWeight={"extrabold"}
+                onClick={() => navigate(`/bdsm`)}
+              >
+                무료 테스트 하러가기
+              </Godo>
+            </Stack>
+          </HStack>
+
+          {/* <Circle
+            id="circle"
+            bgColor={"white"}
+            w={"100px"}
+            h={"100px"}
+            position={"absolute"}
+            top={"50px"}
+            left={"30px"}
+            border={"5px solid #8c8c8c"}
+            zIndex={"99"}
+            cursor={"pointer"}
+            onClick={() => navigate(`/bdsm`)}
+            overflow={"hidden"}
           >
-            <Flex
-              direction={"row"}
-              align={"center"}
-              backgroundColor={"white"}
-              width={"100%"}
-              h={"48px"}
-              opacity={"0.8"}
-              borderRadius={"1vh"}
-            >
-              <Flex w={"48px"} h={"48px"} align={"center"} justify={"center"}>
-                <Image
-                  w={"24px"}
-                  h={"24px"}
-                  bgColor={"white"}
-                  src={require("../../assets/logo192.png")}
-                />
-                {/* <Logo /> */}
-              </Flex>
-              <Text color={"black"} fontSize={"medium"}>
-                {shopInfo?.shop_name}
-              </Text>
-            </Flex>
-          </Flex>
+            <Image src={require("../../assets/bdsm.png")}></Image>
+          </Circle> */}
         </Stack>
+        <Stack h={"2"}></Stack>
         <Box bgColor={"#d9d9d9"} padding={"1vh 2vh"}>
           <VStack>
-            <Button
-              mt={"-3vh"}
-              size={"sm"}
-              leftIcon={
-                localStorage.getItem("adult") ? (
-                  <CheckIcon />
-                ) : (
+            <Flex
+              id="title"
+              w={"100%"}
+              h={"100%"}
+              justify={"space-between"}
+              alignItems={"center"}
+            >
+              <Flex
+                direction={"row"}
+                align={"center"}
+                backgroundColor={"white"}
+                width={"100%"}
+                h={"40px"}
+                opacity={"0.8"}
+                borderRadius={"1vh"}
+              >
+                <Flex w={"40px"} h={"40px"} align={"center"} justify={"center"}>
                   <Image
                     w={"24px"}
                     h={"24px"}
                     bgColor={"white"}
                     src={require("../../assets/logo192.png")}
                   />
-                )
-              }
+                  {/* <Logo /> */}
+                </Flex>
+                <ChosunGu color={"black"} fontSize={"medium"}>
+                  {shopInfo?.shop_name}
+                </ChosunGu>
+              </Flex>
+            </Flex>
+            <Button
+              size={"sm"}
+              variant={"ghost"}
+              textDecoration={"underline"}
+              sx={{ textUnderlineOffset: "3px" }}
+              fontSize={"md"}
+              fontWeight={"bold"}
+              fontFamily={"Godo"}
+              // leftIcon={
+              //   localStorage.getItem("adult") ? (
+              //     <CheckIcon />
+              //   ) : (
+              //     <Image
+              //       w={"24px"}
+              //       h={"24px"}
+              //       bgColor={"white"}
+              //       src={require("../../assets/logo192.png")}
+              //     />
+              //   )
+              // }
               colorScheme={localStorage.getItem("adult") ? "green" : "gray"}
               onClick={() => {
                 if (!localStorage.getItem("adult")) {
@@ -404,10 +479,16 @@ function Home(props) {
                 ? "초간단 성인인증하기"
                 : "성인인증 완료"}
             </Button>
-            <ChosunGu fontSize={"sm"}>
-              성인인증을 하시면 전체 상세 이미지를 보실 수 있으며, 성인인증 관련
-              개인정보 및 기록은 보관되지 않습니다.
-            </ChosunGu>
+            <Jejumyeongjo
+              fontSize={"xs"}
+              fontWeight={"900"}
+              lineHeight={"1.2"}
+              textAlign={"center"}
+              whiteSpace={"pre-line"}
+            >
+              {`성인인증을 하시면 전체 상세이미지를 보실 수 있으며,
+              성인인증 개인정보 및 기록은 보관되지 않습니다.`}
+            </Jejumyeongjo>
           </VStack>
         </Box>
         <Stack>

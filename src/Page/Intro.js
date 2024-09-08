@@ -6,6 +6,7 @@ export const Intro1 = () => {
   return (
     <Stack
       // id="intro1"
+      overflow={"hidden"}
       w={"full"}
       h={"100vh"}
       position={"relative"}
@@ -50,6 +51,7 @@ export const Intro2 = () => {
     <Stack
       // id="intro2"
       w={"full"}
+      overflow={"hidden"}
       position={"relative"}
       minHeight="100vh"
       css={{
@@ -61,7 +63,13 @@ export const Intro2 = () => {
       justify={"center"}
     >
       <Stack spacing={0} px={4}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           ADULT TOY
         </ONEMobilePOP>
         <ChosunGu>성인용품 사용해보신 적이 있나요?</ChosunGu>
@@ -121,6 +129,7 @@ export const Intro3 = () => {
     <Stack
       // id="intro3"
       spacing={8}
+      overflow={"hidden"}
       position={"relative"}
       minHeight="100vh"
       css={{
@@ -131,7 +140,13 @@ export const Intro3 = () => {
       justify={"center"}
     >
       <Stack spacing={0} px={4}>
-        <ONEMobilePOP color={"red"} fontSize={"36px"}>
+        <ONEMobilePOP
+          textShadow={
+            "1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff"
+          }
+          color={"red"}
+          fontSize={"36px"}
+        >
           ADULT MARKET
         </ONEMobilePOP>
         <ChosunGu>성인용품 시장 5조원 시대</ChosunGu>
