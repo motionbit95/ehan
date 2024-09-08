@@ -33,7 +33,14 @@ const Main = () => {
         </ChosunGu>
       </Stack>
       <Stack>
-        <Image src={require("../Asset/Resize/001.png")} />
+        <Image
+          display={{ base: "none", md: "block" }}
+          src={require("../Asset/PC/001 1.png")}
+        />
+        <Image
+          display={{ base: "block", md: "none" }}
+          src={require("../Asset/Resize/001.png")}
+        />
       </Stack>
     </Stack>
   );

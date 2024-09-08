@@ -546,22 +546,25 @@ function BDSM(props) {
                   w={"100%"}
                   onClick={() => navigate("/bdsm/view")}
                 >
-                  BDSM 성향모두보기
+                  BDSM 성향 모두보기
                 </Button>
               </VStack>
             </form>
-            <HStack justifyContent={"flex-end"}>
-              <Button
-                size={"xs"}
-                colorScheme="red"
-                onClick={() => (window.location.href = "/")}
-              >
-                레드스위치 바로가기
-              </Button>
-              <Button size={"xs"} colorScheme="green">
-                {" "}
-                내 주변 설치지점 찾기
-              </Button>
+
+            <HStack justifyContent={"space-between"} align={"start"}>
+              <Stack>
+                <Button size={"xs"} colorScheme="green">
+                  {" "}
+                  내 주변 설치지점 찾기
+                </Button>
+                <Button
+                  size={"xs"}
+                  colorScheme="red"
+                  onClick={() => (window.location.href = "/")}
+                >
+                  레드스위치 바로가기
+                </Button>
+              </Stack>
               <Button size={"xs"} onClick={() => clip()} leftIcon={<BsShare />}>
                 테스트링크 공유하기
               </Button>

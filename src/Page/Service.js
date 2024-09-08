@@ -84,7 +84,14 @@ export const Service2 = () => {
       </Stack>
       <Box w={"full"} pl={{ base: 0, md: 20 }}>
         {/* <Image src={require("../Asset/005.jpg")} /> */}
-        <Image src={require("../Asset/Resize/005.png")} />
+        <Image
+          display={{ base: "none", md: "block" }}
+          src={require("../Asset/PC/006 1.png")}
+        />
+        <Image
+          display={{ base: "block", md: "none" }}
+          src={require("../Asset/Resize/005.png")}
+        />
       </Box>
       <Stack align={"center"} fontSize={"14px"} pl={{ base: 0, md: 20 }}>
         <Jejumyeongjo>

@@ -75,8 +75,13 @@ export const Intro2 = () => {
         <ChosunGu>성인용품 사용해보신 적이 있나요?</ChosunGu>
       </Stack>
       <Stack spacing={0}>
-        {/* <Image src={require("../Asset/003.jpg")} /> */}
-        <Image src={require("../Asset/Resize/003.png")} />
+        <Box display={{ base: "none", md: "block" }}>
+          <Image src={require("../Asset/PC/003 1.png")} />
+        </Box>
+        <Image
+          display={{ base: "block", md: "none" }}
+          src={require("../Asset/Resize/003.png")}
+        />
         <Stack align={"center"} px={2} mt={-3}>
           <Jejumyeongjo fontSize={{ base: "15px", md: "lg" }}>
             대답하기 부끄러운 것은 저 뿐만이 아니겠죠?
