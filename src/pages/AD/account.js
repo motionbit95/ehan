@@ -10,8 +10,13 @@ import {
   Input,
   Select,
   Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
   Table,
   TableContainer,
+  Tabs,
   Tbody,
   Td,
   Text,
@@ -246,6 +251,93 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
           </Stack>
         </Stack>
       )}
+    </>
+  );
+}
+
+function ShopInfo({
+  depth1,
+  depth2,
+  setDepth1,
+  setDepth2,
+  shopInfoData,
+  ...props
+}) {
+  const [shopData, setShopData] = React.useState({
+    shop_name: shopInfoData?.shop_name,
+    shop_address: shopInfoData?.shop_address,
+    doc_id: shopInfoData?.doc_id,
+    shop_depth1: shopInfoData?.shop_depth1,
+    shop_depth2: shopInfoData?.shop_depth2,
+    shop_img: shopInfoData?.shop_img,
+    logo_img: shopInfoData?.logo_img,
+  });
+
+  return (
+    <>
+      <Stack w={"100%"} h={"100%"}>
+        <Stack>
+          <FormControl>
+            <FormLabel>가맹점 id</FormLabel>
+            <Input
+              name="doc_id"
+              type="text"
+              disabled
+              defaultValue={shopData?.doc_id}
+              // placeholder="가맹점 id를 입력하세요."
+              onChange={(e) =>
+                setShopData({ ...shopData, doc_id: e.target.value })
+              }
+            ></Input>
+          </FormControl>
+          <FormControl>
+            <FormLabel>가맹점 이름</FormLabel>
+            <HStack>
+              <Input
+                name="shop_name"
+                type="text"
+                defaultValue={shopData?.shop_name}
+                // placeholder="가맹점 이름을 입력하세요."
+              />
+              <Button onClick={() => alert("변경")}>변경</Button>
+            </HStack>
+          </FormControl>
+          <FormControl>
+            <FormLabel>가맹점 주소</FormLabel>
+            <HStack>
+              <Input
+                name="shop_address"
+                type="text"
+                // placeholder="가맹점 주소를 입력하세요."
+                defaultValue={shopData?.shop_address}
+                onChange={(e) =>
+                  setShopData({ ...shopData, shop_address: e.target.value })
+                }
+              />
+              <Button onClick={() => alert("변경")}>변경</Button>
+            </HStack>
+          </FormControl>
+          <FormControl>
+            <FormLabel>1차 카테고리</FormLabel>
+            <RDepth1
+              defaultValue={shopData?.shop_depth1}
+              onChangeDepth1={(depth1) => {
+                setShopData({ ...shopData, shop_depth1: depth1 });
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>2차 카테고리</FormLabel>
+            <RDepth2
+              depth1={shopData?.shop_depth1}
+              defaultValue={shopData?.shop_depth2}
+              onChangeDepth2={(depth2) => {
+                setShopData({ ...shopData, shop_depth2: depth2 });
+              }}
+            />
+          </FormControl>
+        </Stack>
+      </Stack>
     </>
   );
 }
@@ -508,73 +600,156 @@ function Account(props) {
                     </FormControl>
                   </PopupBase>
                 </ButtonGroup>
-                <TableContainer
+                <Tabs
                   border={"1px solid #d9d9d9"}
                   bgColor={"white"}
                   borderRadius={"10px"}
                   p={"10px"}
+                  variant={"soft-rounded"}
                 >
-                  <Table variant="simple" size={"sm"}>
-                    <Thead h={"40px"}>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>이름</Th>
-                        <Th>ID</Th>
-                        <Th>관리 지점</Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          수정
-                        </Th>
-                        <Th textAlign={"center"} w={"30px"}>
-                          삭제
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {adminList.map((item, index) => (
-                        <Tr
-                          key={index}
-                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                        >
-                          <Td fontSize={"sm"}>{index + 1}</Td>
-                          <Td fontSize={"sm"}>{item.admin_name}</Td>
-                          <Td fontSize={"sm"}>{item.admin_email}</Td>
-                          <Td fontSize={"sm"}>
-                            {item.permission === "supervisor"
-                              ? "전지점"
-                              : searchShopName(item.shop_id)}
-                          </Td>
-                          <Td>
-                            <PopupBase
-                              size={"sm"}
-                              colorScheme={"gray"}
-                              visibleButton={true}
-                              action={"수정"}
-                              title={<EditIcon />}
-                              onClose={(e) => window.location.reload()}
-                            >
-                              <AccountInfo
-                                permission={admin?.permission}
-                                admin={item}
-                                shopList={props.shopList}
-                                visibleAdminInfo={true}
-                                checkConfirmPassword={checkConfirmPassword}
-                                checkValidPassword={checkValidPassword}
-                                checkCurrentPassword={checkCurrentPassword}
-                              />
-                            </PopupBase>
-                          </Td>
-                          <Td>
-                            <IconButton
-                              size={"sm"}
-                              onClick={() => deleteAdmin(item.doc_id)}
-                              icon={<DeleteIcon />}
-                            />
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
+                  <TabList>
+                    <Tab>관리자</Tab>
+                    <Tab>지점</Tab>
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      {/* 관리자 */}
+                      <TableContainer
+                      // border={"1px solid #d9d9d9"}
+                      // bgColor={"white"}
+                      // borderRadius={"10px"}
+                      // p={"10px"}
+                      >
+                        <Table variant="simple" size={"sm"}>
+                          <Thead h={"40px"}>
+                            <Tr>
+                              <Th>No</Th>
+                              <Th>이름</Th>
+                              <Th>ID</Th>
+                              <Th>관리 지점</Th>
+                              <Th textAlign={"center"} w={"30px"}>
+                                수정
+                              </Th>
+                              <Th textAlign={"center"} w={"30px"}>
+                                삭제
+                              </Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {adminList.map((item, index) => (
+                              <Tr
+                                key={index}
+                                _hover={{
+                                  cursor: "pointer",
+                                  bgColor: "#f0f0f0",
+                                }}
+                              >
+                                <Td fontSize={"sm"}>{index + 1}</Td>
+                                <Td fontSize={"sm"}>{item.admin_name}</Td>
+                                <Td fontSize={"sm"}>{item.admin_email}</Td>
+                                <Td fontSize={"sm"}>
+                                  {item.permission === "supervisor"
+                                    ? "전지점"
+                                    : searchShopName(item.shop_id)}
+                                </Td>
+                                <Td>
+                                  <PopupBase
+                                    size={"sm"}
+                                    colorScheme={"gray"}
+                                    visibleButton={true}
+                                    action={"수정"}
+                                    title={<EditIcon />}
+                                    onClose={(e) => window.location.reload()}
+                                  >
+                                    <AccountInfo
+                                      permission={admin?.permission}
+                                      admin={item}
+                                      shopList={props.shopList}
+                                      visibleAdminInfo={true}
+                                      checkConfirmPassword={
+                                        checkConfirmPassword
+                                      }
+                                      checkValidPassword={checkValidPassword}
+                                      checkCurrentPassword={
+                                        checkCurrentPassword
+                                      }
+                                    />
+                                  </PopupBase>
+                                </Td>
+                                <Td>
+                                  <IconButton
+                                    size={"sm"}
+                                    onClick={() => deleteAdmin(item.doc_id)}
+                                    icon={<DeleteIcon />}
+                                  />
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
+                    </TabPanel>
+                    <TabPanel>
+                      {/* 지점 */}
+                      <TableContainer
+                      // border={"1px solid #d9d9d9"}
+                      // bgColor={"white"}
+                      // borderRadius={"10px"}
+                      // p={"10px"}
+                      >
+                        <Table variant="simple" size={"sm"}>
+                          <Thead h={"40px"}>
+                            <Tr>
+                              <Th>No</Th>
+                              <Th>지점명</Th>
+                              <Th>주소</Th>
+                              <Th textAlign={"center"} w={"30px"}>
+                                수정
+                              </Th>
+                              <Th textAlign={"center"} w={"30px"}>
+                                삭제
+                              </Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {shopList.map((item, index) => (
+                              <Tr
+                                key={index}
+                                _hover={{
+                                  cursor: "pointer",
+                                  bgColor: "#f0f0f0",
+                                }}
+                              >
+                                <Td fontSize={"sm"}>{index + 1}</Td>
+                                <Td fontSize={"sm"}>{item.shop_name}</Td>
+                                <Td fontSize={"sm"}>{item.shop_address}</Td>
+                                <Td>
+                                  <PopupBase
+                                    size={"sm"}
+                                    colorScheme={"gray"}
+                                    visibleButton={true}
+                                    action={"수정"}
+                                    title={<EditIcon />}
+                                    onClose={(e) => window.location.reload()}
+                                  >
+                                    <ShopInfo shopInfoData={item} />
+                                  </PopupBase>
+                                </Td>
+                                <Td>
+                                  <IconButton
+                                    size={"sm"}
+                                    onClick={() => deleteAdmin(item.doc_id)}
+                                    icon={<DeleteIcon />}
+                                  />
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
               </Stack>
             )}
             {visibleAdminInfo && (
