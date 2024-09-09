@@ -562,16 +562,9 @@ function Account(props) {
                         placeholder="가맹점 이름을 입력하세요."
                       ></Input>
                     </FormControl>
+
                     <FormControl isRequired>
-                      <FormLabel>가맹점 주소</FormLabel>
-                      <Input
-                        name="shop_address"
-                        type="text"
-                        placeholder="가맹점 주소를 입력하세요."
-                      ></Input>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>1차 카테고리</FormLabel>
+                      <FormLabel>시/도</FormLabel>
                       <RDepth1
                         defaultValue={depth1}
                         onChangeDepth1={(value) => {
@@ -580,7 +573,7 @@ function Account(props) {
                       />
                     </FormControl>
                     <FormControl isRequired>
-                      <FormLabel>2차 카테고리</FormLabel>
+                      <FormLabel>구/군</FormLabel>
                       <RDepth2
                         depth1={depth1}
                         defaultValue={depth2}
@@ -588,6 +581,14 @@ function Account(props) {
                           setDepth2(value);
                         }}
                       />
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>가맹점 주소</FormLabel>
+                      <Input
+                        name="shop_address"
+                        type="text"
+                        placeholder="가맹점 주소를 입력하세요."
+                      ></Input>
                     </FormControl>
                   </PopupBase>
                 </ButtonGroup>
@@ -856,16 +857,9 @@ function Account(props) {
                           placeholder="가맹점 이름을 입력하세요."
                         ></Input>
                       </FormControl>
+
                       <FormControl isRequired>
-                        <FormLabel>가맹점 주소</FormLabel>
-                        <Input
-                          name="shop_address"
-                          type="text"
-                          placeholder="가맹점 주소를 입력하세요."
-                        ></Input>
-                      </FormControl>
-                      <FormControl isRequired>
-                        <FormLabel>1차 카테고리</FormLabel>
+                        <FormLabel>시/도</FormLabel>
                         <RDepth1
                           defaultValue={depth1}
                           onChangeDepth1={(value) => {
@@ -874,7 +868,7 @@ function Account(props) {
                         />
                       </FormControl>
                       <FormControl isRequired>
-                        <FormLabel>2차 카테고리</FormLabel>
+                        <FormLabel>구/군</FormLabel>
                         <RDepth2
                           depth1={depth1}
                           defaultValue={depth2}
@@ -883,39 +877,58 @@ function Account(props) {
                           }}
                         />
                       </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel>가맹점 주소</FormLabel>
+                        <Input
+                          name="shop_address"
+                          type="text"
+                          placeholder="가맹점 주소를 입력하세요."
+                        ></Input>
+                      </FormControl>
                     </PopupBase>
                   </ButtonGroup>
 
                   <Box bgColor={"white"} borderRadius={"10px"} px={"20px"}>
-                    <Table>
-                      <Thead>
-                        <Tr>
-                          <Th px={0} fontSize={"sm"}>
-                            이름
-                          </Th>
-                          <Th px={0} fontSize={"sm"}>
-                            ID / 관리 지점
-                          </Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {adminList.map((item, index) => (
-                          <Tr key={index}>
-                            <Td px={0} fontSize={"sm"}>
-                              {item.admin_name}
-                            </Td>
-                            <Td px={0} fontSize={"sm"}>
-                              <Text>{item.admin_email}</Text>
-                              <Text>
-                                {item.permission === "supervisor"
-                                  ? "전지점"
-                                  : searchShopName(item.shop_id)}
-                              </Text>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
+                    <Tabs variant={"soft-rounded"}>
+                      <TabList pt={4}>
+                        <Tab>관리자</Tab>
+                        <Tab>지점</Tab>
+                      </TabList>
+                      <TabPanels>
+                        <TabPanel>
+                          <Table>
+                            <Thead>
+                              <Tr>
+                                <Th px={0} fontSize={"sm"}>
+                                  이름
+                                </Th>
+                                <Th px={0} fontSize={"sm"}>
+                                  ID / 관리 지점
+                                </Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {adminList.map((item, index) => (
+                                <Tr key={index}>
+                                  <Td px={0} fontSize={"sm"}>
+                                    {item.admin_name}
+                                  </Td>
+                                  <Td px={0} fontSize={"sm"}>
+                                    <Text>{item.admin_email}</Text>
+                                    <Text>
+                                      {item.permission === "supervisor"
+                                        ? "전지점"
+                                        : searchShopName(item.shop_id)}
+                                    </Text>
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        </TabPanel>
+                        <TabPanel>{/* <Text>준비 예정</Text> */}</TabPanel>
+                      </TabPanels>
+                    </Tabs>
                   </Box>
                 </Stack>
               )}
