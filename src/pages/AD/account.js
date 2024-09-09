@@ -290,33 +290,16 @@ function ShopInfo({
           </FormControl>
           <FormControl>
             <FormLabel>가맹점 이름</FormLabel>
-            <HStack>
-              <Input
-                name="shop_name"
-                type="text"
-                defaultValue={shopData?.shop_name}
-                // placeholder="가맹점 이름을 입력하세요."
-              />
-              <Button onClick={() => alert("변경")}>변경</Button>
-            </HStack>
+            <Input
+              name="shop_name"
+              type="text"
+              defaultValue={shopData?.shop_name}
+              // placeholder="가맹점 이름을 입력하세요."
+            />
           </FormControl>
+
           <FormControl>
-            <FormLabel>가맹점 주소</FormLabel>
-            <HStack>
-              <Input
-                name="shop_address"
-                type="text"
-                // placeholder="가맹점 주소를 입력하세요."
-                defaultValue={shopData?.shop_address}
-                onChange={(e) =>
-                  setShopData({ ...shopData, shop_address: e.target.value })
-                }
-              />
-              <Button onClick={() => alert("변경")}>변경</Button>
-            </HStack>
-          </FormControl>
-          <FormControl>
-            <FormLabel>1차 카테고리</FormLabel>
+            <FormLabel>시/도</FormLabel>
             <RDepth1
               defaultValue={shopData?.shop_depth1}
               onChangeDepth1={(depth1) => {
@@ -325,13 +308,25 @@ function ShopInfo({
             />
           </FormControl>
           <FormControl>
-            <FormLabel>2차 카테고리</FormLabel>
+            <FormLabel>구/군</FormLabel>
             <RDepth2
               depth1={shopData?.shop_depth1}
               defaultValue={shopData?.shop_depth2}
               onChangeDepth2={(depth2) => {
                 setShopData({ ...shopData, shop_depth2: depth2 });
               }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>가맹점 주소</FormLabel>
+            <Input
+              name="shop_address"
+              type="text"
+              // placeholder="가맹점 주소를 입력하세요."
+              defaultValue={shopData?.shop_address}
+              onChange={(e) =>
+                setShopData({ ...shopData, shop_address: e.target.value })
+              }
             />
           </FormControl>
         </Stack>
