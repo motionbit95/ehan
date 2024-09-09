@@ -254,7 +254,7 @@ function Home(props) {
           id="banner"
           flexDirection={"column"}
           alignItems={"center"}
-          backgroundImage={`url(${shopInfo?.shop_img})`}
+          // backgroundImage={`url(${shopInfo?.shop_img})`}
           backgroundSize={"cover"}
           backgroundPosition={"center"}
           backgroundRepeat={"no-repeat"}
@@ -443,7 +443,11 @@ function Home(props) {
                   />
                   {/* <Logo /> */}
                 </Flex>
-                <ChosunGu color={"black"} fontSize={"medium"}>
+                <ChosunGu
+                  color={"black"}
+                  fontSize={"medium"}
+                  fontWeight={"bold"}
+                >
                   {shopInfo?.shop_name}
                 </ChosunGu>
               </Flex>
@@ -480,7 +484,7 @@ function Home(props) {
                 : "성인인증 완료"}
             </Button>
             <Jejumyeongjo
-              fontSize={"xs"}
+              fontSize={"sm"}
               fontWeight={"900"}
               lineHeight={"1.2"}
               textAlign={"center"}
