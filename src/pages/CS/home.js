@@ -254,7 +254,6 @@ function Home(props) {
           id="banner"
           flexDirection={"column"}
           alignItems={"center"}
-          // backgroundImage={`url(${shopInfo?.shop_img})`}
           backgroundSize={"cover"}
           backgroundPosition={"center"}
           backgroundRepeat={"no-repeat"}

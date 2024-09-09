@@ -448,8 +448,6 @@ export const postShop = async (e) => {
     [e.target[2].name]: e.target[2].value, // shop_address
     [e.target[3].name]: e.target[3].value, // shop_depth1
     [e.target[4].name]: e.target[4].value, // shop_depth2
-    [e.target[5].name]: e.target[5].value, // shop_img
-    [e.target[6].name]: e.target[6].value, // logo_img
     createAt: new Date(),
   };
 

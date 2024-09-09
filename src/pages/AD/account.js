@@ -269,8 +269,6 @@ function ShopInfo({
     doc_id: shopInfoData?.doc_id,
     shop_depth1: shopInfoData?.shop_depth1,
     shop_depth2: shopInfoData?.shop_depth2,
-    shop_img: shopInfoData?.shop_img,
-    logo_img: shopInfoData?.logo_img,
   });
 
   return (
@@ -453,6 +451,12 @@ function Account(props) {
     window.location.reload();
   };
 
+  const deleteShop = async (id) => {
+    // 지점 정보 삭제
+    await deleteDoc(doc(db, "SHOP", id));
+    window.location.reload();
+  };
+
   const [depth1, setDepth1] = useState("");
   const [depth2, setDepth2] = useState("");
 
@@ -590,14 +594,6 @@ function Account(props) {
                         }}
                       />
                     </FormControl>
-                    <FormControl>
-                      <FormLabel>배너 이미지</FormLabel>
-                      <Input name="shop_img" p={"4px"} type="file" />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>로고 이미지</FormLabel>
-                      <Input name="logo_img" p={"4px"} type="file" />
-                    </FormControl>
                   </PopupBase>
                 </ButtonGroup>
                 <Tabs
@@ -659,7 +655,7 @@ function Account(props) {
                                     visibleButton={true}
                                     action={"수정"}
                                     title={<EditIcon />}
-                                    onClose={(e) => window.location.reload()}
+                                    onClose={saveAdmin}
                                   >
                                     <AccountInfo
                                       permission={admin?.permission}
@@ -730,7 +726,7 @@ function Account(props) {
                                     visibleButton={true}
                                     action={"수정"}
                                     title={<EditIcon />}
-                                    onClose={(e) => window.location.reload()}
+                                    onClose={saveShop}
                                   >
                                     <ShopInfo shopInfoData={item} />
                                   </PopupBase>
@@ -738,7 +734,7 @@ function Account(props) {
                                 <Td>
                                   <IconButton
                                     size={"sm"}
-                                    onClick={() => deleteAdmin(item.doc_id)}
+                                    onClick={() => deleteShop(item.doc_id)}
                                     icon={<DeleteIcon />}
                                   />
                                 </Td>
@@ -891,14 +887,6 @@ function Account(props) {
                             setDepth2(value);
                           }}
                         />
-                      </FormControl>
-                      <FormControl>
-                        <FormLabel>배너 이미지</FormLabel>
-                        <Input name="shop_img" p={"4px"} type="file" />
-                      </FormControl>
-                      <FormControl>
-                        <FormLabel>로고 이미지</FormLabel>
-                        <Input name="logo_img" p={"4px"} type="file" />
                       </FormControl>
                     </PopupBase>
                   </ButtonGroup>
