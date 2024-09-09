@@ -27,6 +27,7 @@ import {
   fetchAdminList,
   postAdmin,
   postShop,
+  queryShop,
 } from "../../firebase/firebase_func";
 import PopupBase from "../../modals/PopupBase";
 import RDepth1 from "../../components/RDepth1";
@@ -325,6 +326,7 @@ function Account(props) {
     if (admin?.permission === "supervisor") {
       if (adminList) {
         getAdminList();
+        getShopList();
       }
     }
   }, [admin]);
@@ -332,6 +334,13 @@ function Account(props) {
   const getAdminList = async () => {
     const adminList = await fetchAdminList();
     setAdminList(adminList);
+  };
+
+  const [shopList, setShopList] = useState([]);
+  const getShopList = async () => {
+    const shopList = await queryShop("", "");
+    setShopList(shopList);
+    console.log(shopList);
   };
 
   const saveShop = async (e) => {
