@@ -46,6 +46,7 @@ import {
 import { formatCurrency } from "../CS/home";
 import $ from "jquery";
 import BDSM from "./bdsm";
+import Banner from "./banner";
 
 function Dashboard(props) {
   const navigate = useNavigate();
@@ -149,6 +150,8 @@ function Dashboard(props) {
         return <Product shopList={shopList} />;
       case "bdsm":
         return <BDSM />;
+      case "banner":
+        return <Banner />;
       default:
         return <Home />;
     }

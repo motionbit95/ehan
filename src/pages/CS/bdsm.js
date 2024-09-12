@@ -38,6 +38,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ChosunGu } from "../../Component/Text";
 import { db } from "../../firebase/firebase_conf";
+import EmblaCarousel from "../../components/Carousel";
 
 function BDSM(props) {
   const navigate = useNavigate();
@@ -399,8 +400,8 @@ function BDSM(props) {
         <Logo />
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
       </HStack> */}
-      <Center bgColor={"#8c8c8c"} aspectRatio={"5/1"}>
-        <ChosunGu>배너광고(예정)</ChosunGu>
+      <Center bgColor={"white"} aspectRatio={"5/1"}>
+        <EmblaCarousel />
       </Center>
       {step === 0 && (
         <Container maxW="container.sm">
@@ -835,8 +836,8 @@ function BDSM(props) {
         </Container>
       )}
 
-      <Center bgColor={"#8c8c8c"} aspectRatio={"5/1"}>
-        <ChosunGu>배너광고(예정)</ChosunGu>
+      <Center bgColor={"white"} aspectRatio={"5/1"}>
+        <EmblaCarousel />
       </Center>
     </Stack>
   );

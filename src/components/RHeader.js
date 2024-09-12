@@ -156,6 +156,17 @@ const RHeader = (props) => {
               </Button>
             </Stack>
             <Stack>
+              {admin.permission === "supervisor" && (
+                <Button
+                  leftIcon={<CopyIcon />}
+                  onClick={() => handleClick("banner")}
+                  variant={currentMenu === "banner" ? "solid" : "ghost"}
+                  justifyContent={"flex-start"}
+                  w={"100%"}
+                >
+                  광고배너 설정
+                </Button>
+              )}
               <Button
                 leftIcon={<CopyIcon />}
                 onClick={() => handleClick("bdsm")}
@@ -238,6 +249,14 @@ const RHeader = (props) => {
                       </Button>
                     </Stack>
                     <Stack>
+                      <Button
+                        onClick={() => handleClick("banner")}
+                        variant={currentMenu === "banner" ? "solid" : "ghost"}
+                        justifyContent={"flex-start"}
+                        w={"100%"}
+                      >
+                        광고 배너 설정
+                      </Button>
                       <Button
                         onClick={() => handleClick("bdsm")}
                         variant={currentMenu === "bdsm" ? "solid" : "ghost"}

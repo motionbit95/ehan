@@ -528,52 +528,61 @@ function Inventory({ ...props }) {
                 p={"10px"}
                 mb={"20px"}
               >
-                <ButtonGroup size={"md"} w={"100%"} justifyContent={"flex-end"}>
-                  <PopupBase
-                    onClose={addInventory}
-                    icon={<AddIcon />}
-                    title={"재고"}
-                    action={"추가"}
+                {admin?.permission === "supervisor" && (
+                  <ButtonGroup
+                    size={"md"}
+                    w={"100%"}
+                    justifyContent={"flex-end"}
                   >
-                    <Stack>
-                      <FormControl isRequired>
-                        <FormLabel>관리 지점</FormLabel>
-                        <Select
-                          isDisabled={admin?.permission !== "supervisor"}
-                          defaultValue={admin?.shop_id}
-                          name="shop_id"
-                          onChange={(e) => setSelectedShop(e.target.value)}
-                        >
-                          <option value="">선택</option>
-                          {props.shopList?.map((shop) => (
-                            <option key={shop.doc_id} value={shop.doc_id}>
-                              {shop.shop_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl isRequired>
-                        <FormLabel>상품 선택</FormLabel>
-                        <Select name="product_id">
-                          <option value="">선택</option>
-                          {totalProducts?.map((product) => (
-                            <option key={product.doc_id} value={product.doc_id}>
-                              {product.product_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </PopupBase>
-                  <Button
-                    onClick={updateInventory}
-                    colorScheme="red"
-                    variant={"outline"}
-                    leftIcon={<EditIcon />}
-                  >
-                    저장
-                  </Button>
-                </ButtonGroup>
+                    <PopupBase
+                      onClose={addInventory}
+                      icon={<AddIcon />}
+                      title={"재고"}
+                      action={"추가"}
+                    >
+                      <Stack>
+                        <FormControl isRequired>
+                          <FormLabel>관리 지점</FormLabel>
+                          <Select
+                            isDisabled={admin?.permission !== "supervisor"}
+                            defaultValue={admin?.shop_id}
+                            name="shop_id"
+                            onChange={(e) => setSelectedShop(e.target.value)}
+                          >
+                            <option value="">선택</option>
+                            {props.shopList?.map((shop) => (
+                              <option key={shop.doc_id} value={shop.doc_id}>
+                                {shop.shop_name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl isRequired>
+                          <FormLabel>상품 선택</FormLabel>
+                          <Select name="product_id">
+                            <option value="">선택</option>
+                            {totalProducts?.map((product) => (
+                              <option
+                                key={product.doc_id}
+                                value={product.doc_id}
+                              >
+                                {product.product_name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Stack>
+                    </PopupBase>
+                    <Button
+                      onClick={updateInventory}
+                      colorScheme="red"
+                      variant={"outline"}
+                      leftIcon={<EditIcon />}
+                    >
+                      저장
+                    </Button>
+                  </ButtonGroup>
+                )}
                 <Table variant="simple" size={"sm"}>
                   <Thead h={"40px"}>
                     <Tr>
@@ -890,6 +899,26 @@ function BasicUsage() {
                 }}
                 initialValue=" "
               />
+              {/* <Select
+                isDisabled={admin?.permission !== "supervisor"}
+                defaultValue={admin?.shop_id}
+                name="shop_id"
+                onChange={(e) => {
+                  setIncomeData({
+                    ...incomeData,
+                    shop_id: e.target.value,
+                  });
+                  setShopId(e.target.value);
+                  getSales(dateRange, e.target.value);
+                }}
+              >
+                <option value="">전체</option>
+                {props.shopList?.map((shop, index) => (
+                  <option key={index} value={shop.doc_id}>
+                    {shop.shop_name}
+                  </option>
+                ))}
+              </Select> */}
             </Stack>
           </ModalBody>
 

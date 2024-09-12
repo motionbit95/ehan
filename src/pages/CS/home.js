@@ -288,11 +288,11 @@ function Home(props) {
             /> */}
             <Stack spacing={0} align={"center"} pt={"2vh"}>
               <HStack spacing={0} align={"center"} justify={"center"}>
-                <Box w={{ base: "20px", md: "28px" }}>
+                <Box w={{ base: "24px", md: "32px" }}>
                   <Image src={require("../../Asset/redswitchLogo.png")} />
                 </Box>
                 <ChosunBg
-                  fontSize={{ base: "xl", md: "2xl" }}
+                  fontSize={{ base: "2xl", md: "3xl" }}
                   fontWeight="bold"
                 >
                   REDSWITCH
@@ -300,7 +300,7 @@ function Home(props) {
               </HStack>
               <Text
                 mt={"-6px"}
-                fontSize={"8px"}
+                fontSize={{ base: "10px", md: "12px" }}
                 color={"black"}
                 fontWeight={"bold"}
               >
@@ -365,7 +365,7 @@ function Home(props) {
               /> */}
             </HStack>
           </Stack>
-          <HStack align={"center"}>
+          <HStack align={"center"} onClick={() => navigate(`/bdsm`)}>
             <Box w={"130px"} zIndex={"99"} cursor={"pointer"}>
               <Image src={require("../../assets/bdsm_gray.png")} />
             </Box>
@@ -386,11 +386,10 @@ function Home(props) {
                 </Godo>
               </Stack>
               <Godo
-                fontSize={"sm"}
+                fontSize={"md"}
                 textAlign={"end"}
                 textDecoration={"underline"}
                 fontWeight={"extrabold"}
-                onClick={() => navigate(`/bdsm`)}
               >
                 무료 테스트 하러가기
               </Godo>
