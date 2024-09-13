@@ -3,8 +3,13 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Box, Button, Stack, Flex } from "@chakra-ui/react";
 import Autoplay from "embla-carousel-autoplay";
 
-const EmblaCarousel = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
+const EmblaCarousel = (props) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true, // 슬라이드가 무한 루프로 반복
+    },
+    [Autoplay({ delay: 5000 })]
+  );
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onSelect = useCallback(() => {
@@ -31,13 +36,16 @@ const EmblaCarousel = () => {
         <Flex w={"full"} h={"full"}>
           {[1, 2, 3].map((i) => (
             <Box
-              w={"full"}
-              h={"full"}
-              flex="0 0 100%"
+              borderRadius={"20"}
+              key={i}
+              flex="0 0 80%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
+              mx={2} // 슬라이드 사이 간격
               bg="gray.200"
               display="flex"
               justifyContent="center"
               alignItems="center"
+              fontSize={"2xl"}
+              fontWeight="bold"
             >
               Slide {i}
             </Box>
@@ -47,27 +55,17 @@ const EmblaCarousel = () => {
 
       {/* Navigation Buttons */}
       <Flex gap={2} position={"absolute"} bottom={2}>
-        <Box
-          w={2}
-          h={2}
-          bg={selectedIndex === 0 ? "blue.500" : "gray.500"}
-          borderRadius={"full"}
-          onClick={() => emblaApi && emblaApi.scrollTo(0)}
-        />
-        <Box
-          w={2}
-          h={2}
-          bg={selectedIndex === 1 ? "blue.500" : "gray.500"}
-          borderRadius={"full"}
-          onClick={() => emblaApi && emblaApi.scrollTo(1)}
-        />
-        <Box
-          w={2}
-          h={2}
-          bg={selectedIndex === 2 ? "blue.500" : "gray.500"}
-          borderRadius={"full"}
-          onClick={() => emblaApi && emblaApi.scrollTo(2)}
-        />
+        {[0, 1, 2].map((i) => (
+          <Box
+            key={i}
+            w={"10px"}
+            h={"10px"}
+            borderRadius="full"
+            border={"1px solid white"}
+            bg={selectedIndex === i ? "gray.500" : "white"}
+            onClick={() => emblaApi && emblaApi.scrollTo(i)}
+          />
+        ))}
       </Flex>
     </Stack>
   );
