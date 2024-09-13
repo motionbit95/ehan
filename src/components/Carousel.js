@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Box, Button, Stack, Flex } from "@chakra-ui/react";
+import { Box, Button, Stack, Flex, Image } from "@chakra-ui/react";
 import Autoplay from "embla-carousel-autoplay";
 
 const EmblaCarousel = (props) => {
@@ -28,8 +28,10 @@ const EmblaCarousel = (props) => {
     require("../Asset/banner_1.png"),
     require("../Asset/banner_1.png"),
   ];
+
   return (
     <Stack
+      py={2}
       spacing={4}
       align="center"
       w={"full"}
@@ -44,7 +46,7 @@ const EmblaCarousel = (props) => {
               overflow={"hidden"}
               borderRadius={"10"}
               key={i}
-              flex="0 0 80%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
+              flex="0 0 60%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
               mx={2} // 슬라이드 사이 간격
               display="flex"
               justifyContent="center"
@@ -52,14 +54,14 @@ const EmblaCarousel = (props) => {
               fontSize={"2xl"}
               fontWeight="bold"
             >
-              <img src={i} alt="banner" />
+              <Image src={i} alt="banner" />
             </Box>
           ))}
         </Flex>
       </Box>
 
       {/* Navigation Buttons */}
-      <Flex gap={2} position={"absolute"} bottom={2}>
+      <Flex gap={2} position={"absolute"} bottom={4}>
         {[0, 1, 2].map((i) => (
           <Box
             key={i}
