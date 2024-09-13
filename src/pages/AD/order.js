@@ -1,4 +1,6 @@
 import {
+  Button,
+  ButtonGroup,
   Flex,
   FormErrorIcon,
   HStack,
@@ -30,7 +32,13 @@ import { db } from "../../firebase/firebase_conf";
 import { formatCurrency } from "../CS/home";
 import { SERVER_URL, debug } from "../../firebase/api";
 import RFilter from "../../components/RFilter";
-import { CloseIcon, CopyIcon, DeleteIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  CopyIcon,
+  DeleteIcon,
+} from "@chakra-ui/icons";
 import PopupBase from "../../modals/PopupBase";
 import axios from "axios";
 import $ from "jquery";
@@ -325,6 +333,36 @@ function Order(props) {
                     ))}
                   </Tbody>
                 </Table>
+                <Flex mt={4} justifyContent="center" alignItems="center">
+                  <IconButton
+                    icon={<ChevronLeftIcon fontSize={"24px"} />}
+                    // onClick={handlePrevPage}
+                    // isDisabled={currentPage === 1}
+                    // variant={"outline"}
+                    // color={popmint}
+                    // borderColor={popmint}
+                  />
+                  <ButtonGroup ml={4} mr={4}>
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <Button
+                        key={index + 1}
+                        // onClick={() => handlePageClick(index + 1)}
+                        color={"black"}
+                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+                  </ButtonGroup>
+                  <IconButton
+                    icon={<ChevronRightIcon fontSize={"24px"} />}
+                    // isDisabled={currentPage === totalPages}
+                    // onClick={handleNextPage}
+                    // color={popmint}
+                    // variant={"outline"}
+                    // borderColor={popmint}
+                  />
+                </Flex>
               </TableContainer>
             </Stack>
           </Stack>

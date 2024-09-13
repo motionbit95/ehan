@@ -117,7 +117,28 @@ const Banner = () => {
           <CardHeader>
             <HStack justifyContent={"space-between"}>
               <Text fontWeight={"bold"}>하단 배너</Text>
-              <Button colorScheme="red">저장</Button>
+              <ButtonGroup size={"md"} justifyContent={"flex-end"}>
+                <PopupBase icon={<AddIcon />} title={"배너"} action={"등록"}>
+                  <Stack>
+                    <FormControl isRequired>
+                      <FormLabel>제목</FormLabel>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>광고사</FormLabel>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>기간</FormLabel>
+                    </FormControl>
+                  </Stack>
+                </PopupBase>
+                <Button
+                  colorScheme="red"
+                  variant={"outline"}
+                  leftIcon={<EditIcon />}
+                >
+                  저장
+                </Button>
+              </ButtonGroup>
             </HStack>
           </CardHeader>
           <CardBody>

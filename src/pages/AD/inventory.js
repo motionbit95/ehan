@@ -41,7 +41,13 @@ import {
 } from "../../firebase/firebase_func";
 import { useGlobalState } from "../../GlobalState";
 import PopupBase from "../../modals/PopupBase";
-import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DeleteIcon,
+  EditIcon,
+} from "@chakra-ui/icons";
 import { formatCurrency } from "../CS/home";
 import RFilter from "../../components/RFilter";
 import {
@@ -486,6 +492,36 @@ function Inventory({ ...props }) {
                     <Text>재고 저장버튼</Text>
                   </Stack> */}
                 </CardBody>
+                <Flex pb="20px" justifyContent="center" alignItems="center">
+                  <IconButton
+                    icon={<ChevronLeftIcon fontSize={"24px"} />}
+                    // onClick={handlePrevPage}
+                    // isDisabled={currentPage === 1}
+                    // variant={"outline"}
+                    // color={popmint}
+                    // borderColor={popmint}
+                  />
+                  <ButtonGroup ml={4} mr={4}>
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <Button
+                        key={index + 1}
+                        // onClick={() => handlePageClick(index + 1)}
+                        color={"black"}
+                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+                  </ButtonGroup>
+                  <IconButton
+                    icon={<ChevronRightIcon fontSize={"24px"} />}
+                    // isDisabled={currentPage === totalPages}
+                    // onClick={handleNextPage}
+                    // color={popmint}
+                    // variant={"outline"}
+                    // borderColor={popmint}
+                  />
+                </Flex>
               </Card>
               <Card>
                 <CardHeader fontWeight={"bold"}>재고 타임라인</CardHeader>
@@ -673,6 +709,36 @@ function Inventory({ ...props }) {
                       ))}
                   </Tbody>
                 </Table>
+                <Flex mt={4} justifyContent="center" alignItems="center">
+                  <IconButton
+                    icon={<ChevronLeftIcon fontSize={"24px"} />}
+                    // onClick={handlePrevPage}
+                    // isDisabled={currentPage === 1}
+                    // variant={"outline"}
+                    // color={popmint}
+                    // borderColor={popmint}
+                  />
+                  <ButtonGroup ml={4} mr={4}>
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <Button
+                        key={index + 1}
+                        // onClick={() => handlePageClick(index + 1)}
+                        color={"black"}
+                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+                  </ButtonGroup>
+                  <IconButton
+                    icon={<ChevronRightIcon fontSize={"24px"} />}
+                    // isDisabled={currentPage === totalPages}
+                    // onClick={handleNextPage}
+                    // color={popmint}
+                    // variant={"outline"}
+                    // borderColor={popmint}
+                  />
+                </Flex>
               </TableContainer>
             </Stack>
           </Stack>
