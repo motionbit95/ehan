@@ -350,6 +350,30 @@ function Inventory({ ...props }) {
     }
   };
 
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const totalPages = Math.ceil(inventoryList.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentData = inventoryList.slice(startIndex, endIndex);
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -492,36 +516,6 @@ function Inventory({ ...props }) {
                     <Text>재고 저장버튼</Text>
                   </Stack> */}
                 </CardBody>
-                <Flex pb="20px" justifyContent="center" alignItems="center">
-                  <IconButton
-                    icon={<ChevronLeftIcon fontSize={"24px"} />}
-                    // onClick={handlePrevPage}
-                    // isDisabled={currentPage === 1}
-                    // variant={"outline"}
-                    // color={popmint}
-                    // borderColor={popmint}
-                  />
-                  <ButtonGroup ml={4} mr={4}>
-                    {Array.from({ length: 5 }, (_, index) => (
-                      <Button
-                        key={index + 1}
-                        // onClick={() => handlePageClick(index + 1)}
-                        color={"black"}
-                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
-                      >
-                        {index + 1}
-                      </Button>
-                    ))}
-                  </ButtonGroup>
-                  <IconButton
-                    icon={<ChevronRightIcon fontSize={"24px"} />}
-                    // isDisabled={currentPage === totalPages}
-                    // onClick={handleNextPage}
-                    // color={popmint}
-                    // variant={"outline"}
-                    // borderColor={popmint}
-                  />
-                </Flex>
               </Card>
               <Card>
                 <CardHeader fontWeight={"bold"}>재고 타임라인</CardHeader>
@@ -622,19 +616,19 @@ function Inventory({ ...props }) {
                 <Table variant="simple" size={"sm"}>
                   <Thead h={"40px"}>
                     <Tr>
-                      <Th>No</Th>
-                      <Th>카테고리</Th>
-                      <Th>상품명</Th>
-                      <Th>상품가격</Th>
-                      <Th>관리지점</Th>
-                      <Th>재고수량</Th>
+                      <Th w={"60px"}>No</Th>
+                      <Th w={"180px"}>카테고리</Th>
+                      <Th w={"300px"}>상품명</Th>
+                      <Th w={"160px"}>상품가격</Th>
+                      <Th w={"230px"}>관리지점</Th>
+                      <Th w={"150px"}>재고수량</Th>
                       <Th textAlign={"center"}>재고사용여부</Th>
                       <Th w={"30px"}>삭제</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {totalProducts &&
-                      inventoryList?.map((item, index) => (
+                      currentData?.map((item, index) => (
                         <Tr
                           key={index}
                           _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
@@ -712,19 +706,19 @@ function Inventory({ ...props }) {
                 <Flex mt={4} justifyContent="center" alignItems="center">
                   <IconButton
                     icon={<ChevronLeftIcon fontSize={"24px"} />}
-                    // onClick={handlePrevPage}
-                    // isDisabled={currentPage === 1}
+                    onClick={handlePrevPage}
+                    isDisabled={currentPage === 1}
                     // variant={"outline"}
                     // color={popmint}
                     // borderColor={popmint}
                   />
                   <ButtonGroup ml={4} mr={4}>
-                    {Array.from({ length: 5 }, (_, index) => (
+                    {Array.from({ length: totalPages }, (_, index) => (
                       <Button
                         key={index + 1}
-                        // onClick={() => handlePageClick(index + 1)}
+                        onClick={() => handlePageClick(index + 1)}
                         color={"black"}
-                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
+                        bg={currentPage === index + 1 ? "#EDF2F7" : "white"}
                       >
                         {index + 1}
                       </Button>
@@ -732,8 +726,8 @@ function Inventory({ ...props }) {
                   </ButtonGroup>
                   <IconButton
                     icon={<ChevronRightIcon fontSize={"24px"} />}
-                    // isDisabled={currentPage === totalPages}
-                    // onClick={handleNextPage}
+                    isDisabled={currentPage === totalPages}
+                    onClick={handleNextPage}
                     // color={popmint}
                     // variant={"outline"}
                     // borderColor={popmint}

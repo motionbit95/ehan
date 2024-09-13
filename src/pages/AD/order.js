@@ -150,6 +150,30 @@ function Order(props) {
     return null;
   }
 
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const totalPages = Math.ceil(orderList.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentData = orderList.slice(startIndex, endIndex);
+
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -188,18 +212,18 @@ function Order(props) {
                 <Table variant="simple" size={"sm"}>
                   <Thead h={"40px"}>
                     <Tr>
-                      <Th>No.</Th>
-                      <Th>결제(환불)일</Th>
-                      <Th>결제내역</Th>
-                      <Th>결제(환불)금액</Th>
-                      <Th>지점</Th>
-                      <Th>주문상태</Th>
+                      <Th w={"60px"}>No.</Th>
+                      <Th w={"130px"}>결제(환불)일</Th>
+                      <Th w={"300px"}>결제내역</Th>
+                      <Th w={"200px"}>결제(환불)금액</Th>
+                      <Th w={"200px"}>지점</Th>
+                      <Th w={"200px"}>주문상태</Th>
                       <Th>결제취소</Th>
                       <Th>삭제</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {orderList?.map((item, index) => (
+                    {currentData?.map((item, index) => (
                       <Tr
                         key={index}
                         _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
@@ -336,19 +360,19 @@ function Order(props) {
                 <Flex mt={4} justifyContent="center" alignItems="center">
                   <IconButton
                     icon={<ChevronLeftIcon fontSize={"24px"} />}
-                    // onClick={handlePrevPage}
-                    // isDisabled={currentPage === 1}
+                    onClick={handlePrevPage}
+                    isDisabled={currentPage === 1}
                     // variant={"outline"}
                     // color={popmint}
                     // borderColor={popmint}
                   />
                   <ButtonGroup ml={4} mr={4}>
-                    {Array.from({ length: 5 }, (_, index) => (
+                    {Array.from({ length: totalPages }, (_, index) => (
                       <Button
                         key={index + 1}
-                        // onClick={() => handlePageClick(index + 1)}
+                        onClick={() => handlePageClick(index + 1)}
                         color={"black"}
-                        // bg={currentPage === index + 1 ? popmint : "#E1E4E4"}
+                        bg={currentPage === index + 1 ? "#EDF2F7" : "white"}
                       >
                         {index + 1}
                       </Button>
@@ -356,8 +380,8 @@ function Order(props) {
                   </ButtonGroup>
                   <IconButton
                     icon={<ChevronRightIcon fontSize={"24px"} />}
-                    // isDisabled={currentPage === totalPages}
-                    // onClick={handleNextPage}
+                    isDisabled={currentPage === totalPages}
+                    onClick={handleNextPage}
                     // color={popmint}
                     // variant={"outline"}
                     // borderColor={popmint}
