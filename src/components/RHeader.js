@@ -23,6 +23,7 @@ import {
   DownloadIcon,
   DragHandleIcon,
   EditIcon,
+  ExternalLinkIcon,
   HamburgerIcon,
   ReactIcon,
   SearchIcon,
@@ -158,7 +159,7 @@ const RHeader = (props) => {
             <Stack>
               {admin.permission === "supervisor" && (
                 <Button
-                  leftIcon={<CopyIcon />}
+                  leftIcon={<ExternalLinkIcon />}
                   onClick={() => handleClick("banner")}
                   variant={currentMenu === "banner" ? "solid" : "ghost"}
                   justifyContent={"flex-start"}
