@@ -23,11 +23,15 @@ const EmblaCarousel = (props) => {
     onSelect();
   }, [emblaApi, onSelect]);
 
-  const Banner = [
-    require("../Asset/banner_1.png"),
-    require("../Asset/banner_1.png"),
-    require("../Asset/banner_1.png"),
-  ];
+  // const Banner = [
+  //   require("../Asset/banner_1.png"),
+  //   require("../Asset/banner_1.png"),
+  //   require("../Asset/banner_1.png"),
+  // ];
+
+  useEffect(() => {
+    console.log(props.list);
+  }, [props.list]);
 
   return (
     <Stack
@@ -41,20 +45,24 @@ const EmblaCarousel = (props) => {
       {/* Embla Viewport */}
       <Box ref={emblaRef} overflow="hidden" w={"full"} h={"full"}>
         <Flex w={"full"} h={"full"}>
-          {Banner.map((i) => (
+          {props.list.map((i) => (
             <Box
               overflow={"hidden"}
               borderRadius={"10"}
               key={i}
-              flex="0 0 60%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
+              // flex="0 0 60%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
               mx={2} // 슬라이드 사이 간격
               display="flex"
               justifyContent="center"
               alignItems="center"
               fontSize={"2xl"}
               fontWeight="bold"
+              w={"full"}
+              bgColor={"red"}
+              height={"200px"}
+              objectFit={"cover"}
             >
-              <Image src={i} alt="banner" />
+              <Image src={i.banner_image} alt="banner" />
             </Box>
           ))}
         </Flex>
@@ -62,7 +70,7 @@ const EmblaCarousel = (props) => {
 
       {/* Navigation Buttons */}
       <Flex gap={2} position={"absolute"} bottom={4}>
-        {[0, 1, 2].map((i) => (
+        {props.list.map((i) => (
           <Box
             key={i}
             w={"10px"}

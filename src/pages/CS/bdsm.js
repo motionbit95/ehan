@@ -32,7 +32,14 @@ import { BsShare } from "react-icons/bs";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import { data } from "../../bdms";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import { fetchProducts } from "../../firebase/firebase_func";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -394,6 +401,40 @@ function BDSM(props) {
       });
   };
 
+  const [topList, setTopList] = useState([]);
+  const [bottomList, setBottomList] = useState([]);
+
+  useEffect(() => {
+    const getBanner = async () => {
+      const q = query(collection(db, "BANNER"));
+
+      const querySnapshot = await getDocs(q);
+
+      const top = [];
+      const bottom = [];
+      querySnapshot.forEach((doc) => {
+        if (doc.data().position === "Top") {
+          console.log(doc.data());
+          top.push({ ...doc.data(), doc_id: doc.id });
+          setTopList(top);
+        }
+
+        if (doc.data().position === "Bottom") {
+          console.log(doc.data());
+          bottom.push({ ...doc.data(), doc_id: doc.id });
+          setBottomList(bottom);
+        }
+      });
+    };
+
+    getBanner();
+  }, []);
+
+  useEffect(() => {
+    console.log(topList);
+    console.log(bottomList);
+  }, [topList, bottomList]);
+
   return (
     <Stack justifyContent={"space-between"} minH={window.innerHeight}>
       {/* <HStack p={{ base: "1vh", md: "2vh" }} id="header">
@@ -401,7 +442,7 @@ function BDSM(props) {
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
       </HStack> */}
       <Center bgColor={"white"} aspectRatio={"5/1"}>
-        <EmblaCarousel />
+        <EmblaCarousel list={topList} />
       </Center>
       {step === 0 && (
         <Container maxW="container.sm">
@@ -837,7 +878,7 @@ function BDSM(props) {
       )}
 
       <Center bgColor={"white"} aspectRatio={"5/1"}>
-        <EmblaCarousel />
+        <EmblaCarousel list={bottomList} />
       </Center>
     </Stack>
   );
