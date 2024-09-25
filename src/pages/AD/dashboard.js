@@ -159,50 +159,54 @@ function Dashboard(props) {
 
   const cancelOrder = async (order) => {
     if (window.confirm("결제를 취소하시겠습니까?")) {
-      // jQuery를 사용하여 POST 요청을 보냅니다.
-      $.ajax({
-        url: SERVER_URL + "/cancel", // 요청을 보낼 엔드포인트 URL
-        method: "POST",
-        contentType: "application/json", // 요청 본문의 데이터 형식
-        data: JSON.stringify({
-          order_id: order.order_id,
-          reason: "관리자 취소",
-          tid: order.pay_id,
-          amount: order.pay_price,
-        }), // POST할 데이터를 JSON 문자열로 변환하여 전송
-        success: async function (response) {
-          // 성공적으로 요청이 완료되었을 때 처리할 작업
-          console.log("POST 요청 성공:", response);
-
-          if (response.resultCode === "0000") {
-            await updateDoc(doc(db, "PAYMENT", order.doc_id), {
-              // 1000 : 취소 성공
-              pay_state: "1000",
-              pay_result: response.resultMsg,
-              cancel_date: response.cancelledAt,
-            });
-
-            // 알림을 발생시킵니다.
-            addDoc(collection(db, "ALARM"), {
-              type: "order",
-              shop_id: order.shop_id,
-              createAt: new Date(),
-              order_id: order.doc_id,
-              alarm_code: "I002",
-              alarm_title: `${order.doc_id} 주문을 취소하였습니다.`,
-            });
-
-            window.location.reload();
-          } else {
-            alert(response.resultMsg);
-          }
-        },
-        error: function (xhr, status, error) {
-          // 요청이 실패했을 때 처리할 작업
-          console.error("POST 요청 실패:", error);
-        },
-      });
+      console.log(order);
     }
+
+    // if (window.confirm("결제를 취소하시겠습니까?")) {
+    //   // jQuery를 사용하여 POST 요청을 보냅니다.
+    //   $.ajax({
+    //     url: SERVER_URL + "/cancel", // 요청을 보낼 엔드포인트 URL
+    //     method: "POST",
+    //     contentType: "application/json", // 요청 본문의 데이터 형식
+    //     data: JSON.stringify({
+    //       order_id: order.order_id,
+    //       reason: "관리자 취소",
+    //       tid: order.pay_id,
+    //       amount: order.pay_price,
+    //     }), // POST할 데이터를 JSON 문자열로 변환하여 전송
+    //     success: async function (response) {
+    //       // 성공적으로 요청이 완료되었을 때 처리할 작업
+    //       console.log("POST 요청 성공:", response);
+
+    //       if (response.resultCode === "0000") {
+    //         await updateDoc(doc(db, "PAYMENT", order.doc_id), {
+    //           // 1000 : 취소 성공
+    //           pay_state: "1000",
+    //           pay_result: response.resultMsg,
+    //           cancel_date: response.cancelledAt,
+    //         });
+
+    //         // 알림을 발생시킵니다.
+    //         addDoc(collection(db, "ALARM"), {
+    //           type: "order",
+    //           shop_id: order.shop_id,
+    //           createAt: new Date(),
+    //           order_id: order.doc_id,
+    //           alarm_code: "I002",
+    //           alarm_title: `${order.doc_id} 주문을 취소하였습니다.`,
+    //         });
+
+    //         window.location.reload();
+    //       } else {
+    //         alert(response.resultMsg);
+    //       }
+    //     },
+    //     error: function (xhr, status, error) {
+    //       // 요청이 실패했을 때 처리할 작업
+    //       console.error("POST 요청 실패:", error);
+    //     },
+    //   });
+    // }
   };
 
   // U - update order
@@ -267,13 +271,6 @@ function Dashboard(props) {
               </ModalBody>
               <ModalFooter>
                 <ButtonGroup>
-                  <Button
-                    onClick={() => {
-                      cancelOrder(newOrder);
-                    }}
-                  >
-                    거부
-                  </Button>
                   <Button
                     onClick={() => handleChangeState("0001", newOrder)}
                     colorScheme="red"

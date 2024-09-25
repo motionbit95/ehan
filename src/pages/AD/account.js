@@ -58,13 +58,13 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
     }
   };
 
-  const handleChangeShop = async (e) => {
+  const handleChangeShop = async (value) => {
     if (window.confirm("관리 지점을 변경하시겠습니까?")) {
       const docRef = doc(db, "ACCOUNT", admin.doc_id);
       // 오류 발생
       // 관리지점 데이터가 들어가지지 않음 - shop_id
-      console.log("관리 지점 아이디 : ", e.target.value);
-      await updateDoc(docRef, { shop_id: e.target.value });
+      console.log("관리 지점 아이디 : ", value);
+      await updateDoc(docRef, { shop_id: value });
     }
   };
 
@@ -126,7 +126,9 @@ function AccountInfo({ permission, admin, shopList, ...props }) {
             <FormControl>
               <FormLabel>관리 지점</FormLabel>
               {permission === "supervisor" ? (
-                <SearchShop onSelect={handleChangeShop}></SearchShop>
+                <SearchShop
+                  onSelect={(shop) => handleChangeShop(shop)}
+                ></SearchShop>
               ) : (
                 // <Select
                 //   onChange={handleChangeShop}
@@ -435,6 +437,7 @@ function Account(props) {
   };
 
   const saveAdmin = async (e) => {
+    console.log(e);
     if (await postAdmin(e)) {
       window.location.reload();
     }
@@ -548,11 +551,17 @@ function Account(props) {
                   >
                     <FormControl isRequired>
                       <FormLabel>가맹점 id</FormLabel>
-                      <Input
-                        name="doc_id"
-                        type="text"
-                        placeholder="가맹점 id를 입력하세요."
-                      ></Input>
+                      <Stack spacing={0}>
+                        <Input
+                          name="doc_id"
+                          type="text"
+                          placeholder="가맹점 id를 입력하세요."
+                        ></Input>
+                        <Text color={"red.500"} pl={1} fontSize={"10px"}>
+                          * 특수문자, 대문자, 기호 등 사용하지 않는 것을
+                          추천드립니다. (도메인 명으로 지정됩니다.)
+                        </Text>
+                      </Stack>
                     </FormControl>
                     <FormControl isRequired>
                       <FormLabel>가맹점 이름</FormLabel>

@@ -103,39 +103,80 @@ function Order(props) {
 
   const cancelOrder = async (order) => {
     if (window.confirm("결제를 취소하시겠습니까?")) {
-      // jQuery를 사용하여 POST 요청을 보냅니다.
-      $.ajax({
-        url: SERVER_URL + "/cancel", // 요청을 보낼 엔드포인트 URL
-        method: "POST",
-        contentType: "application/json", // 요청 본문의 데이터 형식
-        data: JSON.stringify({
-          order_id: order.order_id,
-          reason: "관리자 취소",
-          tid: order.pay_id,
-          amount: order.pay_price,
-        }), // POST할 데이터를 JSON 문자열로 변환하여 전송
-        success: async function (response) {
-          // 성공적으로 요청이 완료되었을 때 처리할 작업
-          console.log("POST 요청 성공:", response);
+      console.log(order);
+      let cancelResqest = {
+        tid: order.tid,
+        ordNo: order.ordNo,
+        canAmt: order.goodsAmt,
+        ediDate: order.ediDate,
+      };
 
-          if (response.resultCode === "0000") {
-            await updateDoc(doc(db, "PAYMENT", order.doc_id), {
-              // 1000 : 취소 성공
-              pay_state: "1000",
-              pay_result: response.resultMsg,
-              cancel_date: response.cancelledAt,
-            });
+      console.log(
+        `${process.env.REACT_APP_SERVER_URL}/payment/payCancel?tid=${order.tid}&ordNo=${order.ordNo}&canAmt=${order.goodsAmt}&ediDate=${order.ediDate}`
+      );
+
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/payment/payCancel?tid=${order.tid}&ordNo=${order.ordNo}&canAmt=${order.goodsAmt}&ediDate=${order.ediDate}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          alert(
+            data.resultCd === "0000" ? "[정상] " : "[실패] " + data.resultMsg
+          );
+
+          let pay_state =
+            data.resultCd === "0000" || data.resultCd === "2013"
+              ? "0100"
+              : order.pay_state;
+
+          updateDoc(doc(db, "PAYMENT", order.doc_id), {
+            resultCd: data.resultCd,
+            resultMsg: data.resultMsg,
+            pay_state: pay_state,
+          }).then(() => {
             window.location.reload();
-          } else {
-            alert(response.resultMsg);
-          }
-        },
-        error: function (xhr, status, error) {
-          // 요청이 실패했을 때 처리할 작업
-          console.error("POST 요청 실패:", error);
-        },
-      });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+
+    // if (window.confirm("결제를 취소하시겠습니까?")) {
+    //   // jQuery를 사용하여 POST 요청을 보냅니다.
+    //   $.ajax({
+    //     url: SERVER_URL + "/cancel", // 요청을 보낼 엔드포인트 URL
+    //     method: "POST",
+    //     contentType: "application/json", // 요청 본문의 데이터 형식
+    //     data: JSON.stringify({
+    //       order_id: order.order_id,
+    //       reason: "관리자 취소",
+    //       tid: order.pay_id,
+    //       amount: order.pay_price,
+    //     }), // POST할 데이터를 JSON 문자열로 변환하여 전송
+    //     success: async function (response) {
+    //       // 성공적으로 요청이 완료되었을 때 처리할 작업
+    //       console.log("POST 요청 성공:", response);
+
+    //       if (response.resultCode === "0000") {
+    //         await updateDoc(doc(db, "PAYMENT", order.doc_id), {
+    //           // 1000 : 취소 성공
+    //           pay_state: "1000",
+    //           pay_result: response.resultMsg,
+    //           cancel_date: response.cancelledAt,
+    //         });
+    //         window.location.reload();
+    //       } else {
+    //         alert(response.resultMsg);
+    //       }
+    //     },
+    //     error: function (xhr, status, error) {
+    //       // 요청이 실패했을 때 처리할 작업
+    //       console.error("POST 요청 실패:", error);
+    //     },
+    //   });
+    // }
   };
 
   function searchShopName(id) {

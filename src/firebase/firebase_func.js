@@ -481,6 +481,17 @@ export const postAdmin = async (e) => {
   return true;
 };
 
+// 배너 등록
+export const postBanner = async (data) => {
+  console.log(data);
+
+  try {
+    const docRef = await addDoc(collection(db, "BANNER"), data);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+};
 // 현재 로그인된 사용자가 익명인지 여부를 판단하는 함수
 export const isCurrentUserAnonymous = () => {
   const currentUser = auth.currentUser;
@@ -582,9 +593,14 @@ export async function readInventoryData(shop_id) {
 }
 
 export const getShopName = async (shop_id) => {
-  const docRef = doc(db, "SHOP", shop_id);
-  const docSnap = await getDoc(docRef);
-  return docSnap.data().shop_name;
+  try {
+    const docRef = doc(db, "SHOP", shop_id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data().shop_name;
+  } catch (error) {
+    console.error("shop id로 샵 정보가져오기 오류 발생:", error);
+    return "";
+  }
 };
 
 export const getShop = async (shop_id) => {

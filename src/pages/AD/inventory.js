@@ -30,6 +30,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Checkbox,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -79,6 +80,7 @@ import {
   timestampToDate,
   timestampToTime,
 } from "../../firebase/api";
+import SearchShop from "../../components/SearchShop";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -196,21 +198,36 @@ function Inventory({ ...props }) {
     getDocs(collection(db, "POST")).then((querySnapshot) => {
       const list = [];
       if (shopFilter) {
-        setPostList([]);
         querySnapshot.forEach((doc) => {
-          if (
-            doc.data().created_by.shop_id === shopFilter.shop_id ||
-            doc.data().created_by.shop_id === ""
-          ) {
+          console.log(doc.data().shopId);
+
+          // 수퍼바이저의 경우는 전체리스트를 보여준다
+          if (admin?.permission === "supervisor") {
             list.push({ ...doc.data(), doc_id: doc.id });
-            setPostList(list);
+          } else {
+            // 전체에게 보낸건 보이게 한다.
+            if (doc.data().shopId === "#checkAllShop") {
+              console.log("전체에게 보낸거임 > ", doc.data());
+              list.push({ ...doc.data(), doc_id: doc.id });
+            }
+
+            // 발신자가 나(내가 보낸거) 인 경우 보이게 한다
+            if (doc.data().created_by.shop_id === admin?.shop_id) {
+              console.log("내가 보낸거임! > ", doc.data());
+              list.push({ ...doc.data(), doc_id: doc.id });
+            }
+
+            // 수신자가 나(내가 받은거) 인 경우 보이게 한다
+            if (doc.data().shopId === admin?.uid) {
+              console.log("내가 받은거임! > ", doc.data());
+              list.push({ ...doc.data(), doc_id: doc.id });
+            }
           }
-        });
-      } else {
-        querySnapshot.forEach((doc) => {
-          list.push({ ...doc.data(), doc_id: doc.id });
+
           setPostList(list);
         });
+      } else {
+        setPostList([]);
       }
     });
 
@@ -331,11 +348,22 @@ function Inventory({ ...props }) {
   };
 
   async function getFilteredData(value) {
-    console.log("filter", value);
-    setShopFilter(value);
-    let newList = await getFilteredInventory(value);
-    console.log(newList);
-    setInventoryList(newList);
+    if (admin?.permission === "supervisor") {
+      // 수퍼바이저는 전체 리스트를 받아도 무방(shopid에 구애받지 않음)
+      setShopFilter(value);
+      let newList = await getFilteredInventory(value);
+      console.log(newList);
+      setInventoryList(newList);
+    } else {
+      // 일반 관리자는 관리 지점데이터만 긁어와야하므로 shopId가 있어야 함
+      if (value.shop_id) {
+        console.log("filter ====> ", value);
+        setShopFilter(value);
+        let newList = await getFilteredInventory(value);
+        console.log(newList);
+        setInventoryList(newList);
+      }
+    }
   }
 
   useEffect(() => {
@@ -472,8 +500,9 @@ function Inventory({ ...props }) {
                         <Tr>
                           <Th>No</Th>
                           <Th>제목</Th>
-                          <Th>작성자</Th>
-                          <Th>관리지점</Th>
+                          <Th>발신자</Th>
+                          <Th>수신자</Th>
+                          {/* <Th>관리지점</Th> */}
                           <Th>답변</Th>
                           {admin?.permission === "supervisor" && <Th>삭제</Th>}
                         </Tr>
@@ -484,11 +513,12 @@ function Inventory({ ...props }) {
                             <Td>{index + 1}</Td>
                             <Td>{item.title}</Td>
                             <Td>{item.created_by.admin_name}</Td>
-                            <Td>
+                            <Td>{item.shopName}</Td>
+                            {/* <Td>
                               {item.created_by.shop_id === ""
                                 ? "관리자"
                                 : item.created_by.shop_id}
-                            </Td>
+                            </Td> */}
                             <Td>
                               <AnswerUsage post={item} />
                             </Td>
@@ -917,10 +947,24 @@ function BasicUsage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [content, setContent] = useState(" ");
   const [title, setTitle] = useState(" ");
+  const [shopId, setShopId] = useState(" ");
 
-  const addPost = () => {
+  const [sendAll, setSendAll] = useState(false); // 전체 발송 플래그
+
+  const addPost = async () => {
     console.log(admin);
     console.log(content);
+
+    let tempShopId;
+    let tempShopName;
+
+    if (sendAll) {
+      tempShopId = "#checkAllShop";
+      tempShopName = "전체";
+    } else {
+      tempShopId = shopId;
+      tempShopName = await getShopName(shopId);
+    }
 
     addDoc(collection(db, "POST"), {
       content: content,
@@ -929,6 +973,8 @@ function BasicUsage() {
       updated_at: serverTimestamp(),
       updated_by: admin,
       title: title,
+      shopId: tempShopId,
+      shopName: tempShopName,
     }).then(() => {
       console.log("added");
       setContent(" ");
@@ -953,32 +999,30 @@ function BasicUsage() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="제목을 입력하세요."
               ></Input>
+              <Stack>
+                <HStack justifyContent={"space-between"}>
+                  <Text>지점 선택</Text>
+                  {admin?.permission === "supervisor" && (
+                    <Checkbox onChange={() => setSendAll(!sendAll)}>
+                      전체발송
+                    </Checkbox>
+                  )}
+                </HStack>
+                {!sendAll && (
+                  <SearchShop
+                    onSelect={(shop) => {
+                      console.log(shop);
+                      setShopId(shop);
+                    }}
+                  ></SearchShop>
+                )}
+              </Stack>
               <ToastEditor
                 onChange={(html) => {
                   setContent(html);
                 }}
                 initialValue=" "
               />
-              {/* <Select
-                isDisabled={admin?.permission !== "supervisor"}
-                defaultValue={admin?.shop_id}
-                name="shop_id"
-                onChange={(e) => {
-                  setIncomeData({
-                    ...incomeData,
-                    shop_id: e.target.value,
-                  });
-                  setShopId(e.target.value);
-                  getSales(dateRange, e.target.value);
-                }}
-              >
-                <option value="">전체</option>
-                {props.shopList?.map((shop, index) => (
-                  <option key={index} value={shop.doc_id}>
-                    {shop.shop_name}
-                  </option>
-                ))}
-              </Select> */}
             </Stack>
           </ModalBody>
 
@@ -1005,6 +1049,15 @@ function AnswerUsage({ post }) {
   const { admin } = useGlobalState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [reply, setReply] = useState(" ");
+  const [shopName, setShopName] = useState("");
+
+  useEffect(() => {
+    if (post.shopId) {
+      getShopName(post.shopId).then((name) => {
+        setShopName(name);
+      });
+    }
+  });
 
   const updateReply = () => {
     updateDoc(doc(db, "POST", post.doc_id), {

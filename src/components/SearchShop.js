@@ -143,6 +143,7 @@ function SearchShop(props) {
             <Button
               colorScheme="red"
               onClick={() => {
+                console.log(tempSelected);
                 setTempSelected(null);
                 setSelectedShop(tempSelected);
                 props.onSelect(tempSelected.doc_id);

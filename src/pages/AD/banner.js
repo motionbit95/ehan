@@ -29,6 +29,10 @@ import { AddIcon, CloseIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import PopupBase from "../../modals/PopupBase";
 import { useGlobalState } from "../../GlobalState";
 import { debug } from "../../firebase/api";
+import { postBanner } from "../../firebase/firebase_func";
+import { db, storage } from "../../firebase/firebase_conf";
+import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function BannerInfo({ ...props }) {
   const [banner, setBanner] = useState(
@@ -39,7 +43,6 @@ function BannerInfo({ ...props }) {
           banner_image: [],
           advertiser: "",
           position: "",
-          shop_id: props.shop_id,
         }
   );
 
@@ -71,6 +74,10 @@ function BannerInfo({ ...props }) {
   const handleFileChange = (event) => {
     // 파일 정보를 product 정보에 저장합니다.
     handleChange(event);
+
+    if (event.target.files[0]) {
+      props.setBannerFile(event.target.files[0]);
+    }
 
     if (event.target.files[0]) {
       // 파일을 Blob으로 변환하여 미리보기 이미지 설정
@@ -172,7 +179,8 @@ function BannerInfo({ ...props }) {
       </FormControl>
       <FormControl isRequired>
         <FormLabel>위치</FormLabel>
-        <Select onChange={handleChange} name="position" defaultValue={"Top"}>
+        <Select onChange={handleChange} name="position" defaultValue={""}>
+          <option value="">선택</option>
           <option value="Top">Top</option>
           <option value="Bottom">Bottom</option>
         </Select>
@@ -185,6 +193,44 @@ const Banner = () => {
   const { admin } = useGlobalState();
   const [bannerList, setBannerList] = useState([]);
   const [bannerInfo, setBannerInfo] = useState(null);
+  const [bannerFile, setBannerFile] = useState(null);
+
+  const getBanner = async () => {
+    const tempList = [];
+    const q = query(collection(db, "BANNER"));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      tempList.push({ ...doc.data(), doc_id: doc.id });
+      setBannerList(tempList);
+    });
+  };
+
+  // 파일 업로드 부분
+  const uploadFile = async (file) => {
+    // uid 부여를 위해 현재 시각을 파일명에 적어줌
+    if (!file.name) return null;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줌
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const uploaded_file = await uploadBytes(
+      ref(storage, `banner_image/${year + month + day}_${file.name}`),
+      file
+    );
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+    return file_url;
+  };
+
+  useEffect(() => {
+    getBanner();
+  }, []);
+
   const handleChange = (event) => {
     // setBannerList({ ...bannerList, [event.target.name]: event.target.value });
     console.log(event.target.name, event.target.value);
@@ -193,6 +239,29 @@ const Banner = () => {
   const updateBannerInfo = (bannerInfo) => {
     setBannerInfo(bannerInfo);
     console.log(bannerInfo);
+  };
+
+  const saveBanner = async (e) => {
+    e.preventDefault();
+
+    // 이미지를 업로드하고 해당 url을 전달한다.
+    uploadFile(bannerFile).then(async (url) => {
+      const addData = {
+        [e.target[0].name]: e.target[0].value, // banner_title
+        [e.target[1].name]: e.target[1].value, // advertiser
+        banner_image: url,
+        // [e.target[2].name]: e.target[2].value, // banner_image
+        // [e.target[3].name]: e.target[3].value, // ????
+        [e.target[4].name]: e.target[4].value, // position
+        createAt: new Date(),
+      };
+
+      console.log(addData);
+
+      if (await postBanner(addData)) {
+        window.location.reload();
+      }
+    });
   };
   return (
     <Stack w={"100%"} h={"100%"}>
@@ -213,10 +282,16 @@ const Banner = () => {
             <HStack justifyContent={"space-between"}>
               <Text fontWeight={"bold"}>광고 배너</Text>
               <ButtonGroup size={"md"} justifyContent={"flex-end"}>
-                <PopupBase icon={<AddIcon />} title={"배너"} action={"등록"}>
+                <PopupBase
+                  icon={<AddIcon />}
+                  title={"배너"}
+                  action={"등록"}
+                  onClose={(e) => saveBanner(e)}
+                >
                   <BannerInfo
                     shop_id={admin?.shop_id}
                     onChangeBanner={updateBannerInfo}
+                    setBannerFile={setBannerFile}
                   />
                 </PopupBase>
                 {/* <Button
@@ -242,38 +317,44 @@ const Banner = () => {
                   <Tr>
                     <Th>No</Th>
                     <Th>제목</Th>
-                    <Th>작성자</Th>
                     <Th>광고사</Th>
                     <Th>위치</Th>
                     {/* {admin?.permission === "supervisor" &&  */}
+                    <Th>미리보기</Th>
                     <Th>삭제</Th>
                     {/* } */}
                   </Tr>
                 </Thead>
                 <Tbody>
                   {bannerList?.map((item, index) => (
-                    <Tr key={index}>
-                      <Td fontSize={"sm"}>{index + 1}</Td>
+                    <Tr>
+                      <Td>{index + 1}</Td>
                       <Td>{item.banner_title}</Td>
-                      <Td>
-                        {item.created_by.shop_id === ""
-                          ? "관리자"
-                          : item.created_by.shop_id}
-                      </Td>
                       <Td>{item.advertiser}</Td>
                       <Td>{item.position}</Td>
-                      {/* {admin?.permission === "supervisor" && ( */}
-                      <Td w={"30px"}>
-                        <Button
-                          size={"sm"}
-                          colorScheme="red"
-                          variant={"outline"}
-                          leftIcon={<DeleteIcon />}
-                        >
-                          삭제
-                        </Button>
+                      <Td>
+                        <Image
+                          src={item.banner_image}
+                          height={"100px"}
+                          aspectRatio={"16/9"}
+                        />
                       </Td>
-                      {/* )} */}
+                      <Td>
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          onClick={() => {
+                            if (window.confirm("광고를 삭제하시겠습니까?")) {
+                              console.log(item.doc_id);
+                              deleteDoc(doc(db, "BANNER", item.doc_id)).then(
+                                () => {
+                                  console.log("Document deleted! ");
+                                  window.location.reload();
+                                }
+                              );
+                            }
+                          }}
+                        />
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>

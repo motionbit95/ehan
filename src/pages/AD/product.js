@@ -528,6 +528,7 @@ function ProductInfo({ shopList, permission, ...props }) {
               }}
               name="product_category"
             >
+              <option value="">카테고리 선택</option>
               {categories?.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -754,6 +755,13 @@ function Product(props) {
     }
   };
 
+  const saveProduct = async (e) => {
+    console.log(e);
+    if (await postProduct(e)) {
+      window.location.reload();
+    }
+  };
+
   const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -869,9 +877,10 @@ function Product(props) {
                             action={"수정"}
                             size={"sm"}
                             title={<EditIcon />}
-                            onClose={async () => {
-                              await uploadImages();
-                            }}
+                            onClose={saveProduct}
+                            // {async () => {
+                            //   await uploadImages();
+                            // }}
                           >
                             <ProductInfo
                               product={item}
