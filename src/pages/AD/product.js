@@ -511,11 +511,7 @@ function ProductInfo({ shopList, permission, ...props }) {
               defaultValue={props.product?.product_category}
             ></Input> */}
             <Select
-              defaultValue={
-                product?.product_category
-                  ? product.product_category
-                  : categories[0]
-              }
+              value={product?.product_category}
               onChange={(e) => {
                 setProduct({
                   ...product,
@@ -756,8 +752,9 @@ function Product(props) {
   };
 
   const saveProduct = async (e) => {
-    console.log(e);
-    if (await postProduct(e)) {
+    // console.log(e);
+
+    if (await updateProduct(productInfo)) {
       window.location.reload();
     }
   };
@@ -854,52 +851,56 @@ function Product(props) {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {currentData?.map((item, index) => (
-                      <Tr
-                        key={index}
-                        _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                      >
-                        <Td fontSize={"sm"}>{index + 1}</Td>
-                        <Td fontSize={"sm"}>
-                          {timestampToDate(item.createAt)}
-                        </Td>
-                        <Td fontSize={"sm"}>{item.product_category}</Td>
-                        <Td fontSize={"sm"}>{item.product_name}</Td>
+                    {currentData?.map((item, index) => {
+                      const itemNumber =
+                        (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+                      return (
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
+                          <Td fontSize={"sm"}>{itemNumber}</Td>
+                          <Td fontSize={"sm"}>
+                            {timestampToDate(item.createAt)}
+                          </Td>
+                          <Td fontSize={"sm"}>{item.product_category}</Td>
+                          <Td fontSize={"sm"}>{item.product_name}</Td>
 
-                        <Td fontSize={"sm"}>
-                          {formatCurrency(item.product_price)}원
-                        </Td>
-                        <Td>{searchShopName(item.shop_id)}</Td>
-                        <Td>
-                          <PopupBase
-                            colorScheme={"gray"}
-                            visibleButton={true}
-                            action={"수정"}
-                            size={"sm"}
-                            title={<EditIcon />}
-                            onClose={saveProduct}
-                            // {async () => {
-                            //   await uploadImages();
-                            // }}
-                          >
-                            <ProductInfo
-                              product={item}
-                              shop_id={admin?.shop_id}
-                              shopList={props.shopList}
-                              permission={admin?.permission}
-                              onChangeProduct={updateProductInfo}
+                          <Td fontSize={"sm"}>
+                            {formatCurrency(item.product_price)}원
+                          </Td>
+                          <Td>{searchShopName(item.shop_id)}</Td>
+                          <Td>
+                            <PopupBase
+                              colorScheme={"gray"}
+                              visibleButton={true}
+                              action={"수정"}
+                              size={"sm"}
+                              title={<EditIcon />}
+                              onClose={saveProduct}
+                              // {async () => {
+                              //   await uploadImages();
+                              // }}
+                            >
+                              <ProductInfo
+                                product={item}
+                                shop_id={admin?.shop_id}
+                                shopList={props.shopList}
+                                permission={admin?.permission}
+                                onChangeProduct={updateProductInfo}
+                              />
+                            </PopupBase>
+                          </Td>
+                          <Td>
+                            <IconButton
+                              size={"sm"}
+                              onClick={() => deleteProduct(item.doc_id)}
+                              icon={<DeleteIcon />}
                             />
-                          </PopupBase>
-                        </Td>
-                        <Td>
-                          <IconButton
-                            size={"sm"}
-                            onClick={() => deleteProduct(item.doc_id)}
-                            icon={<DeleteIcon />}
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
+                          </Td>
+                        </Tr>
+                      );
+                    })}
                   </Tbody>
                 </Table>
                 <Flex mt={4} justifyContent="center" alignItems="center">

@@ -50,7 +50,7 @@ const EmblaCarousel = (props) => {
               overflow={"hidden"}
               borderRadius={"10"}
               key={i}
-              // flex="0 0 60%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
+              flex="0 0 100%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
               mx={2} // 슬라이드 사이 간격
               display="flex"
               justifyContent="center"
@@ -58,11 +58,15 @@ const EmblaCarousel = (props) => {
               fontSize={"2xl"}
               fontWeight="bold"
               w={"full"}
-              bgColor={"red"}
               height={"200px"}
-              objectFit={"cover"}
             >
-              <Image src={i.banner_image} alt="banner" />
+              <Image
+                src={i.banner_image}
+                alt="banner"
+                w={"full"}
+                h={"full"}
+                objectFit={"cover"}
+              />
             </Box>
           ))}
         </Flex>

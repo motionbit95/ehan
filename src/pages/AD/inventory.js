@@ -325,17 +325,7 @@ function Inventory({ ...props }) {
     readInventory();
   };
 
-  const changeInventoryCount = (index, count) => {
-    const tempInventoryList = [...inventoryList];
-    tempInventoryList[index].inventory_count = count;
-
-    setInventoryList(tempInventoryList);
-    // console.log(
-    //   tempInventoryList[index],
-    //   tempInventoryList[index].inventory_count
-    // );
-  };
-
+  /******  20b2b696-13f0-49f7-909b-be7885abc03c  *******/
   const changeInventoryUse = (index, use) => {
     const tempInventoryList = [...inventoryList];
     tempInventoryList[index].inventory_use = use;
@@ -402,6 +392,14 @@ function Inventory({ ...props }) {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentData = inventoryList.slice(startIndex, endIndex);
 
+  const changeInventoryCount = (index, count) => {
+    //0으로 오면 안되고 페이지 인덱스(2) * 한페이지 항목개수(10) + 이 페이지에서의 index(index)
+    console.log(startIndex + index);
+    const tempInventoryList = [...inventoryList];
+    tempInventoryList[20].inventory_count = count;
+
+    setInventoryList(tempInventoryList);
+  };
   return (
     <Flex w={"100%"} h={"calc(100% - 48px)"}>
       {isDesktop ? (
@@ -587,6 +585,7 @@ function Inventory({ ...props }) {
                 borderRadius={"10px"}
                 p={"10px"}
                 mb={"20px"}
+                minH={"709px"}
               >
                 {admin?.permission === "supervisor" && (
                   <ButtonGroup
@@ -658,79 +657,83 @@ function Inventory({ ...props }) {
                   </Thead>
                   <Tbody>
                     {totalProducts &&
-                      currentData?.map((item, index) => (
-                        <Tr
-                          key={index}
-                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                        >
-                          <Td fontSize={"sm"}>{index + 1}</Td>
-                          <ProductColumn
-                            productList={totalProducts}
-                            product_id={item.product_id}
-                          />
-                          <Td>{searchShopName(item.shop_id)}</Td>
-                          <Td>
-                            <HStack
-                              visibility={
-                                item.inventory_use ? "visible" : "hidden"
-                              }
-                              w={"100px"}
-                              spacing={"10px"}
-                              border={"1px solid #d9d9d9"}
-                              p={"10px 7px"}
-                              borderRadius={"10px"}
-                              justifyContent={"space-between"}
-                            >
-                              <Image
-                                w={"16px"}
-                                h={"16px"}
-                                src={require("../../image/HiMinus.png")}
-                                onClick={() => {
-                                  if (item.inventory_count > 0) {
+                      currentData?.map((item, index) => {
+                        const itemNumber =
+                          (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+                        return (
+                          <Tr
+                            key={index}
+                            _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                          >
+                            <Td fontSize={"sm"}>{itemNumber}</Td>
+                            <ProductColumn
+                              productList={totalProducts}
+                              product_id={item.product_id}
+                            />
+                            <Td>{searchShopName(item.shop_id)}</Td>
+                            <Td>
+                              <HStack
+                                visibility={
+                                  item.inventory_use ? "visible" : "hidden"
+                                }
+                                w={"100px"}
+                                spacing={"10px"}
+                                border={"1px solid #d9d9d9"}
+                                p={"10px 7px"}
+                                borderRadius={"10px"}
+                                justifyContent={"space-between"}
+                              >
+                                <Image
+                                  w={"16px"}
+                                  h={"16px"}
+                                  src={require("../../image/HiMinus.png")}
+                                  onClick={() => {
+                                    if (item.inventory_count > 0) {
+                                      changeInventoryCount(
+                                        index,
+                                        item.inventory_count - 1
+                                      );
+                                    }
+                                  }}
+                                />
+                                <Text
+                                  color={
+                                    item.inventory_count <= 3 ? "red" : "black"
+                                  }
+                                >
+                                  {item.inventory_count}
+                                </Text>
+                                <Image
+                                  w={"16px"}
+                                  h={"16px"}
+                                  src={require("../../image/HiPlus.png")}
+                                  onClick={() => {
                                     changeInventoryCount(
                                       index,
-                                      item.inventory_count - 1
+                                      item.inventory_count + 1
                                     );
-                                  }
-                                }}
-                              />
-                              <Text
-                                color={
-                                  item.inventory_count <= 3 ? "red" : "black"
+                                  }}
+                                />
+                              </HStack>
+                            </Td>
+                            <Td textAlign={"center"}>
+                              <Switch
+                                onChange={() =>
+                                  changeInventoryUse(index, !item.inventory_use)
                                 }
-                              >
-                                {item.inventory_count}
-                              </Text>
-                              <Image
-                                w={"16px"}
-                                h={"16px"}
-                                src={require("../../image/HiPlus.png")}
-                                onClick={() => {
-                                  changeInventoryCount(
-                                    index,
-                                    item.inventory_count + 1
-                                  );
-                                }}
+                                defaultChecked={item.inventory_use}
                               />
-                            </HStack>
-                          </Td>
-                          <Td textAlign={"center"}>
-                            <Switch
-                              onChange={() =>
-                                changeInventoryUse(index, !item.inventory_use)
-                              }
-                              defaultChecked={item.inventory_use}
-                            />
-                          </Td>
-                          <Td>
-                            <IconButton
-                              size={"sm"}
-                              onClick={() => deleteInventory(item.doc_id)}
-                              icon={<DeleteIcon />}
-                            />
-                          </Td>
-                        </Tr>
-                      ))}
+                            </Td>
+                            <Td>
+                              <IconButton
+                                size={"sm"}
+                                onClick={() => deleteInventory(item.doc_id)}
+                                icon={<DeleteIcon />}
+                              />
+                            </Td>
+                          </Tr>
+                        );
+                      })}
                   </Tbody>
                 </Table>
                 <Flex mt={4} justifyContent="center" alignItems="center">
@@ -1052,12 +1055,13 @@ function AnswerUsage({ post }) {
   const [shopName, setShopName] = useState("");
 
   useEffect(() => {
+    console.log(post.shopId);
     if (post.shopId) {
       getShopName(post.shopId).then((name) => {
         setShopName(name);
       });
     }
-  });
+  }, []);
 
   const updateReply = () => {
     updateDoc(doc(db, "POST", post.doc_id), {
