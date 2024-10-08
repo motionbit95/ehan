@@ -41,9 +41,12 @@ function Cert(props) {
   const [toggle, setToggle] = useState(false);
   const [step, setStep] = useState(props.step ? props.step : 0);
   const [certType, setCertType] = useState("KakaocertService");
-  const [certOption, setCertOption] = useState("카카오톡");
+  const [certOption, setCertOption] = useState("PASS");
 
-  const options = ["카카오톡", "네이버", "PASS"];
+  const options = [
+    // "카카오톡", "네이버",
+    "PASS",
+  ];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "framework",
@@ -297,13 +300,13 @@ function Cert(props) {
                           onChange={(e) => {
                             console.log(e.target.value);
                             setCertOption(e.target.value);
-                            if (e.target.value === "카카오톡") {
-                              setCertType("KakaocertService");
-                            }
+                            // if (e.target.value === "카카오톡") {
+                            //   setCertType("KakaocertService");
+                            // }
 
-                            if (e.target.value === "네이버") {
-                              setCertType("NavercertService");
-                            }
+                            // if (e.target.value === "네이버") {
+                            //   setCertType("NavercertService");
+                            // }
 
                             if (e.target.value === "PASS") {
                               setCertType("PasscertService");
@@ -350,12 +353,12 @@ function Cert(props) {
             {step === 2 && (
               <Stack>
                 <Text>본인인증을 진행하고 인증완료 버튼을 클릭해주세요.</Text>
-                {certOption === "카카오톡" && (
+                {/* {certOption === "카카오톡" && (
                   <Image src={require("../../assets/kakaostep.jpg")} />
                 )}
                 {certOption === "네이버" && (
                   <Image src={require("../../assets/naverstep.png")} />
-                )}
+                )} */}
                 {certOption === "PASS" && (
                   <Image src={require("../../assets/passstep.png")} />
                 )}

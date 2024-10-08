@@ -81,6 +81,8 @@ import {
   timestampToTime,
 } from "../../firebase/api";
 import SearchShop from "../../components/SearchShop";
+import { event } from "jquery";
+import { set } from "date-fns";
 
 function ProductColumn({ productList, product_id }) {
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -161,6 +163,12 @@ function Inventory({ ...props }) {
     ),
     new Date(),
   ]);
+
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+
+  const handlePostClick = () => {
+    setIsPostModalOpen(true);
+  };
 
   const updateAlarm = () => {
     const q = query(
@@ -507,35 +515,42 @@ function Inventory({ ...props }) {
                       </Thead>
                       <Tbody>
                         {postList?.map((item, index) => (
-                          <Tr key={index}>
-                            <Td>{index + 1}</Td>
-                            <Td>{item.title}</Td>
-                            <Td>{item.created_by.admin_name}</Td>
-                            <Td>{item.shopName}</Td>
-                            {/* <Td>
+                          <>
+                            <Tr key={index} onClick={handlePostClick}>
+                              <Td>{index + 1}</Td>
+                              <Td>{item.title}</Td>
+                              <Td>{item.created_by.admin_name}</Td>
+                              <Td>{item.shopName}</Td>
+                              {/* <Td>
                               {item.created_by.shop_id === ""
                                 ? "관리자"
                                 : item.created_by.shop_id}
                             </Td> */}
-                            <Td>
-                              <AnswerUsage post={item} />
-                            </Td>
-                            {admin?.permission === "supervisor" && (
-                              <Td w={"30px"}>
-                                <Button
-                                  size={"sm"}
-                                  onClick={() => {
-                                    deletePost(item.doc_id);
-                                  }}
-                                  colorScheme="red"
-                                  variant={"outline"}
-                                  leftIcon={<DeleteIcon />}
-                                >
-                                  삭제
-                                </Button>
+                              <Td>
+                                <AnswerUsage post={item} />
                               </Td>
-                            )}
-                          </Tr>
+                              {admin?.permission === "supervisor" && (
+                                <Td w={"30px"}>
+                                  <Button
+                                    size={"sm"}
+                                    onClick={() => {
+                                      deletePost(item.doc_id);
+                                    }}
+                                    colorScheme="red"
+                                    variant={"outline"}
+                                    leftIcon={<DeleteIcon />}
+                                  >
+                                    삭제
+                                  </Button>
+                                </Td>
+                              )}
+                            </Tr>
+                            <PostModal
+                              post={item}
+                              isOpen={isPostModalOpen}
+                              onClose={() => setIsPostModalOpen(false)}
+                            />
+                          </>
                         ))}
                       </Tbody>
                     </Table>
@@ -1080,7 +1095,10 @@ function AnswerUsage({ post }) {
     <>
       <Button
         size={"sm"}
-        onClick={onOpen}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
         colorScheme={post.reply ? "green" : "gray"}
       >
         {post.reply ? "답변완료" : "답변작성"}
@@ -1144,3 +1162,31 @@ function AnswerUsage({ post }) {
     </>
   );
 }
+
+const PostModal = ({ post, isOpen, onClose }) => {
+  return (
+    <Modal size={"2xl"} isCentered isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>
+          {post.reply ? "답변이 완료된 게시글입니다." : "게시판 답변 작성"}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Stack>
+            <Text fontSize={"xl"} fontWeight={"bold"}>
+              {post.title}
+            </Text>
+            <Text>
+              {timestampToDate(post.created_at)}{" "}
+              {timestampToTime(post.created_at)}
+            </Text>
+            <Box p={4} borderRadius={"lg"}>
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            </Box>
+          </Stack>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};

@@ -20,7 +20,7 @@ import Main from "./Main";
 import Intro, { Intro1, Intro2, Intro3 } from "./Intro";
 import Service, { Service1, Service2, Service3, Service4 } from "./Service";
 import Customer from "./Customer";
-import ContactUs from "./ContactUs";
+import ContactUs, { Terms } from "./ContactUs";
 import Footer from "../Component/Footer";
 import { Section, SectionsContainer } from "react-fullpage";
 
@@ -127,6 +127,17 @@ const GOModal = ({ isOpen, onClose }) => {
     shop_address: "",
     room_cnt: "",
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("terms");
+
+  const handleopenModal = (type) => {
+    setModalType(type);
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Modal size={{ base: "full", md: "2xl" }} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -228,6 +239,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 color={"#808080"}
                 textDecoration={"underline"}
                 cursor={"pointer"}
+                onClick={() => handleopenModal("privacy")}
               >
                 개인정보취급방침
               </Text>
@@ -261,6 +273,13 @@ const GOModal = ({ isOpen, onClose }) => {
               </Button>
             </Stack>
           </Stack>
+          {isModalOpen && (
+            <Terms
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              istype={modalType}
+            />
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>

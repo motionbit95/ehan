@@ -102,7 +102,7 @@ const ContactUs = () => {
 
 export default ContactUs;
 
-const Terms = ({ isOpen, onClose, istype }) => {
+export const Terms = ({ isOpen, onClose, istype }) => {
   return (
     <Modal size={{ base: "80%", md: "md" }} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

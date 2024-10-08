@@ -122,7 +122,7 @@ function BannerInfo({ ...props }) {
         <Input onChange={handleChange} name="banner_title" />
       </FormControl>
       <FormControl isRequired>
-        <FormLabel>광고사</FormLabel>
+        <FormLabel>광고사 링크</FormLabel>
         <Input onChange={handleChange} name="advertiser" />
       </FormControl>
       <FormControl isRequired>
@@ -317,7 +317,7 @@ const Banner = () => {
                   <Tr>
                     <Th>No</Th>
                     <Th>제목</Th>
-                    <Th>광고사</Th>
+                    <Th>광고사 링크</Th>
                     <Th>위치</Th>
                     {/* {admin?.permission === "supervisor" &&  */}
                     <Th>미리보기</Th>

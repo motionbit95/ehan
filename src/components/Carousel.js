@@ -7,6 +7,7 @@ const EmblaCarousel = (props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true, // 슬라이드가 무한 루프로 반복
+      align: "center",
     },
     [Autoplay({ delay: 5000 })]
   );
@@ -22,12 +23,6 @@ const EmblaCarousel = (props) => {
     emblaApi.on("select", onSelect);
     onSelect();
   }, [emblaApi, onSelect]);
-
-  // const Banner = [
-  //   require("../Asset/banner_1.png"),
-  //   require("../Asset/banner_1.png"),
-  //   require("../Asset/banner_1.png"),
-  // ];
 
   useEffect(() => {
     console.log(props.list);
@@ -50,15 +45,14 @@ const EmblaCarousel = (props) => {
               overflow={"hidden"}
               borderRadius={"10"}
               key={i}
-              flex="0 0 100%" // 슬라이드가 화면의 80%만 차지하여 양옆 미리보기 가능
+              flex={"0 0 100%"}
               mx={2} // 슬라이드 사이 간격
               display="flex"
               justifyContent="center"
               alignItems="center"
-              fontSize={"2xl"}
-              fontWeight="bold"
               w={"full"}
               height={"200px"}
+              onClick={() => window.open(i.advertiser)}
             >
               <Image
                 src={i.banner_image}
@@ -77,8 +71,8 @@ const EmblaCarousel = (props) => {
         {props.list.map((i) => (
           <Box
             key={i}
-            w={"10px"}
-            h={"10px"}
+            w={{ base: "5px", md: "10px" }}
+            h={{ base: "5px", md: "10px" }}
             borderRadius="full"
             border={"1px solid white"}
             bg={selectedIndex === i ? "gray.500" : "white"}

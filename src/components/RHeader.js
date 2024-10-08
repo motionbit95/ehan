@@ -27,6 +27,7 @@ import {
   HamburgerIcon,
   ReactIcon,
   SearchIcon,
+  ViewIcon,
 } from "@chakra-ui/icons";
 import { auth } from "../firebase/firebase_conf";
 import { useGlobalState } from "../GlobalState";
@@ -168,6 +169,17 @@ const RHeader = (props) => {
                   광고배너 설정
                 </Button>
               )}
+              {admin.permission === "supervisor" && (
+                <Button
+                  leftIcon={<ViewIcon />}
+                  onClick={() => handleClick("spot")}
+                  variant={currentMenu === "spot" ? "solid" : "ghost"}
+                  justifyContent={"flex-start"}
+                  w={"100%"}
+                >
+                  설치지점
+                </Button>
+              )}
               <Button
                 leftIcon={<CopyIcon />}
                 onClick={() => handleClick("bdsm")}
@@ -256,7 +268,15 @@ const RHeader = (props) => {
                         justifyContent={"flex-start"}
                         w={"100%"}
                       >
-                        광고 배너 설정
+                        광고배너 설정
+                      </Button>
+                      <Button
+                        onClick={() => handleClick("spot")}
+                        variant={currentMenu === "banner" ? "solid" : "ghost"}
+                        justifyContent={"flex-start"}
+                        w={"100%"}
+                      >
+                        설치지점
                       </Button>
                       <Button
                         onClick={() => handleClick("bdsm")}

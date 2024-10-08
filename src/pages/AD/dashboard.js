@@ -47,6 +47,7 @@ import { formatCurrency } from "../CS/home";
 import $ from "jquery";
 import BDSM from "./bdsm";
 import Banner from "./banner";
+import Spot from "./spot";
 
 function Dashboard(props) {
   const navigate = useNavigate();
@@ -58,6 +59,11 @@ function Dashboard(props) {
   const [showPopup, setShowPopup] = useState(false);
   const [newOrder, setNewOrder] = useState(null);
   const [shop, setShop] = useState({});
+
+  const playSound = () => {
+    const audio = new Audio("../../assets/Sound/VoicesAI_1724058982121.mp3"); // 사운드 파일 경로
+    audio.play(); // 사운드 재생
+  };
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "PAYMENT"), (snapshot) => {
@@ -90,6 +96,7 @@ function Dashboard(props) {
                 change.doc.data().pay_state === "0000"
               ) {
                 // 주문이 추가되었을 때 팝업을 띄움
+                playSound();
                 setShowPopup(true);
                 setNewOrder(change.doc.data());
                 return;
@@ -152,6 +159,8 @@ function Dashboard(props) {
         return <BDSM />;
       case "banner":
         return <Banner />;
+      case "spot":
+        return <Spot />;
       default:
         return <Home />;
     }
