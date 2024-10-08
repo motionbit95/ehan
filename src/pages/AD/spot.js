@@ -49,7 +49,7 @@ function SpotInfo({ ...props }) {
         ...spot,
         [event.target.name]: [event.target.files[0]],
       });
-      props.onChangeBanner({
+      props.onChangeSpot({
         ...spot,
         [event.target.name]: [event.target.files[0]],
       });
@@ -61,6 +61,11 @@ function SpotInfo({ ...props }) {
   const imageRef = useRef();
   const [previewImage, setPreviewImage] = useState(
     props.spot?.spot_image[0] ? props.spot?.spot_image[0] : null
+  );
+
+  const logoRef = useRef();
+  const [logoImage, setlogoImage] = useState(
+    props.spot?.spot_logo[0] ? props.spot?.spot_logo[0] : null
   );
 
   const handleFileChange = (event) => {
@@ -86,6 +91,25 @@ function SpotInfo({ ...props }) {
       setPreviewImage(null);
     }
   };
+  const handleLogoFileChange = (event) => {
+    // 파일 정보를 product 정보에 저장합니다.
+    handleChange(event);
+
+    if (event.target.files[0]) {
+      // 파일을 Blob으로 변환하여 미리보기 이미지 설정
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const fileAsBlob = new Blob([reader.result], {
+          type: event.target.files[0].type,
+        }); // Blob로 저장
+        setlogoImage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+    } else {
+      // 파일이 선택되지 않은 경우 미리보기 이미지 초기화
+      setlogoImage(null);
+    }
+  };
 
   function onImageUpload(ref) {
     if (ref) {
@@ -101,9 +125,23 @@ function SpotInfo({ ...props }) {
       ...spot,
       spot_image: [],
     });
-    props.onChangeBanner({
-      ...props.banner,
+    props.onChangeSpot({
+      ...props.spot,
       spot_image: [],
+    });
+  }
+
+  function onDeleteLogoImage() {
+    // 파일 ui 에 담긴 정보도 지워줘야한다.
+    imageRef.current.value = "";
+    setlogoImage(null);
+    setSpot({
+      ...spot,
+      spot_logo: [],
+    });
+    props.onChangeSpot({
+      ...props.spot,
+      spot_logo: [],
     });
   }
 
@@ -114,11 +152,63 @@ function SpotInfo({ ...props }) {
         <Input onChange={handleChange} name="spot_title" />
       </FormControl>
       <FormControl isRequired>
+        <FormLabel>설치지점 로고 등록</FormLabel>
+        <InputGroup w={"100px"}>
+          <Input
+            type="file"
+            name="spot_logo"
+            onChange={handleLogoFileChange}
+            display={"none"}
+            ref={logoRef}
+            accept="image/*"
+          />
+          {logoImage ? (
+            <>
+              <Image
+                onClick={() => onImageUpload(logoRef)}
+                src={logoImage}
+                w={"100px"}
+                h={"100px"}
+                objectFit={"cover"}
+              />
+              <IconButton
+                size={"xs"}
+                position={"absolute"}
+                top={0}
+                right={0}
+                onClick={onDeleteImage}
+                icon={<CloseIcon />}
+                // variant={"ghost"}
+              />
+            </>
+          ) : (
+            <Flex
+              border={"1px solid #d9d9d9"}
+              borderRadius={"10px"}
+              onClick={() => onImageUpload(logoRef)}
+              src={logoImage}
+              w={"100px"}
+              h={"100px"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <IconButton
+                onClick={onDeleteLogoImage}
+                icon={<AddIcon />}
+                variant={"ghost"}
+                size={"lg"}
+                _hover={{ bg: "none" }}
+              />
+            </Flex>
+          )}
+        </InputGroup>
+      </FormControl>
+      <FormControl isRequired>
         <FormLabel>설치지점 이미지 등록</FormLabel>
         <InputGroup w={"100px"}>
           <Input
             type="file"
-            name="banner_image"
+            name="spot_image"
             onChange={handleFileChange}
             display={"none"}
             ref={imageRef}
@@ -171,6 +261,12 @@ function SpotInfo({ ...props }) {
 
 const Spot = () => {
   const [spotFile, setSpotFile] = useState(null);
+  const [spotInfo, setSpotInfo] = useState(null);
+
+  const updateSpotInfo = (spotInfo) => {
+    setSpotInfo(spotInfo);
+    console.log(spotInfo);
+  };
   return (
     <Stack w={"100%"} h={"100%"}>
       <Stack
@@ -192,7 +288,10 @@ const Spot = () => {
                   title={"설치지점"}
                   action={"등록"}
                 >
-                  <SpotInfo setSpotFile={setSpotFile} />
+                  <SpotInfo
+                    onChangeSpot={updateSpotInfo}
+                    setSpotFile={setSpotFile}
+                  />
                 </PopupBase>
               </ButtonGroup>
             </HStack>

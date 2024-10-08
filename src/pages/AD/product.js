@@ -140,7 +140,7 @@ function ProductInfo({ shopList, permission, ...props }) {
   );
 
   const illustRef = useRef();
-  const [illustImage, setIllustmage] = useState(
+  const [illustImage, setIllustImage] = useState(
     props.product?.illiust ? props.product?.illiust : null
   );
 
@@ -195,12 +195,12 @@ function ProductInfo({ shopList, permission, ...props }) {
         const fileAsBlob = new Blob([reader.result], {
           type: event.target.files[0].type,
         }); // Blob로 저장
-        setIllustmage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
+        setIllustImage(URL.createObjectURL(fileAsBlob)); // URL로 이미지 보여주기
       };
       reader.readAsArrayBuffer(event.target.files[0]);
     } else {
       // 파일이 선택되지 않은 경우 미리보기 이미지 초기화
-      setIllustmage(null);
+      setIllustImage(null);
     }
   };
 
@@ -241,7 +241,7 @@ function ProductInfo({ shopList, permission, ...props }) {
   function onDeleteIllustImage() {
     // 파일 ui 에 담긴 정보도 지워줘야한다.
     illustRef.current.value = "";
-    setIllustmage(null);
+    setIllustImage(null);
     setProduct({
       ...product,
       illiust: "",
@@ -427,7 +427,7 @@ function ProductInfo({ shopList, permission, ...props }) {
             <InputGroup w={"100px"}>
               <Input
                 type="file"
-                name="illust"
+                name="illiust"
                 onChange={handleIllustFileChange}
                 display={"none"}
                 ref={illustRef}
@@ -661,6 +661,20 @@ function Product(props) {
     if (productInfo.product_detail) {
       const url = await uploadFile(productInfo.product_detail[0]);
       productInfo.product_detail = url;
+      if (url) {
+        //링크로 변환해서 리스트에 담는다
+        if (await postProduct(productInfo)) {
+          setProductList([
+            ...productList,
+            { ...productInfo, createAt: new Date() },
+          ]);
+        }
+      }
+    }
+
+    if (productInfo.illiust) {
+      const url = await uploadFile(productInfo.illiust[0]);
+      productInfo.illiust = url;
       if (url) {
         //링크로 변환해서 리스트에 담는다
         if (await postProduct(productInfo)) {
