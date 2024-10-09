@@ -18,6 +18,7 @@ import {
   Th,
   Thead,
   Tr,
+  Td,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Text } from "recharts";
@@ -26,6 +27,7 @@ import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase/firebase_conf";
 import { collection, getDocs, query } from "firebase/firestore";
+import { postSpot } from "../../firebase/firebase_func";
 
 function SpotInfo({ ...props }) {
   const [spot, setSpot] = useState(
@@ -43,7 +45,10 @@ function SpotInfo({ ...props }) {
   }, [spot]);
 
   const handleChange = (event) => {
-    if (event.target.name === "spot_image") {
+    if (
+      event.target.name === "spot_image" ||
+      event.target.name === "spot_logo"
+    ) {
       // debug("파일을 선택했습니다. ", event.target.files[0].name);
       setSpot({
         ...spot,
@@ -148,7 +153,7 @@ function SpotInfo({ ...props }) {
   return (
     <Stack>
       <FormControl isRequired>
-        <FormLabel>제목</FormLabel>
+        <FormLabel>지점명</FormLabel>
         <Input onChange={handleChange} name="spot_title" />
       </FormControl>
       <FormControl isRequired>
@@ -262,10 +267,66 @@ function SpotInfo({ ...props }) {
 const Spot = () => {
   const [spotFile, setSpotFile] = useState(null);
   const [spotInfo, setSpotInfo] = useState(null);
+  const [spotList, setSpotList] = useState([]);
+
+  useEffect(() => {
+    getSpot();
+  }, []);
+
+  const getSpot = async () => {
+    const tempList = [];
+    const q = query(collection(db, "SPOT"));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      tempList.push({ ...doc.data(), doc_id: doc.id });
+      setSpotList(tempList);
+    });
+  };
 
   const updateSpotInfo = (spotInfo) => {
     setSpotInfo(spotInfo);
     console.log(spotInfo);
+  };
+
+  const uploadFile = async (file) => {
+    // uid 부여를 위해 현재 시각을 파일명에 적어줌
+    if (!file.name) return null;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줌
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const uploaded_file = await uploadBytes(
+      ref(storage, `spot_image/${year + month + day}_${file.name}`),
+      file
+    );
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+    return file_url;
+  };
+
+  const saveSpot = async (e) => {
+    e.preventDefault();
+
+    // 이미지를 업로드하고 해당 url을 전달한다.
+    uploadFile(spotFile).then(async (url) => {
+      const addData = {
+        [e.target[0].name]: e.target[0].value, // banner_title
+        [e.target[1].name]: e.target[1].value, // advertiser
+        spot_image: url,
+        createAt: new Date(),
+      };
+
+      console.log(addData);
+
+      if (await postSpot(addData)) {
+        window.location.reload();
+      }
+    });
   };
   return (
     <Stack w={"100%"} h={"100%"}>
@@ -287,6 +348,7 @@ const Spot = () => {
                   icon={<AddIcon />}
                   title={"설치지점"}
                   action={"등록"}
+                  onClick={(e) => saveSpot(e)}
                 >
                   <SpotInfo
                     onChangeSpot={updateSpotInfo}
@@ -309,14 +371,23 @@ const Spot = () => {
                   <Tr>
                     <Th w={"70px"}>No</Th>
                     <Th>등록일</Th>
-                    <Th>지점</Th>
+                    <Th>지점명</Th>
                     <Th>아이콘</Th>
                     <Th>이미지</Th>
                     <Th>삭제</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr></Tr>
+                  {spotList.map((spot, index) => (
+                    <Tr key={spot.doc_id}>
+                      <Td>{index + 1}</Td>
+                      <Td>{spot.createAt}</Td>
+                      <Td>{spot.spot_title}</Td>
+                      <Td>{spot.spot_logo}</Td>
+                      <Td>{spot.spot_image}</Td>
+                      <Td></Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </TableContainer>

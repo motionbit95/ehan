@@ -51,7 +51,7 @@ const EmblaCarousel = (props) => {
               justifyContent="center"
               alignItems="center"
               w={"full"}
-              height={"200px"}
+              height={{ base: "120px", md: "200px" }}
               onClick={() => window.open(i.advertiser)}
             >
               <Image
