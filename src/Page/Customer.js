@@ -20,14 +20,17 @@ import {
   ChevronRightIcon,
   CopyIcon,
 } from "@chakra-ui/icons";
+import { collection, getDocs, query } from "firebase/firestore";
+import { db } from "../firebase/firebase_conf";
 
 const Customer = () => {
   const [index, setIndex] = useState(0);
+  const [spotList, setSpotList] = useState([]);
 
   // 4초마다 탭 인덱스를 증가시키는 useEffect
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % TabItems.length);
+      setIndex((prevIndex) => (prevIndex + 1) % spotList.length);
     }, 4000);
 
     // 컴포넌트가 언마운트될 때 인터벌 클리어
@@ -37,6 +40,23 @@ const Customer = () => {
   const handleTabClick = (idx) => {
     setIndex(idx);
   };
+
+  useEffect(() => {
+    const getSpot = async () => {
+      const q = query(collection(db, "SPOT"));
+
+      const querySnapshot = await getDocs(q);
+
+      const tempList = [];
+      querySnapshot.forEach((doc) => {
+        console.log(doc.data());
+        tempList.push({ ...doc.data(), doc_id: doc.id });
+        setSpotList(tempList);
+      });
+    };
+
+    getSpot();
+  }, []);
 
   return (
     <Stack
@@ -65,60 +85,8 @@ const Customer = () => {
         index={index}
         handleTabClick={handleTabClick}
         setIndex={setIndex}
-        TabItems={TabItems}
+        TabItems={spotList}
       />
-      {/* <Stack align={"center"} spacing={8}>
-        <HStack align={"center"} spacing={{ base: 4, md: 8 }}>
-          <IconButton
-            icon={<ChevronLeftIcon />}
-            borderRadius={"full"}
-            size={"xs"}
-          />
-          <HStack spacing={4}>
-            <Box borderRadius={"full"} overflow={"hidden"}>
-              <Image w={"64px"} h={"64px"} bgColor={"white"} />
-            </Box>
-            <Box borderRadius={"full"} overflow={"hidden"}>
-              <Image w={"64px"} h={"64px"} bgColor={"white"} />
-            </Box>
-            <Box borderRadius={"full"} overflow={"hidden"}>
-              <Image w={"64px"} h={"64px"} bgColor={"white"} />
-            </Box>
-          </HStack>
-          <IconButton
-            icon={<ChevronRightIcon />}
-            borderRadius={"full"}
-            size={"xs"}
-          />
-        </HStack>
-        <HStack align={"center"} spacing={0}>
-          <IconButton
-            bgColor={"black"}
-            icon={<ChevronLeftIcon color={"white"} boxSize={"48px"} />}
-            borderRadius={"full"}
-          />
-          <HStack spacing={4}>
-            <Box overflow={"hidden"}>
-              <Image
-                boxSize={{ base: "100px", md: "160px" }}
-                bgColor={"white"}
-              />
-            </Box>
-            <Box overflow={"hidden"}>
-              <Image
-                boxSize={{ base: "100px", md: "160px" }}
-                bgColor={"white"}
-              />
-            </Box>
-          </HStack>
-          <IconButton
-            bgColor={"black"}
-            icon={<ChevronRightIcon color={"white"} boxSize={"48px"} />}
-            borderRadius={"full"}
-          />
-        </HStack>
-      </Stack> */}
-      {/* <Box w={"100%"} h={"50vh"} bgColor={"#0F0F0F"} /> */}
       <Stack align={"center"}>
         <ChosunGu decoration={"underline"} fontSize={"14px"} cursor={"pointer"}>
           설치지점 검색하기
@@ -230,41 +198,3 @@ const TabColumn = ({ index, handleTabClick, setIndex, TabItems }) => {
     </Tabs>
   );
 };
-
-const TabItems = [
-  {
-    id: 1,
-    title: "1번컨텐츠",
-    logos: require("../assets/bdsm_gray.png"),
-    content: "https://via.placeholder.com/100",
-    icon: CopyIcon,
-  },
-  {
-    id: 2,
-    title: "2번컨텐츠",
-    logos: require("../assets/bdsm.png"),
-    content: "https://via.placeholder.com/200",
-    icon: CheckIcon,
-  },
-  {
-    id: 3,
-    title: "3번컨텐츠",
-    logos: require("../assets/bdsm_gray.png"),
-    content: "https://via.placeholder.com/300",
-    icon: CheckIcon,
-  },
-  {
-    id: 4,
-    title: "4번컨텐츠",
-    logos: require("../assets/bdsm.png"),
-    content: "https://via.placeholder.com/400",
-    icon: CheckIcon,
-  },
-  {
-    id: 5,
-    title: "5번컨텐츠",
-    logos: require("../assets/bdsm_gray.png"),
-    content: "https://via.placeholder.com/500",
-    icon: CheckIcon,
-  },
-];

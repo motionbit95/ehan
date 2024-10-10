@@ -177,7 +177,7 @@ const RHeader = (props) => {
                   justifyContent={"flex-start"}
                   w={"100%"}
                 >
-                  설치지점
+                  설치지점(스팟)
                 </Button>
               )}
               <Button
@@ -276,7 +276,7 @@ const RHeader = (props) => {
                         justifyContent={"flex-start"}
                         w={"100%"}
                       >
-                        설치지점
+                        설치지점(스팟)
                       </Button>
                       <Button
                         onClick={() => handleClick("bdsm")}
