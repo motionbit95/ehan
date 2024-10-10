@@ -161,7 +161,7 @@ const TabColumn = ({ index, handleTabClick, setIndex, TabItems }) => {
           />
           {visibleTabItems.map((item, idx) => (
             <Tab
-              key={item.id}
+              // key={item.id}
               _selected={{ color: "blue.500" }}
               onClick={() => handleTabClick(idx)}
             >
@@ -173,7 +173,7 @@ const TabColumn = ({ index, handleTabClick, setIndex, TabItems }) => {
                   overflow={"hidden"}
                   bgColor={"white"}
                 >
-                  <Image src={item.logos} w={"full"} h={"full"} />
+                  {/* <Image src={item.spot_logo} w={"full"} h={"full"} /> */}
                 </Box>
               </Stack>
             </Tab>
@@ -190,8 +190,13 @@ const TabColumn = ({ index, handleTabClick, setIndex, TabItems }) => {
       {/* 두 개씩 이미지 출력 */}
       <HStack justify="center" spacing={4} pt={4}>
         {visibleImageItems.map((item) => (
-          <Box key={item.id} w={"160px"} h={"160px"}>
-            <Image src={item.content} w={"full"} />
+          <Box w={"160px"} h={"160px"}>
+            <Image
+              // src={item.content}
+              bgColor={"white"}
+              w={"full"}
+              h={"full"}
+            />
           </Box>
         ))}
       </HStack>
