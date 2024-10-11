@@ -49,7 +49,11 @@ const EmblaCarousel = (props) => {
         <Box display="flex">
           {props.list.map((item, index) => (
             <Box key={index} minWidth="100%">
-              <Image src={item.banner_image} borderRadius="lg" />
+              <Image
+                src={item.banner_image}
+                borderRadius="lg"
+                aspectRatio={"16/5"}
+              />
             </Box>
           ))}
         </Box>

@@ -40,7 +40,7 @@ function Cert(props) {
   const { onOpen, isOpen, onClose, onVerified } = props;
   const [toggle, setToggle] = useState(false);
   const [step, setStep] = useState(props.step ? props.step : 0);
-  const [certType, setCertType] = useState("KakaocertService");
+  const [certType, setCertType] = useState("PasscertService");
   const [certOption, setCertOption] = useState("PASS");
 
   const options = [
