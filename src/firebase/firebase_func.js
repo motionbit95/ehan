@@ -783,9 +783,14 @@ export const getAlarmList = async (shop_id) => {
 
 export const getFilteredProduct = async (value) => {
   console.log(value);
+  //# sjpark - 1011
+  // 상품 등록 순서대로 정렬
   var q = query(
     collection(db, "PRODUCT"),
-    orderBy(value.order ? value.order : "createAt")
+    orderBy(
+      value.order ? value.order : "createAt",
+      value.order === "createAt" ? "desc" : "asc"
+    )
   );
 
   const querySnapshot = await getDocs(q);

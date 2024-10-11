@@ -70,7 +70,7 @@ function ProductInfo({ shopList, permission, ...props }) {
           product_origin_price: 0,
           product_price: 0,
           product_category: categories[0],
-          illiust: "",
+          illust: [],
           shop_id: props.shop_id,
         }
   );
@@ -83,7 +83,7 @@ function ProductInfo({ shopList, permission, ...props }) {
     if (
       event.target.name === "product_images" ||
       event.target.name === "product_detail" ||
-      event.target.name === "illiust"
+      event.target.name === "illust"
     ) {
       debug("파일을 선택했습니다. ", event.target.files[0].name);
       // 03.06 - 이미지는 하나만 선택하도록 변경
@@ -141,7 +141,7 @@ function ProductInfo({ shopList, permission, ...props }) {
 
   const illustRef = useRef();
   const [illustImage, setIllustImage] = useState(
-    props.product?.illiust ? props.product?.illiust : null
+    props.product?.illust ? props.product?.illust : null
   );
 
   const handleFileChange = (event) => {
@@ -244,11 +244,11 @@ function ProductInfo({ shopList, permission, ...props }) {
     setIllustImage(null);
     setProduct({
       ...product,
-      illiust: "",
+      illust: "",
     });
     props.onChangeProduct({
       ...product,
-      illiust: "",
+      illust: "",
     });
   }
 
@@ -427,7 +427,7 @@ function ProductInfo({ shopList, permission, ...props }) {
             <InputGroup w={"100px"}>
               <Input
                 type="file"
-                name="illiust"
+                name="illust"
                 onChange={handleIllustFileChange}
                 display={"none"}
                 ref={illustRef}
@@ -672,9 +672,9 @@ function Product(props) {
       }
     }
 
-    if (productInfo.illiust) {
-      const url = await uploadFile(productInfo.illiust[0]);
-      productInfo.illiust = url;
+    if (productInfo.illust) {
+      const url = await uploadFile(productInfo.illust[0]);
+      productInfo.illust = url;
       if (url) {
         //링크로 변환해서 리스트에 담는다
         if (await postProduct(productInfo)) {
@@ -766,7 +766,7 @@ function Product(props) {
   };
 
   const saveProduct = async (e) => {
-    // console.log(e);
+    console.log(productInfo);
 
     if (await updateProduct(productInfo)) {
       window.location.reload();
