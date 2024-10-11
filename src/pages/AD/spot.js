@@ -19,6 +19,7 @@ import {
   Thead,
   Tr,
   Td,
+  Box,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Text } from "recharts";
@@ -189,7 +190,7 @@ function SpotInfo({ ...props }) {
                 position={"absolute"}
                 top={0}
                 right={0}
-                onClick={onDeleteImage}
+                onClick={onDeleteLogoImage}
                 icon={<CloseIcon />}
                 // variant={"ghost"}
               />
@@ -408,16 +409,21 @@ const Spot = () => {
                       <Td>{timestampToDate(spot.createAt)}</Td>
                       <Td>{spot.spot_title}</Td>
                       <Td>
-                        <Image
-                          w={"200px"}
-                          aspectRatio={1}
-                          objectFit={"fill"}
-                          src={spot.spot_logo}
-                        />
+                        <Box
+                          borderRadius={"full"}
+                          overflow={"hidden"}
+                          w={"100px"}
+                        >
+                          <Image
+                            aspectRatio={1}
+                            objectFit={"fill"}
+                            src={spot.spot_logo}
+                          />
+                        </Box>
                       </Td>
                       <Td>
                         <Image
-                          w={"200px"}
+                          w={"100px"}
                           aspectRatio={1}
                           objectFit={"fill"}
                           src={spot.spot_image}

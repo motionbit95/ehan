@@ -1,58 +1,30 @@
 import {
   Box,
   HStack,
-  Icon,
   IconButton,
   Image,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
+  VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { ChosunBg, ChosunGu } from "../Component/Text";
-import {
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CopyIcon,
-} from "@chakra-ui/icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase/firebase_conf";
+import { ChosunBg, ChosunGu } from "../Component/Text";
 
 const Customer = () => {
-  const [index, setIndex] = useState(0);
   const [spotList, setSpotList] = useState([]);
-
-  // 4초마다 탭 인덱스를 증가시키는 useEffect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % spotList.length);
-    }, 4000);
-
-    // 컴포넌트가 언마운트될 때 인터벌 클리어
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleTabClick = (idx) => {
-    setIndex(idx);
-  };
 
   useEffect(() => {
     const getSpot = async () => {
       const q = query(collection(db, "SPOT"));
-
       const querySnapshot = await getDocs(q);
 
       const tempList = [];
       querySnapshot.forEach((doc) => {
-        console.log(doc.data());
         tempList.push({ ...doc.data(), doc_id: doc.id });
-        setSpotList(tempList);
       });
+      setSpotList(tempList);
     };
 
     getSpot();
@@ -60,18 +32,13 @@ const Customer = () => {
 
   return (
     <Stack
-      // id="customer"
       minHeight="100vh"
       overflow={"hidden"}
-      css={{
-        "@supports (-webkit-appearance:none) and (stroke-color: transparent)": {
-          minHeight: "-webkit-fill-available",
-        },
-      }}
       justify={"center"}
       spacing={12}
+      px={4}
     >
-      <Stack px={4} spacing={0}>
+      <Stack spacing={0}>
         <ChosunBg fontSize={"36px"}>설치 지점</ChosunBg>
         <ChosunGu
           fontSize={{ base: "12px", md: "14px" }}
@@ -81,12 +48,7 @@ const Customer = () => {
           전국 어디서든 레드스위치를 경험할 수 있습니다.`}
         </ChosunGu>
       </Stack>
-      <TabColumn
-        index={index}
-        handleTabClick={handleTabClick}
-        setIndex={setIndex}
-        TabItems={spotList}
-      />
+      <SpotView TabItems={spotList} />
       <Stack align={"center"}>
         <ChosunGu decoration={"underline"} fontSize={"14px"} cursor={"pointer"}>
           설치지점 검색하기
@@ -98,108 +60,97 @@ const Customer = () => {
 
 export default Customer;
 
-const TabColumn = ({ index, handleTabClick, setIndex, TabItems }) => {
-  const visibleTabs = 3; // 한 번에 보여질 Tab 수
-  const visibleImages = 2; // 한 번에 보여질 이미지 수
-
-  // 자동 슬라이드 기능
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % TabItems.length);
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, [setIndex, TabItems.length]);
-
-  const handlePrev = () => {
-    setIndex((prevIndex) =>
-      prevIndex === 0 ? TabItems.length - 1 : prevIndex - 1
-    );
-  };
+const SpotView = ({ TabItems }) => {
+  const [imageIndex, setImageIndex] = useState(0); // 이미지 인덱스 상태 추가
+  const [logoIndex, setLogoIndex] = useState(0);
 
   const handleNext = () => {
-    setIndex((prevIndex) => (prevIndex + 1) % TabItems.length);
-  };
-
-  // 항상 3개의 Tab을 보여주는 로직, 배열 순환 고려
-  const getVisibleTabs = (index, items, count) => {
-    const totalItems = items.length;
-    let visibleTabs = [];
-
-    for (let i = 0; i < count; i++) {
-      visibleTabs.push(items[(index + i) % totalItems]);
+    if (logoIndex < TabItems.length - 3) {
+      setLogoIndex(logoIndex + 1);
     }
-
-    return visibleTabs;
   };
 
-  // 항상 2개의 이미지를 보여주는 로직
-  const getVisibleImages = (index, items, count) => {
-    const totalItems = items.length;
-    let visibleImages = [];
-
-    for (let i = 0; i < count; i++) {
-      visibleImages.push(items[(index + i) % totalItems]);
+  const handlePrev = () => {
+    if (logoIndex > 0) {
+      setLogoIndex(logoIndex - 1);
     }
-
-    return visibleImages;
   };
 
-  // 현재 보여질 Tab과 이미지들을 가져옴
-  const visibleTabItems = getVisibleTabs(index, TabItems, visibleTabs);
-  const visibleImageItems = getVisibleImages(index, TabItems, visibleImages);
+  const handleNextImage = () => {
+    if (imageIndex < TabItems.length - 2) {
+      setImageIndex(imageIndex + 1);
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (imageIndex > 0) {
+      setImageIndex(imageIndex - 1);
+    }
+  };
+
+  // 로고 3개 표시
+  const visibleLogos = TabItems.slice(logoIndex, logoIndex + 3);
+
+  // 이미지 2개 표시
+  const visibleImages = TabItems.slice(imageIndex, imageIndex + 2);
 
   return (
-    <Tabs variant={"unstyled"} index={index} onChange={setIndex}>
-      <TabList justifyContent={"center"}>
-        <HStack align={"center"} spacing={0}>
-          <IconButton
-            icon={<ChevronLeftIcon />}
+    <VStack spacing={8} align="center">
+      {/* 로고 출력 */}
+      <HStack spacing={4}>
+        <IconButton
+          icon={<ChevronLeftIcon fontSize={"lg"} />}
+          borderRadius={"full"}
+          size={"xs"}
+          onClick={handlePrev}
+          isDisabled={logoIndex === 0}
+        />
+        {visibleLogos.map((spot, idx) => (
+          <Box
+            key={idx}
             borderRadius={"full"}
-            size={"xs"}
-            onClick={handlePrev}
-          />
-          {visibleTabItems.map((item, idx) => (
-            <Tab
-              // key={item.id}
-              _selected={{ color: "blue.500" }}
-              onClick={() => handleTabClick(idx)}
-            >
-              <Stack align={"center"}>
-                <Box
-                  boxSize={"72px"}
-                  dir={"column"}
-                  borderRadius={"full"}
-                  overflow={"hidden"}
-                  bgColor={"white"}
-                >
-                  {/* <Image src={item.spot_logo} w={"full"} h={"full"} /> */}
-                </Box>
-              </Stack>
-            </Tab>
-          ))}
-          <IconButton
-            icon={<ChevronRightIcon />}
-            borderRadius={"full"}
-            size={"xs"}
-            onClick={handleNext}
-          />
-        </HStack>
-      </TabList>
-
-      {/* 두 개씩 이미지 출력 */}
-      <HStack justify="center" spacing={4} pt={4}>
-        {visibleImageItems.map((item) => (
-          <Box w={"160px"} h={"160px"}>
+            boxSize={"64px"}
+            overflow={"hidden"}
+          >
             <Image
-              // src={item.content}
-              bgColor={"white"}
               w={"full"}
               h={"full"}
+              objectFit={"cover"}
+              src={spot.spot_logo}
             />
           </Box>
         ))}
+        <IconButton
+          icon={<ChevronRightIcon fontSize={"lg"} />}
+          borderRadius={"full"}
+          size={"xs"}
+          onClick={handleNext}
+          isDisabled={logoIndex >= TabItems.length - 3}
+        />
       </HStack>
-    </Tabs>
+
+      {/* 두 개씩 이미지 출력 */}
+      <HStack justify="center" spacing={4}>
+        <IconButton
+          icon={<ChevronLeftIcon fontSize={"2xl"} />}
+          borderRadius={"full"}
+          size={"sm"}
+          onClick={handlePrevImage}
+          isDisabled={imageIndex === 0} // 첫 번째 이미지일 때 비활성화
+        />
+        {visibleImages.map((spot, idx) => (
+          <Box key={idx} w={"120px"} h={"120px"}>
+            <Image src={spot.spot_image} w="full" h="full" objectFit="cover" />
+          </Box>
+        ))}
+        <IconButton
+          icon={<ChevronRightIcon fontSize={"2xl"} />}
+          borderRadius={"full"}
+          size={"sm"}
+          onClick={handleNextImage}
+          isDisabled={imageIndex >= TabItems.length - 2} // 마지막 이미지일 때 비활성화
+        />
+      </HStack>
+    </VStack>
   );
 };
