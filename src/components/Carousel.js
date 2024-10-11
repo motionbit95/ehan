@@ -52,7 +52,7 @@ const EmblaCarousel = (props) => {
               <Image
                 src={item.banner_image}
                 borderRadius="lg"
-                aspectRatio={"16/5"}
+                // aspectRatio={"16/5"}
               />
             </Box>
           ))}

@@ -441,7 +441,7 @@ function BDSM(props) {
         <Logo />
         <Text fontFamily={"seolleimcool-SemiBold"}>레드스위치</Text>
       </HStack> */}
-      <Center bgColor={"white"} aspectRatio={"5/1"}>
+      <Center bgColor={"white"}>
         <EmblaCarousel list={topList} />
       </Center>
       {step === 0 && (
@@ -877,7 +877,7 @@ function BDSM(props) {
         </Container>
       )}
 
-      <Center bgColor={"white"} aspectRatio={"5/1"}>
+      <Center bgColor={"white"}>
         <EmblaCarousel list={bottomList} />
       </Center>
     </Stack>
