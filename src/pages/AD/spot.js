@@ -23,11 +23,19 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { Text } from "recharts";
 import PopupBase from "../../modals/PopupBase";
-import { AddIcon, CloseIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase/firebase_conf";
-import { collection, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { postSpot } from "../../firebase/firebase_func";
+import { timestampToDate } from "../../firebase/api";
 
 function SpotInfo({ ...props }) {
   const [spot, setSpot] = useState(
@@ -275,12 +283,14 @@ const Spot = () => {
 
   const getSpot = async () => {
     const tempList = [];
-    const q = query(collection(db, "SPOT"));
+    //# sjpark - 1011
+    // 순서대로 정렬하는 방법 - orderBy
+    const q = query(collection(db, "SPOT"), orderBy("createAt", "desc"));
 
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+      // console.log(doc.data());
       tempList.push({ ...doc.data(), doc_id: doc.id });
       setSpotList(tempList);
     });
@@ -312,20 +322,33 @@ const Spot = () => {
   const saveSpot = async (e) => {
     e.preventDefault();
 
+    //# sjpark - 1011
+    // 폼 submit시 해당 이벤트로 진입하도록 설계
+    // e에 폼 이벤트가 실려온다. 해당 부분 타겟을 출력해보면 아래와 같다
+    // console.log(e.target[0].name, e.target[0].value); // 지점명
+    // console.log(e.target[1].name, e.target[1].value); // 로고
+    // console.log(e.target[3].name, e.target[3].value); // 이미지
+
     // 이미지를 업로드하고 해당 url을 전달한다.
-    uploadFile(spotFile).then(async (url) => {
-      const addData = {
-        [e.target[0].name]: e.target[0].value, // banner_title
-        [e.target[1].name]: e.target[1].value, // advertiser
-        spot_image: url,
-        createAt: new Date(),
-      };
+    uploadFile(e.target[3].files[0]).then(async (image_url) => {
+      // console.log(image_url);
 
-      console.log(addData);
+      // 스폿 이미지를 저장하는데 성공하면 스폿 로고를 저장하고 스폿 로고를 저장하는데 성공하면,
+      // 저장된 url을 받아서 문서에 저장한다.
+      uploadFile(e.target[1].files[0]).then(async (logo_url) => {
+        const addData = {
+          [e.target[0].name]: e.target[0].value, // spot_name
+          spot_image: image_url,
+          spot_logo: logo_url,
+          createAt: new Date(),
+        };
 
-      if (await postSpot(addData)) {
-        window.location.reload();
-      }
+        // console.log(addData);
+
+        if (await postSpot(addData)) {
+          window.location.reload();
+        }
+      });
     });
   };
   return (
@@ -348,7 +371,8 @@ const Spot = () => {
                   icon={<AddIcon />}
                   title={"설치지점"}
                   action={"등록"}
-                  onClick={(e) => saveSpot(e)}
+                  // onClick={(e) => saveSpot(e)}
+                  onClose={(e) => saveSpot(e)}
                 >
                   <SpotInfo
                     onChangeSpot={updateSpotInfo}
@@ -381,11 +405,42 @@ const Spot = () => {
                   {spotList.map((spot, index) => (
                     <Tr key={spot.doc_id}>
                       <Td>{index + 1}</Td>
-                      <Td>{spot.createAt}</Td>
+                      <Td>{timestampToDate(spot.createAt)}</Td>
                       <Td>{spot.spot_title}</Td>
-                      <Td>{spot.spot_logo}</Td>
-                      <Td>{spot.spot_image}</Td>
-                      <Td></Td>
+                      <Td>
+                        <Image
+                          w={"200px"}
+                          aspectRatio={1}
+                          objectFit={"fill"}
+                          src={spot.spot_logo}
+                        />
+                      </Td>
+                      <Td>
+                        <Image
+                          w={"200px"}
+                          aspectRatio={1}
+                          objectFit={"fill"}
+                          src={spot.spot_image}
+                        />
+                      </Td>
+                      <Td>
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          onClick={() => {
+                            if (
+                              window.confirm("스폿 지점을 삭제하시겠습니까?")
+                            ) {
+                              console.log(spot.doc_id);
+                              deleteDoc(doc(db, "SPOT", spot.doc_id)).then(
+                                () => {
+                                  console.log("Document deleted! ");
+                                  window.location.reload();
+                                }
+                              );
+                            }
+                          }}
+                        />
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
