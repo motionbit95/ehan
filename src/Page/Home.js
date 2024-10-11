@@ -138,6 +138,31 @@ const GOModal = ({ isOpen, onClose }) => {
     setIsModalOpen(false);
   };
 
+  const handleClick = async (e) => {
+    e.preventDefault();
+    if (window.confirm("양식을 제출 하시겠습니까?")) {
+      fetch(process.env.REACT_APP_SERVER_URL + "/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.user_email,
+          content: form,
+        }),
+      })
+        .then((data) => {
+          // 전송 성공!
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      return;
+    }
+  };
+
   return (
     <Modal size={{ base: "full", md: "2xl" }} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -249,25 +274,7 @@ const GOModal = ({ isOpen, onClose }) => {
                 isDisabled={!isAgree}
                 color={"white"}
                 bgColor={"red"}
-                onClick={() => {
-                  fetch(process.env.REACT_APP_SERVER_URL + "/sendEmail", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      email: form.user_email,
-                      content: form,
-                    }),
-                  })
-                    .then((data) => {
-                      // 전송 성공!
-                      console.log(data);
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                    });
-                }}
+                onClick={handleClick}
               >
                 신청하기
               </Button>
