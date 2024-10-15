@@ -51,6 +51,7 @@ const EmblaCarousel = (props) => {
             <Box key={index} minWidth="100%">
               <Image
                 src={item.banner_image}
+                onClick={() => window.open(item.advertiser)}
                 borderRadius="lg"
                 // aspectRatio={"16/5"}
               />

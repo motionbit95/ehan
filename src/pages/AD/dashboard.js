@@ -61,7 +61,9 @@ function Dashboard(props) {
   const [shop, setShop] = useState({});
 
   const playSound = () => {
-    const audio = new Audio("../../assets/Sound/VoicesAI_1724058982121.mp3"); // 사운드 파일 경로
+    const audio = new Audio(
+      require("../../assets/Sound/VoicesAI_1724058982121.mp3")
+    ); // 사운드 파일 경로
     audio.play(); // 사운드 재생
   };
 
