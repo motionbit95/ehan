@@ -48,6 +48,7 @@ import $ from "jquery";
 import BDSM from "./bdsm";
 import Banner from "./banner";
 import Spot from "./spot";
+import soundFile from "../../assets/Sound/VoicesAI_1724058982121.mp3";
 
 function Dashboard(props) {
   const navigate = useNavigate();
@@ -66,6 +67,13 @@ function Dashboard(props) {
     ); // 사운드 파일 경로
     audio.play(); // 사운드 재생
   };
+
+  useEffect(() => {
+    if (showPopup) {
+      const audio = new Audio(soundFile);
+      audio.play();
+    }
+  }, [showPopup]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "PAYMENT"), (snapshot) => {
@@ -98,8 +106,8 @@ function Dashboard(props) {
                 change.doc.data().pay_state === "0000"
               ) {
                 // 주문이 추가되었을 때 팝업을 띄움
-                playSound();
                 setShowPopup(true);
+                // playSound();
                 setNewOrder(change.doc.data());
                 return;
               }

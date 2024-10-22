@@ -402,9 +402,9 @@ function Inventory({ ...props }) {
 
   const changeInventoryCount = (index, count) => {
     //0으로 오면 안되고 페이지 인덱스(2) * 한페이지 항목개수(10) + 이 페이지에서의 index(index)
-    console.log(startIndex + index);
+    // console.log(startIndex + index, index);
     const tempInventoryList = [...inventoryList];
-    tempInventoryList[20].inventory_count = count;
+    tempInventoryList[index + (currentPage - 1) * 10].inventory_count = count;
 
     setInventoryList(tempInventoryList);
   };
