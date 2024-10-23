@@ -5,6 +5,13 @@ import {
   FormErrorIcon,
   HStack,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Radio,
   RadioGroup,
   Stack,
@@ -209,6 +216,14 @@ function Order(props) {
     setCurrentPage(page);
   };
 
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const handleOrderClick = (item) => {
+    console.log(item);
+    setSelectedOrder(item);
+    setIsOrderModalOpen(true);
+  };
+
   const totalPages = Math.ceil(orderList.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -259,142 +274,157 @@ function Order(props) {
                       <Th w={"200px"}>결제(환불)금액</Th>
                       <Th w={"200px"}>지점</Th>
                       <Th w={"200px"}>주문상태</Th>
+                      <Th>주문정보</Th>
                       <Th>결제취소</Th>
                       <Th>삭제</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {currentData?.map((item, index) => (
-                      <Tr
-                        key={index}
-                        _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
-                      >
-                        <Td fontSize={"sm"}>{index + 1}</Td>
-                        <Td fontSize={"sm"}>
-                          <Text
-                            color={item?.cancel_date ? "gray" : "black"}
-                            textDecoration={
-                              item?.cancel_date ? "line-through" : "none"
-                            }
-                            whiteSpace={"pre-line"}
-                          >
-                            {item?.ediDate.slice(0, 4) +
-                              "." +
-                              item?.ediDate.slice(4, 6) +
-                              "." +
-                              item?.ediDate.slice(6, 8)}
-                          </Text>
-                          {/* {item?.cancel_date && (
+                      <>
+                        <Tr
+                          key={index}
+                          _hover={{ cursor: "pointer", bgColor: "#f0f0f0" }}
+                        >
+                          <Td fontSize={"sm"}>{index + 1}</Td>
+                          <Td fontSize={"sm"}>
+                            <Text
+                              color={item?.cancel_date ? "gray" : "black"}
+                              textDecoration={
+                                item?.cancel_date ? "line-through" : "none"
+                              }
+                              whiteSpace={"pre-line"}
+                            >
+                              {item?.ediDate.slice(0, 4) +
+                                "." +
+                                item?.ediDate.slice(4, 6) +
+                                "." +
+                                item?.ediDate.slice(6, 8)}
+                            </Text>
+                            {/* {item?.cancel_date && (
                             <Text> {item?.cancel_date?.split("T")[0]}</Text>
                           )} */}
-                        </Td>
-                        <Td fontSize={"sm"} whiteSpace={"pre-line"}>
-                          <Text>
-                            [{item?.order_id}]{"\n"}
-                          </Text>
+                          </Td>
+                          <Td fontSize={"sm"} whiteSpace={"pre-line"}>
+                            <Text>
+                              [{item?.order_id}]{"\n"}
+                            </Text>
 
-                          <Text>
-                            {item?.pay_product[0]?.product_name}
-                            {item?.pay_product?.length > 1
-                              ? ` 외 ${item?.pay_product?.length}건`
-                              : ""}
-                          </Text>
-                        </Td>
-                        <Td fontSize={"sm"}>
-                          <HStack w={"100%"} justifyContent={"flex-start"}>
                             <Text>
-                              {item?.goodsAmt
-                                ? formatCurrency(item?.goodsAmt)
-                                : "0"}
-                              원
+                              {item?.pay_product[0]?.product_name}
+                              {item?.pay_product?.length > 1
+                                ? ` 외 ${item?.pay_product?.length}건`
+                                : ""}
                             </Text>
-                            <Text>
-                              {item?.payMethod === "VACNT"
-                                ? "계좌이체"
-                                : item?.payMethod === "CARD"
-                                ? "카드"
-                                : "기타"}
-                            </Text>
-                          </HStack>
-                        </Td>
-                        <Td>{searchShopName(item?.shop_id)}</Td>
-                        <Td>
-                          <PopupBase
-                            isDisabled={item?.pay_state > "0010"}
-                            size={"xs"}
-                            colorScheme={
-                              item?.pay_state === "0000"
-                                ? "gray"
-                                : item?.pay_state === "0001"
-                                ? "orange"
-                                : item?.pay_state === "0002"
-                                ? "green"
-                                : "gray"
-                            }
-                            title={"배송상태"}
-                            text={
-                              item?.pay_state === "0000"
-                                ? "배송전"
-                                : item?.pay_state === "0001"
-                                ? "배송시작"
-                                : item?.pay_state === "0002"
-                                ? "배송완료"
-                                : "결제취소"
-                            }
-                            action={"변경"}
-                            onClose={(e) => {
-                              handleChangeState(state, item);
-                            }}
-                          >
-                            <RadioGroup
-                              id="pay_state"
-                              colorScheme="red"
-                              defaultValue={item?.pay_state}
-                              onChange={(e) => {
-                                setState(e);
+                          </Td>
+                          <Td fontSize={"sm"}>
+                            <HStack w={"100%"} justifyContent={"flex-start"}>
+                              <Text>
+                                {item?.goodsAmt
+                                  ? formatCurrency(item?.goodsAmt)
+                                  : "0"}
+                                원
+                              </Text>
+                              <Text>
+                                {item?.payMethod === "VACNT"
+                                  ? "계좌이체"
+                                  : item?.payMethod === "CARD"
+                                  ? "카드"
+                                  : "기타"}
+                              </Text>
+                            </HStack>
+                          </Td>
+                          <Td>{searchShopName(item?.shop_id)}</Td>
+                          <Td>
+                            <PopupBase
+                              isDisabled={item?.pay_state > "0010"}
+                              size={"xs"}
+                              colorScheme={
+                                item?.pay_state === "0000"
+                                  ? "gray"
+                                  : item?.pay_state === "0001"
+                                  ? "orange"
+                                  : item?.pay_state === "0002"
+                                  ? "green"
+                                  : "gray"
+                              }
+                              title={"배송상태"}
+                              text={
+                                item?.pay_state === "0000"
+                                  ? "배송전"
+                                  : item?.pay_state === "0001"
+                                  ? "배송시작"
+                                  : item?.pay_state === "0002"
+                                  ? "배송완료"
+                                  : "결제취소"
+                              }
+                              action={"변경"}
+                              onClose={(e) => {
+                                handleChangeState(state, item);
                               }}
                             >
-                              <Stack>
-                                <Radio
-                                  isDisabled={parseInt(item?.pay_state) >= 0}
-                                  size={"lg"}
-                                  value="0000"
-                                >
-                                  배송전
-                                </Radio>
-                                <Radio
-                                  isDisabled={parseInt(item?.pay_state) >= 1}
-                                  size={"lg"}
-                                  value="0001"
-                                >
-                                  배송시작
-                                </Radio>
-                                <Radio
-                                  isDisabled={parseInt(item?.pay_state) >= 2}
-                                  size={"lg"}
-                                  value="0002"
-                                >
-                                  배송완료
-                                </Radio>
-                              </Stack>
-                            </RadioGroup>
-                          </PopupBase>
-                        </Td>
-                        <Td>
-                          <IconButton
-                            size={"sm"}
-                            icon={<CloseIcon />}
-                            onClick={() => cancelOrder(item)}
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            size={"sm"}
-                            icon={<DeleteIcon />}
-                            onClick={() => deleteOrder(item?.doc_id)}
-                          />
-                        </Td>
-                      </Tr>
+                              <RadioGroup
+                                id="pay_state"
+                                colorScheme="red"
+                                defaultValue={item?.pay_state}
+                                onChange={(e) => {
+                                  setState(e);
+                                }}
+                              >
+                                <Stack>
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 0}
+                                    size={"lg"}
+                                    value="0000"
+                                  >
+                                    배송전
+                                  </Radio>
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 1}
+                                    size={"lg"}
+                                    value="0001"
+                                  >
+                                    배송시작
+                                  </Radio>
+                                  <Radio
+                                    isDisabled={parseInt(item?.pay_state) >= 2}
+                                    size={"lg"}
+                                    value="0002"
+                                  >
+                                    배송완료
+                                  </Radio>
+                                </Stack>
+                              </RadioGroup>
+                            </PopupBase>
+                          </Td>
+                          <Td>
+                            <IconButton
+                              size={"sm"}
+                              icon={<CopyIcon />}
+                              onClick={() => handleOrderClick(item)}
+                            />
+                          </Td>
+                          <Td>
+                            <IconButton
+                              size={"sm"}
+                              icon={<CloseIcon />}
+                              onClick={() => cancelOrder(item)}
+                            />
+                          </Td>
+                          <Td>
+                            <IconButton
+                              size={"sm"}
+                              icon={<DeleteIcon />}
+                              onClick={() => deleteOrder(item?.doc_id)}
+                            />
+                          </Td>
+                        </Tr>
+                        <OrderModal
+                          order={selectedOrder}
+                          isOpen={isOrderModalOpen}
+                          onClose={() => setIsOrderModalOpen(false)}
+                        />
+                      </>
                     ))}
                   </Tbody>
                 </Table>
@@ -587,3 +617,34 @@ function Order(props) {
 }
 
 export default Order;
+
+const OrderModal = ({ order, isOpen, onClose }) => {
+  useEffect(() => {
+    console.log(order);
+  }, []);
+  return (
+    <Modal size={"md"} isCentered isOpen={isOpen} onClose={onClose}>
+      {/* <ModalOverlay /> */}
+      <ModalContent>
+        <ModalHeader>
+          <Text>{`[${order?.order_id}] ${order?.pay_product[0]?.product_name} ${
+            order?.pay_product?.length > 1
+              ? ` 외 ${order?.pay_product?.length}건`
+              : ""
+          }`}</Text>
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Stack fontSize={"md"} gap={"0"} pb={6}>
+            <Text>호실 : {order?.order_code}</Text>
+            <Text>배송메세지 : {order?.order_message}</Text>
+            <Text>연락처 : {order?.user_phone}</Text>
+          </Stack>
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={onClose}>닫기</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};

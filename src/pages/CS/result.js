@@ -187,6 +187,16 @@ function Result(props) {
               </Text>
             )}
           </Stack>
+          {(data?.resultCode === "0000") &
+          (
+            <Stack fontSize={"md"} gap={"0"} color={"#e53e3e"}>
+              <Text>
+                상품은 가방에 넣어 문고리에 걸어드리고 초인종 혹은
+                노크해드립니다.
+              </Text>
+              <Text>상품은 수령하시고 가방은 그대로 걸어주세요 :-)</Text>
+            </Stack>
+          )}
           <Stack fontSize={"md"} gap={"0"}>
             <Text>
               주문일시 : {data?.paidAt.slice(0, 4)}.{data?.paidAt.slice(4, 6)}.
